@@ -62,6 +62,12 @@ function Login() {
     }
   };
 
+  const kakaologin = async function signInWithKakao() {
+    const { data, error } = await supabasedata.auth.signInWithOAuth({
+      provider: 'kakao'
+    });
+  };
+
   return (
     <StyledLogin>
       <StyledH1>로그인</StyledH1>
@@ -77,6 +83,7 @@ function Login() {
         <StyledButton type="submit">로그인하기</StyledButton>
       </StyledForm>
 
+      <StyledButton onClick={kakaologin}>카카오로그인</StyledButton>
       <StyledButton onClick={handleLogout}>로그아웃하기</StyledButton>
 
       <Link to="/signup">
