@@ -6,9 +6,12 @@ import { ViewDetail } from '../pages/board/ViewDetail';
 import { Register } from '../pages/board/Register';
 import SignUp from '../pages/signup/signup';
 import Login from '../pages/login/Login';
+import NavBar from 'components/Navbar/NavBar';
+
 const Router = () => {
   return (
     <BrowserRouter>
+      <NavBar />
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/board" element={<BoardPg />} />

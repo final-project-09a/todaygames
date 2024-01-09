@@ -28,6 +28,7 @@ function Signup() {
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       const { data, error } = await supabasedata.auth.signUp({
         email: formData.email,
@@ -62,7 +63,7 @@ function Signup() {
         </div> */}
         <StyledLabel htmlFor="email">이메일</StyledLabel>
         <StyledInput
-          placeholder="아이디"
+          placeholder="이메일"
           type="email"
           id="email"
           name="email"
