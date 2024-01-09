@@ -1,4 +1,7 @@
+import { supabasedata } from 'shared/supabase';
+
 export const ListCumm = () => {
+  const { data, error } = supabasedata.from('comments').select('id');
   return (
     <>
       {/* 최신순카테고리 */}

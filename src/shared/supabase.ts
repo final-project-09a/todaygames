@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { postsTypedata } from './supabase.type';
 
 type supabaseConfig = {
   supabaseUrl: string;
@@ -9,4 +10,4 @@ const supabaseConfig = <supabaseConfig>{
   supabaseKey: process.env.REACT_APP_SUPABASE_APIKEY
 };
 
-export const supabasedata = createClient(supabaseConfig.supabaseKey, supabaseConfig.supabaseUrl);
+export const supabasedata = createClient<postsTypedata>(supabaseConfig.supabaseKey, supabaseConfig.supabaseUrl);
