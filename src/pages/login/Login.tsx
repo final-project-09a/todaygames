@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import { supabasedata } from 'shared/supabase';
 
 interface FormData {
-  // displayname: string;
   email: string;
   password: string;
 }
 
 function Login() {
   const [formData, setFormData] = useState<FormData>({
-    // displayname: '',
     email: '',
     password: ''
   });
@@ -29,14 +27,11 @@ function Login() {
       const { data, error } = await supabasedata.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
-        // options: {
-        //     displayname: formData.displayname
-        //   }
       });
 
       if (error) {
         console.error(error);
-        alert('ID 와 password를 확인해주세요');
+        alert('ID와 password를 확인해주세요');
       } else {
         console.log(data);
         alert('로그인 성공!');
@@ -44,7 +39,23 @@ function Login() {
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred during login');
+      alert('로그인 중에 오류가 발생했습니다');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabasedata.auth.signOut();
+      if (error) {
+        console.error(error);
+        alert('로그아웃 중에 오류가 발생했습니다');
+      } else {
+        alert('로그아웃 성공!');
+        // You can redirect or perform other actions upon successful logout
+      }
+    } catch (error) {
+      console.error(error);
+      alert('로그아웃 중에 오류가 발생했습니다');
     }
   };
 
@@ -52,11 +63,6 @@ function Login() {
     <div className="login">
       <h1>로그인</h1>
       <form onSubmit={handlelogin}>
-        {/* <div>
-          <label htmlFor="displayname">이메일</label>
-          <input type="displayname" id="displayname" name="displayname" value={formData.displayname} onChange={handleChange} />
-          {errors.displayname && <p>{errors.displayname}</p>}
-        </div> */}
         <div>
           <label htmlFor="email">이메일</label>
           <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
@@ -71,6 +77,8 @@ function Login() {
 
         <button type="submit">로그인하기</button>
       </form>
+
+      <button onClick={handleLogout}>로그아웃하기</button>
     </div>
   );
 }
