@@ -1,46 +1,194 @@
-# Getting Started with Create React App
+## 내배캠 React 3기 A-9조 파이널 프로젝트
+### 📢 프로젝트 개요
+**24. 01. 04 - 23. 02. 08**
+- 프로젝트명: **오늘의 게임**
+  
+- 소개
+    - 한 줄 정리 : 게임포탈사이트
+    - 내용 :  다양한 게임들을 추천 받을 수 있고 결제 할 수 있으며 게임에 대한 정보를 유저들끼리 나눌 수 있는 사이트 구현
+    - 
+### 👥 팀 소개
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- 팀명: 구사일생(九死一生)
+- 뜻: 9번 죽을 고비를 넘겨 살아남 듯 어떤 어려움이 있어도 이겨내며 살아남자.
+- 팀 구성원
+-  안준표,권보라,이재환,윤성현,이지혜
 
-## Available Scripts
+### [💡 구현 기능](https://github.com/scseong/motitube/wiki/%EA%B8%B0%EB%8A%A5-%EB%AA%A9%EB%A1%9D#%ED%95%84%EC%88%98%EC%9A%94%EA%B5%AC%EC%82%AC%ED%95%AD)
 
-In the project directory, you can run:
+# 필수 구현 사항
 
-### `npm start`
+## 메인페이지
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### **header**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- [ ]  로그인 상태 → 로그아웃 UI ,  로그아웃 상태  → 로그인 UI
+- [ ]  로고 구현
 
-### `npm test`
+### **Banner**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- [ ]  react-slick을 사용하여 슬라이드 기능 구현
+- [ ]  내부에 게임 제목 구현하여 클릭 시 슬라이드 전환
 
-### `npm run build`
+### Main
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- [ ]  추천 게임 리스트
+- [ ]  장르별 카테고리
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 상세페이지
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- [ ]  게임 상세 설명
+- [ ]  장바구니
+- [ ]  추천 게임 정보 불러오기 / 슬라이드 구현
+- [ ]  찜 기능
 
-### `npm run eject`
+## 커뮤니티 페이지
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- [ ]  커뮤니티 게시판 CRUD
+- [ ]  최신순 정렬, 장르 순 정렬 구현
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 커뮤니티 상세 페이지
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- [ ]  게시글 제목, 내용
+- [ ]  댓글입력하기, 대댓글
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## 로그인, 회원가입 페이지
 
-## Learn More
+- [ ]  페이지 이동을 통한 회원가입 / 로그인 페이지 구현
+- [ ]  소셜로그인(구글, 네이버(?)) 구현
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 마이페이지
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- [ ]  내가 작성한 글
+- [ ]  구매목록
+- [ ]  프로필 수정(사진, 닉네임)
+- [ ]  장바구니 목록
+- [ ]  찜 목록
+- [ ]  커뮤니티 댓글 목
+
+## 장바구니/결제 페이지
+
+- [ ]  장바구니 (리스트 추가/리스트 삭제)
+- [ ]  결제
+
+  ### 📝 역할 분담
+
+| 안준표      | 권보라      | 이재환      | 윤성현      | 이지혜           |
+| ----------- | ----------- | ----------- | ----------- | ---------------- |
+| 커뮤니티 페이지  | 메인/상세 페이지 | 로그인/로그아웃,마이 페이지 | 바구니/결제 | 웹디자인 |
+
+### 🚩 개발 내용
+
+- **개발환경**
+  
+- IDE: Visual Studio Code
+- OS: windows, Mac
+- Package Manager: Yarn Classic (v1.22.19)
+ 
+#### 📌 사용 기술
+
+    - javascript - 동적 웹사이트 구현을 위한 프로그램 언어 
+    - RTK - 전역 상태 관리 도구
+    - React-query - 비동기 관련 로직과 상태를 관리
+    - TypeScript - 예측 가능하고 안정적인 코드 작성, 강력한 개발 도구 지원, 효과적인 협업
+    
+        
+- **라이브러리**
+    - React.js - 상태관리 라이브러리
+    - React-slick - slide를 지원해주는 라이브러리
+- **API**
+    - google API - 로그인 관련 API
+    - naver API - 로그인 관련 API
+    - SteamAPI - 게임정보 관련 API
+    
+- **데이터 베이스** 
+    - supabase - 사용자 인증과 데이터베이스 등의 서버 기능 제공
+- **Tool & Application**
+    - vsCode - 코드 작성을 편리하게해주는 Tool
+    - Thunder Client - API 요청 생성, 테스트, 디버그, 모니터링의 수행을 도와주는 VSCode 확장툴
+
+🗼 초기 화면 설계
+| 메인 페이지                                                | 상세페이지                                                  | 커뮤니티/커뮤니티 상세 페이지                                                | 
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | 
+| ![0101 메인](https://github.com/final-project-09a/todaygames/assets/117058056/c7c4c536-1898-4631-9419-6c1b792cd6d4) | ![0201 상세](https://github.com/final-project-09a/final-project-a09/assets/117058056/032bd03b-1b0c-4e2b-8d4e-4432659f1b9e) | ![0501 커뮤니티](https://github.com/final-project-09a/final-project-a09/assets/117058056/4bca0d37-1bec-42b5-9392-b5e8efd89efe)  ![0502 커뮤니티_상세](https://github.com/final-project-09a/final-project-a09/assets/117058056/a79f7740-926f-4e1c-bb27-bf681cbb2c8b)  |
+
+  | 로그인/회원가입                                                   | 마이 페이지                                          |  장바구니/ 결제 페이지                                |
+  |  ------------------------------------------------------------ | ------------------------------------------------------------ |  ------------------------------------------------------------ |
+ ![Untitled (1)](https://github.com/final-project-09a/final-project-a09/assets/117058056/129b6037-207f-4ee8-910e-ac6c334b1a2d) |  ![Untitled (4)](https://github.com/final-project-09a/final-project-a09/assets/117058056/fcfdcf78-445a-4fd1-9b5d-a7f9db72a4ea) |  ![image](https://github.com/final-project-09a/final-project-a09/assets/117058056/4a4cbed8-b24a-4505-9cc1-82bf8650ac5d)   |
+
+
+## 프로젝트 스케줄!
+
+**24. 01. 04 - 23. 01. 22 중간발표**
+
+
+**24. 01. 04 - 23. 02. 08 최종발표**
+
+
+**1주차 24. 01. 04 - 24.01. 10 기획 마무리**
+----------------------------------------------------
+
+**2주차 24. 01. 11 - 24.01. 17 
+피드백 반영된 코드 70%완성**
+----------------------------------------------------
+**3주차  24. 01. 18 - 24.01. 24 
+중간 발표 이전, 완성된 코드에서 오류와 수정 사항 등을 고려하고 발표
+▶ 프로젝트 MVP 모델을 완성하고, 팀 예상 질문 10가지 답변 준비**
+----------------------------------------------------
+4주차  24. 01. 25 - 24.01. 31 
+유저테스트 진행, 유저테스트 기반 프로젝트 그로스
+----------------------------------------------------
+**5주차 24. 02. 01 - 24.02. 08 
+발표 준비 및 마무리▶ 트러블슈팅 작성**
+----------------------------------------------------
+
+
+
+#### 📂 디렉토리 구조
+```
+📦 project
+ ┣ 📂public
+ ┣ 📂src
+ ┃ ┣ 📂api
+ ┃ ┣ 📂assets
+ ┃ ┣ 📂constants
+ ┃ ┣ 📂components
+ ┃ ┃ ┣ 📂component1
+ ┃ ┃ ┃ ┣📜component1.jsx
+ ┃ ┃ ┃ ┗📜styles.js
+ ┃ ┃ ┣ 📂component2
+ ┃ ┃ ┃ ┣📜component2.jsx
+ ┃ ┃ ┃ ┗📜styles.js
+ ┃ ┣ 📂hooks
+ ┃ ┣ 📂mock
+ ┃ ┣ 📂pages
+ ┃ ┣ 📂shared
+ ┃ ┣ 📂styles
+ ┃ ┣ 📂redux
+ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┗ 📂modules
+ ┃ ┣ 📜App.jsx
+ ┃ ┗ 📜index.js
+ ┣ 📜.eslintrc
+ ┣ 📜.gitignore
+ ┣ 📜.prettierrc
+ ┣ 📜jsconfig.json
+ ┣ 📜package.json
+ ┣ 📜README.md
+ ┗ 📜yarn.lock
+```
+
+- `api/` 서버와의 통신에 사용되는 코드
+- `assets/` 멀티미디어 파일(이미지, 폰트)
+- `constants/` 상수 (색상, 공유되는 값 등)
+- `components/` 재사용 가능한 컴포넌트
+- `hooks/` 커스텀 훅
+- `mock/` 샘플 데이터
+- `pages/` 라우팅되는 페이지 컴포넌트
+- `shared/` 공통적으로 사용되는 리소스
+- `styles/` 스타일 관련
+- `redux/` 리덕스 관련 파일
+### [📃 코드 컨벤션](https://github.com/scseong/motitube/wiki/%EC%BD%94%EB%93%9C-%EC%BB%A8%EB%B2%A4%EC%85%98)
+
+### [🚥 깃 전략](https://github.com/scseong/motitube/wiki/%EA%B9%83-%EC%A0%84%EB%9E%B5)
+  

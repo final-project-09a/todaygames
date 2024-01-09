@@ -1,14 +1,16 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '../pages/home';
 import Detail from '../pages/detail';
-import Comm from '../pages/comm/Comm';
-
+import { BoardPg } from '../pages/board/BoardPg';
+import { ViewDetail } from '../pages/board/ViewDetail';
+import { Register } from '../pages/board/Register';
 const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/comm" element={<Comm />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/board" element={<BoardPg />} />
+        <Route path="/viewdetail" element={<ViewDetail />} />
         <Route path="/" element={<Home />} />
         <Route path="/detail:id" element={<Detail />} />
       </Routes>
