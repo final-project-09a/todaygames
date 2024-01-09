@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { supabasedata } from 'shared/supabase';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel } from './styles';
 
 interface FormData {
   email: string;
@@ -60,26 +63,26 @@ function Login() {
   };
 
   return (
-    <div className="login">
-      <h1>로그인</h1>
-      <form onSubmit={handlelogin}>
-        <div>
-          <label htmlFor="email">이메일</label>
-          <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
-          {errors.email && <p>{errors.email}</p>}
-        </div>
+    <StyledLogin>
+      <StyledH1>로그인</StyledH1>
+      <StyledForm onSubmit={handlelogin}>
+        <StyledLabel htmlFor="email">이메일</StyledLabel>
+        <StyledInput type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
+        {errors.email && <p>{errors.email}</p>}
 
-        <div>
-          <label htmlFor="password">비밀번호</label>
-          <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
-          {errors.password && <p>{errors.password}</p>}
-        </div>
+        <StyledLabel htmlFor="password">비밀번호</StyledLabel>
+        <StyledInput type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
+        {errors.password && <p>{errors.password}</p>}
 
-        <button type="submit">로그인하기</button>
-      </form>
+        <StyledButton type="submit">로그인하기</StyledButton>
+      </StyledForm>
 
-      <button onClick={handleLogout}>로그아웃하기</button>
-    </div>
+      <StyledButton onClick={handleLogout}>로그아웃하기</StyledButton>
+
+      <Link to="/signup">
+        <StyledButton>회원 가입하러 가기</StyledButton>
+      </Link>
+    </StyledLogin>
   );
 }
 
