@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabasedata } from 'shared/supabase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel } from './styles';
 interface FormData {
   // displayname: string;
@@ -9,6 +9,8 @@ interface FormData {
 }
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<FormData>({
     // displayname: '',
     email: '',
@@ -37,11 +39,11 @@ function Signup() {
 
       if (error) {
         console.error(error);
-        alert('Please check your ID and password');
+        alert('ID와 password를 확인해주세요');
       } else {
         console.log(data);
-        alert('Welcome to sign up!');
-        // You can redirect or perform other actions upon successful signup
+        alert('회원가입을 환영합니다');
+        navigate('/login');
       }
     } catch (error) {
       console.error(error);
@@ -59,11 +61,25 @@ function Signup() {
           {errors.displayname && <p>{errors.displayname}</p>}
         </div> */}
         <StyledLabel htmlFor="email">이메일</StyledLabel>
-        <StyledInput type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
+        <StyledInput
+          placeholder="아이디"
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+        />
         {errors.email && <p>{errors.email}</p>}
 
         <StyledLabel htmlFor="password">비밀번호</StyledLabel>
-        <StyledInput type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
+        <StyledInput
+          placeholder="비밀번호"
+          type="password"
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
         {errors.password && <p>{errors.password}</p>}
 
         <StyledButton type="submit">가입하기</StyledButton>

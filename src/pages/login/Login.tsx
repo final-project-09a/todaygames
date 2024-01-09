@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabasedata } from 'shared/supabase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
 
@@ -10,6 +10,8 @@ interface FormData {
 }
 
 function Login() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
@@ -38,7 +40,7 @@ function Login() {
       } else {
         console.log(data);
         alert('로그인 성공!');
-        // You can redirect or perform other actions upon successful login
+        navigate('/');
       }
     } catch (error) {
       console.error(error);
@@ -73,11 +75,25 @@ function Login() {
       <StyledH1>로그인</StyledH1>
       <StyledForm onSubmit={handlelogin}>
         <StyledLabel htmlFor="email">이메일</StyledLabel>
-        <StyledInput type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
+        <StyledInput
+          placeholder="아이디를 입력하세요"
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+        />
         {errors.email && <p>{errors.email}</p>}
 
         <StyledLabel htmlFor="password">비밀번호</StyledLabel>
-        <StyledInput type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
+        <StyledInput
+          placeholder="비밀번호"
+          type="password"
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
         {errors.password && <p>{errors.password}</p>}
 
         <StyledButton type="submit">로그인하기</StyledButton>
