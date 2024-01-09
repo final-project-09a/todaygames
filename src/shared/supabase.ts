@@ -9,4 +9,4 @@ const supabaseConfig = <supabaseConfig>{
   supabaseKey: process.env.REACT_APP_SUPABASE_APIKEY
 };
 
-export const supabasedata = createClient(supabaseConfig.supabaseKey, supabaseConfig.supabaseUrl);
+export const supabasedata = createClient(supabaseConfig.supabaseUrl, supabaseConfig.supabaseKey);
