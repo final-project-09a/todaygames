@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabasedata } from 'shared/supabase';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel } from './styles';
+import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
 
 interface FormData {
   email: string;
@@ -83,7 +83,7 @@ function Login() {
         <StyledButton type="submit">로그인하기</StyledButton>
       </StyledForm>
 
-      <StyledButton onClick={kakaologin}>카카오로그인</StyledButton>
+      <StkakaoButton onClick={kakaologin}>카카오로그인</StkakaoButton>
       <StyledButton onClick={handleLogout}>로그아웃하기</StyledButton>
 
       <Link to="/signup">

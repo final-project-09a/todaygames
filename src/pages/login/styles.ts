@@ -37,6 +37,21 @@ const StyledButton = styled.button`
     background-color: #1c3669;
   }
 `;
+const StkakaoButton = styled.button`
+  width: 350px;
+  height: 50px;
+  flex-shrink: 0;
+  background-color: yellow;
+  color: brown;
+  border: none;
+  margin-top: 10px;
+  border-radius: 15px;
+  font-weight: bolder;
+
+  &:hover {
+    background-color: #1c3669;
+  }
+`;
 
 const StyledH1 = styled.h1`
   color: #ffffff;
@@ -57,4 +72,4 @@ const StyledLabel = styled.label`
   text-align: left;
 `;
 
-export { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel };
+export { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton };
