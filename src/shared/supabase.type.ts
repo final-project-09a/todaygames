@@ -1,6 +1,6 @@
 // 각 테이블 전체 타입 정한 후
 export type Json = string | Date | number | boolean | null | { [key: string]: Json | undefined } | Json[];
-export interface postsTypedata {
+export interface Typedata {
   public: {
     Tables: {
       posts: {
@@ -16,11 +16,13 @@ export interface postsTypedata {
         };
       };
       comments: {
-        id: number;
-        content: string;
-        parent_id: number;
-        parent_content: string;
-        created_at: Date;
+        Row: {
+          id: number;
+          content: string;
+          parent_id: number;
+          parent_content: string;
+          created_at: Date;
+        };
       };
     };
   };

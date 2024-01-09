@@ -1,7 +1,13 @@
 import { supabasedata } from 'shared/supabase';
-
+import { Typedata } from 'shared/supabase.type';
+interface postType {
+  data: Typedata;
+  error: string;
+  id: string;
+}
 export const ListCumm = () => {
-  const { data, error } = supabasedata.from('comments').select('id');
+  const data = supabasedata.from('posts').select('*').returns<Typedata['public']['Tables']['comments']['Row']>();
+
   return (
     <>
       {/* 최신순카테고리 */}
