@@ -3,12 +3,7 @@ import '../Footer/styles';
 import Header from 'components/Header';
 
 const Footer = () => {
-  return (
-    <div>
-      Footer
-      <Header />
-    </div>
-  );
+  return <div>Footer</div>;
 };
 
 export default Footer;
