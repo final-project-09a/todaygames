@@ -4,6 +4,7 @@ import Detail from '../pages/detail';
 import { BoardPg } from '../pages/board/BoardPg';
 import { ViewDetail } from '../pages/board/ViewDetail';
 import { Register } from '../pages/board/Register';
+import SteamProfile from 'pages/posting/Posting';
 const Router = () => {
   return (
     <BrowserRouter>
@@ -13,6 +14,7 @@ const Router = () => {
         <Route path="/viewdetail" element={<ViewDetail />} />
         <Route path="/" element={<Home />} />
         <Route path="/detail:id" element={<Detail />} />
+        <Route path="/posting" element={<SteamProfile />} />
       </Routes>
     </BrowserRouter>
   );
