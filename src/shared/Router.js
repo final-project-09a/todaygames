@@ -4,17 +4,22 @@ import Detail from '../pages/detail';
 import { BoardPg } from '../pages/board/BoardPg';
 import { ViewDetail } from '../pages/board/ViewDetail';
 import { Register } from '../pages/board/Register';
-import SteamProfile from 'pages/posting/Posting';
+import SignUp from '../pages/signup/signup';
+import Login from '../pages/login/Login';
+import NavBar from 'components/Navbar/NavBar';
+
 const Router = () => {
   return (
     <BrowserRouter>
+      <NavBar />
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/board" element={<BoardPg />} />
         <Route path="/viewdetail" element={<ViewDetail />} />
         <Route path="/" element={<Home />} />
         <Route path="/detail:id" element={<Detail />} />
-        <Route path="/posting" element={<SteamProfile />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
   );
