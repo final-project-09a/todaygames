@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabasedata } from 'shared/supabase';
@@ -9,6 +9,20 @@ const NavBar: React.FC = () => {
   // const authState = useSelector((state: RootState) => state.authSlice); // Update RootState with your actual root state type
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // const { user, error } = supabasedata.auth.session()
+    console.log(supabasedata.auth.getUser());
+
+    const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
+      setCurrentUser(session?.user?.email || null);
+    });
+    // .unsubscribe()
+    return () => {
+      authListener;
+      console.log(authListener);
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {

@@ -4,8 +4,8 @@ const StyledSignup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #181924; /* Set the background color */
-  height: 100vh; /* Adjust the height as needed */
+  background: #181924;
+  height: 100vh;
   justify-content: center;
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */

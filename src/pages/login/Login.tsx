@@ -16,7 +16,7 @@ function Login() {
     email: '',
     password: ''
   });
-
+  // const { user, session } = supabasedata.auth.session()
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +28,7 @@ function Login() {
 
   const handlelogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(supabasedata.auth);
     try {
       const { data, error } = await supabasedata.auth.signInWithPassword({
         email: formData.email,
@@ -39,6 +40,7 @@ function Login() {
         alert('ID와 password를 확인해주세요');
       } else {
         console.log(data);
+
         alert('로그인 성공!');
         navigate('/');
       }
@@ -69,6 +71,18 @@ function Login() {
       provider: 'kakao'
     });
   };
+
+  // const googlelogin = async function signInWithgoogle() {
+  //   const { data, error } = await supabasedata.auth.signInWithOAuth({
+  //     provider: 'google',
+  //     options: {
+  //       queryParams: {
+  //         access_type: 'offline',
+  //         prompt: 'consent'
+  //       }
+  //     }
+  //   });
+  // }; 앱 배포 후에 구글로그인 도입가능
 
   return (
     <StyledLogin>
