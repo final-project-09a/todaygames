@@ -11,6 +11,8 @@ type Headers = {
 };
 
 const Like: React.FC<LikeProps> = () => {
+  //   const [liked, setLiked] = useState(false);
+
   const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
   const supabaseKey = process.env.REACT_APP_SUPABASE_APIKEY;
 
@@ -33,6 +35,7 @@ const Like: React.FC<LikeProps> = () => {
       })
     });
 
+    console.log(response);
     const data = await response.json();
     console.log('Like Toggled:', data);
   };
