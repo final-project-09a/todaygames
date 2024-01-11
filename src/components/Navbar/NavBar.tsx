@@ -50,6 +50,7 @@ const NavBar: React.FC = () => {
             <>
               {/* <Link to={`/mypage/:${supabasedata.auth.users()?.id}`}>마이페이지</Link> */}
               {/* <Link to={`/mypage/:${supabasedata.auth.getUser.uid()?.id}`}>마이페이지</Link> */}
+              <Link to={`/mypage`}>마이페이지</Link>
               <button onClick={handleLogout}>로그아웃</button>
             </>
           ) : (
