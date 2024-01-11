@@ -28,12 +28,13 @@ const getMostPlayedGames = async () => {
   }
 };
 
-const getGameDetails = async (appid: string) => {
+const getGameDetails = async (appid: any) => {
   try {
+    console.log(appid);
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/appdetail/${appid}`);
     // const applist = response.data.response.ranks;
     console.log('detail 정보: ', response);
-    return response;
+    return response.data;
   } catch (error) {
     console.error('fetch 에러: ', error);
     throw error;

@@ -35,14 +35,25 @@ const RecommendList = () => {
   const appids = topTen?.map((game: any) => game.appid);
   console.log(appids);
 
-  // // top 10 게임 details
-  // const gameDetailsQueries = useQueries(
-  //   (appids ?? []).map((appid: any) => ({
-  //     queryKey: ['gameDetails', appid],
-  //     queryFn: () => getGameDetails(appid),
-  //     enabled: appid !== undefined
-  //   }))
-  // );
+  // top 10 게임 details
+  // const {
+  //   isLoading: gameDetailsLoading,
+  //   isError: gameDetailsError,
+  //   data: gameDetails
+  // } = useQuery({
+  //   queryKey: ['gameDetails', appids[0]],
+  //   queryFn: getMostPlayedGames
+  // });
+
+  const gameDetailsQueries = useQueries(
+    appids?.map((appid: any) => ({
+      queryKey: ['gameDetails', appid],
+      queryFn: () => getGameDetails(appid),
+      enabled: appid !== undefined
+    })) || []
+  );
+
+  console.log(gameDetailsQueries);
 
   if (gamesLoading || mostPlayedLoading) {
     return <p>로딩중입니다...</p>;
@@ -54,9 +65,16 @@ const RecommendList = () => {
   return (
     <div>
       <ul>
-        {topTen.map((game: any, index: number) => (
-          <li key={game.appid}>{game.appid}</li>
-        ))}
+        {gameDetailsQueries.map((query: any) => {
+          const appid = query.queryKey[1];
+          const gameDetails = query.data;
+
+          return (
+            <li key={appid}>
+              <h3>{gameDetails?.name}</h3>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
