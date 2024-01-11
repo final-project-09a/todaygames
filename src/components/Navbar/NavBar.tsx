@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 import { Link, useNavigate } from 'react-router-dom';
 import { supabasedata } from 'shared/supabase';
 import { NavContainer, NavLogo, BtnInputWrapper, HeaderButton } from './styles';
@@ -11,6 +10,7 @@ const NavBar: React.FC = () => {
   const [useruid, setuseruid] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log(supabasedata);
     const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
       setCurrentUser(session?.user?.email || null);
 
