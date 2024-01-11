@@ -1,4 +1,4 @@
-import { createClient, SignOut } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 
 type supabaseConfig = {
   supabaseUrl: string;
