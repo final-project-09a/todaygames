@@ -3,7 +3,7 @@ import Home from '../pages/home';
 import Detail from '../pages/detail';
 import { BoardPg } from '../pages/board/BoardPg';
 import { ViewDetail } from '../pages/board/ViewDetail';
-import { Register } from '../pages/board/Register';
+import Register from '../pages/register/Register';
 import SignUp from '../pages/signup/signup';
 import Login from '../pages/login/Login';
 import NavBar from 'components/Navbar/NavBar';
