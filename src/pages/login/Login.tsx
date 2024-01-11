@@ -38,7 +38,7 @@ function Login() {
         console.error(error);
         alert('ID와 password를 확인해주세요');
       } else {
-        console.log(data);
+        console.log(data.user.id);
 
         alert('로그인 성공!');
         navigate('/');
