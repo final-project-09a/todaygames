@@ -1,24 +1,5 @@
-import { useEffect } from 'react';
-import { supabasedata } from 'shared/supabase';
-import { QueryResult, QueryData, QueryError } from '@supabase/supabase-js';
-
+// 게시판 등록
 export const BoardRegister = () => {
-  useEffect(() => {
-    const postsRegister = supabasedata.from('post').select(`
-    id,
-    user_id,
-    category,
-    title,
-      image,
-      content,
-      likes_count,
-      comments_count,
-  `);
-    type tppostsRegister = QueryData<typeof BoardRegister>;
-    const { data, error } = await postsRegister;
-    if (error) throw error;
-    const BoardRegister: tppostsRegister = data;
-  });
   return (
     <>
       <main>
@@ -42,5 +23,3 @@ export const BoardRegister = () => {
     </>
   );
 };
-
-export default BoardRegister;

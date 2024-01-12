@@ -5,8 +5,39 @@ export interface Typedata {
     Tables: {
       posts: {
         Row: {
+          // create,select
           id: number;
-          user_id: number;
+          user_id: string;
+          like_count: number;
+          comments_count: number;
+          content: string;
+          image: string;
+          title: string;
+          category: string;
+        };
+        Insert: {
+          id: string;
+          user_id?: string;
+          category: string;
+          title: string;
+          image?: string;
+          content: string;
+          like_count: number;
+          comments_count: number;
+        };
+        Update: {
+          id: string;
+          user_id?: string;
+          category: string;
+          title: string;
+          image?: string;
+          content: string;
+          like_count: number;
+          comments_count: number;
+        };
+        Controll: {
+          id: string;
+          user_id: string;
           category: string;
           title: string;
           image: string;
@@ -18,10 +49,31 @@ export interface Typedata {
       comments: {
         Row: {
           id: number;
-          content: string;
-          parent_id: number;
-          parent_content: string;
-          created_at: Date;
+          comment_id: number;
+          comments: string;
+          parent_comment: string;
+          create_at: Date;
+        };
+        Insert: {
+          id: number;
+          comment_id: number;
+          comments: string;
+          parent_comment: string;
+          create_at: Date;
+        };
+        Update: {
+          id: number;
+          comment_id: number;
+          comments: string;
+          parent_comment: string;
+          create_at: Date;
+        };
+        Controll: {
+          id: number;
+          comment_id: number;
+          comments: string;
+          parent_comment: string;
+          create_at: Date;
         };
       };
     };
