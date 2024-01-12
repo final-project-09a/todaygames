@@ -33,6 +33,7 @@ time, mark, audio, video {
  padding: 0;
  border: 0;
  font-size: 100%;
+ color: white;
  font: inherit;
  vertical-align: baseline;
 }
@@ -43,7 +44,8 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
    line-height: 1;
-   font-family:'NanumSquareNeo-Variable'
+   font-family:'NanumSquareNeo-Variable';
+   background: black;
 }
 ol, ul {
  list-style: none;
