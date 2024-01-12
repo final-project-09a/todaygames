@@ -1,8 +1,14 @@
 import BoardRegister from 'components/board/BoardRegister';
 import { WrappingInput, TitleInput, MainBackground, ContentInput } from './styles';
 import { ChangeEvent, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getGames } from 'api/games';
 
 const Register = () => {
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ['games'],
+    queryFn: getGames
+  });
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
