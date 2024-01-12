@@ -4,7 +4,7 @@ const StyledLogin = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #181924;
+  background: black;
   height: 100vh;
   justify-content: center;
 `;
@@ -27,7 +27,7 @@ const StyledButton = styled.button`
   width: 350px;
   height: 50px;
   flex-shrink: 0;
-  background-color: #2d4fa6;
+  background-color: primary;
   color: #ffffff;
   border: none;
   margin-top: 10px;
