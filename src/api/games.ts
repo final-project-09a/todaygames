@@ -32,9 +32,13 @@ const getGameDetails = async (appid: any) => {
   try {
     console.log(appid);
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/appdetail/${appid}`);
-    // const applist = response.data.response.ranks;
-    console.log('detail 정보: ', response);
-    return response.data;
+    if (response.data && response.data.length > 0) {
+      console.log('detail 정보: ', response.data);
+      return response.data[0].data;
+    } else {
+      console.error('유효하지 않은 response:', response.data[appid].data);
+      throw new Error('유효하지 않은 response');
+    }
   } catch (error) {
     console.error('fetch 에러: ', error);
     throw error;
