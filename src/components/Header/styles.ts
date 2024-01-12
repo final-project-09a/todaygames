@@ -59,7 +59,7 @@ const StTag = styled.div`
   align-items: center;
   gap: 10px;
   border-radius: 10px;
-  background: #181924;
+  background: ${(props) => props.theme.color.primary};
   & p {
     color: #fff;
     font-family: Pretendard;
