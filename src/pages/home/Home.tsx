@@ -1,14 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { getGames } from 'api/games';
-import { useState } from 'react';
 import RecommendList from 'components/homepage/RecommendList';
 import NewGames from 'components/homepage/NewGames';
 import GenreFilter from 'components/homepage/GenreFilter';
 import Header from 'components/Header';
-
-interface GameDetails {
-  name: string;
-}
 
 const Home = () => {
   // const { isLoading, isError, data } = useQuery({

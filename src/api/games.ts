@@ -1,20 +1,20 @@
 import axios from 'axios';
 
-const getGames = async () => {
-  try {
-    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/applist`);
-    if (response.status === 200) {
-      const applist = response.data.applist.apps;
-      console.log('전체 applist 데이터 :', applist);
-      return applist;
-    } else {
-      console.error('응답에러: ', response.status);
-    }
-  } catch (error) {
-    console.error('fetch 에러: ', error);
-    throw error;
-  }
-};
+// const getGames = async () => {
+//   try {
+//     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/applist`);
+//     if (response.status === 200) {
+//       const applist = response.data.applist.apps;
+//       console.log('전체 applist 데이터 :', applist);
+//       return applist;
+//     } else {
+//       console.error('응답에러: ', response.status);
+//     }
+//   } catch (error) {
+//     console.error('fetch 에러: ', error);
+//     throw error;
+//   }
+// };
 
 const getMostPlayedGames = async () => {
   try {
@@ -45,4 +45,4 @@ const getGameDetails = async (appid: any) => {
   }
 };
 
-export { getGames, getMostPlayedGames, getGameDetails };
+export { getMostPlayedGames, getGameDetails };
