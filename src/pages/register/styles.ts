@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const MainBackground = styled.div`
   width: 100%;
   display: flex;
-  background: #717171;
+  background: ${(props) => props.theme.primary};
 `;
 
 const WrappingInput = styled.form`
