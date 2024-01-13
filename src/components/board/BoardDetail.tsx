@@ -1,9 +1,46 @@
-export const BoardDetail = () => {
+// 게시판 상세정보  디자인 미정
+
+// import { useQuery } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { supabase } from 'shared/supabase';
+import { Comment } from 'components/comment/Comment';
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+}
+
+export const Detail = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase.from('posts').select('*');
+      if (error) {
+        throw error;
+      }
+    };
+  });
+
   return (
-    <>
-      게시판 상세보기
-      {/* BoardDetail body 부분  */}
-      <div>{/* 제목,카테고리,닉네임,날짜,내용,좋아요까지(좋아요이미지,클릭시 hover, SetState counter + 1 ) */}</div>
-    </>
+    <React.Fragment>
+      <StboardDetailContainer>
+        <Link to="">
+          <StregisterLinkButton>게시글 작성</StregisterLinkButton>
+        </Link>
+      </StboardDetailContainer>
+      <Comment />
+    </React.Fragment>
   );
 };
+
+const StboardDetailContainer = styled.div`
+  display: flex;
+`;
+
+const StregisterLinkButton = styled.div`
+  display: flex;
+  padding: 20px;
+  width: 35%;
+`;
