@@ -1,9 +1,8 @@
 import React from 'react';
 import {
   StContainer,
-  StHeaderWrapper,
   StHeader,
-  StImage,
+  StFigure,
   StTitle,
   StTagWrapper,
   StTag,
@@ -15,31 +14,29 @@ import {
 const Header = () => {
   return (
     <StContainer>
-      <StHeaderWrapper>
-        <StHeader>
-          <StImage></StImage>
-          <StInfoWrapper>
-            <StGameInfo>
-              <StTitle>Game Name</StTitle>
-              <StTagWrapper>
-                <StTag>
-                  <p>tag1</p>
-                </StTag>
-                <StTag>
-                  <p>tag1</p>
-                </StTag>
-                <StTag>
-                  <p>tag1</p>
-                </StTag>
-                <StTag>
-                  <p>tag1</p>
-                </StTag>
-              </StTagWrapper>
-            </StGameInfo>
-            <StButton>Play Now</StButton>
-          </StInfoWrapper>
-        </StHeader>
-      </StHeaderWrapper>
+      <StHeader>
+        <StFigure></StFigure>
+        <StInfoWrapper>
+          <StGameInfo>
+            <StTitle>Game Name</StTitle>
+            <StTagWrapper>
+              <StTag>
+                <p>tag1</p>
+              </StTag>
+              <StTag>
+                <p>tag1</p>
+              </StTag>
+              <StTag>
+                <p>tag1</p>
+              </StTag>
+              <StTag>
+                <p>tag1</p>
+              </StTag>
+            </StTagWrapper>
+          </StGameInfo>
+          <StButton>Play Now</StButton>
+        </StInfoWrapper>
+      </StHeader>
     </StContainer>
   );
 };

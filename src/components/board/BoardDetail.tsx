@@ -4,9 +4,7 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import useSWR from 'swr';
 import { supabase } from 'shared/supabase';
-import { useQuery } from '@tanstack/react-query';
 import { Comment } from 'components/comment/Comment';
 
 interface Post {
