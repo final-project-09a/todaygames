@@ -1,4 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+import { getComments } from 'api/comments';
 export const Comment = () => {
+  const { data, isError } = useQuery({ queryKey: ['COMMENTLIST'], queryFn: getComments });
   return (
     <>
       {/* 댓글수,
