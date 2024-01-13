@@ -1,18 +1,14 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
-import { getGameDetails, getMostPlayedGames } from 'api/games';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getGameDetails, getMostPlayedGames, getTopTenGameDetails } from 'api/games';
+import React, { useEffect } from 'react';
 
 const RecommendList = () => {
-  // const [recommendGames, setRecommendGames] = useState([]);
+  const queryClient = useQueryClient();
 
-  // // 전체 게임 리스트
-  // const {
-  //   isLoading: gamesLoading,
-  //   isError: gamesError,
-  //   data: games
-  // } = useQuery({
-  //   queryKey: ['games'],
-  //   queryFn: () => getGames()
-  // });
+  React.useEffect(() => {
+    // 마운트 될 때 캐시삭제
+    queryClient.invalidateQueries({ queryKey: ['recommendGames'] });
+  }, [queryClient]);
 
   // 가장 많이 플레이된 게임 100개
   const {
@@ -21,32 +17,46 @@ const RecommendList = () => {
     data: mostPlayedGames
   } = useQuery({
     queryKey: ['recommendGames'],
-    queryFn: () => getMostPlayedGames()
+    queryFn: async () => {
+      try {
+        const data = await getMostPlayedGames();
+        return data;
+      } catch (error) {
+        console.error('most played games 패치 에러: ', error);
+        throw error;
+      }
+    }
   });
 
-  if (mostPlayedLoading) {
-    return <p>게임 리스트를 로딩중입니다...</p>;
-  }
-  if (mostPlayedError) {
-    return <p>게임 리스트를 가져오는데 오류가 발생했습니다...</p>;
-  }
-
-  // 가장 많이 플레이된 게임 100개 중 top 10만 가져오기
+  // // 가장 많이 플레이된 게임 100개 중 top 10만 가져오기
   const topTen = mostPlayedGames?.slice(0, 10);
-  console.log(topTen);
+  const appids = topTen?.map((game: any) => game.appid) || [];
 
-  // top 10 게임 details
-  // const gameDetailsQueryConfigs =
-  //   topTen?.map((game: any) => {
-  //     const appid = game.appid;
-  //     return {
-  //       queryKey: ['gameDetails', appid],
-  //       queryFn: () => getGameDetails(appid),
-  //       enabled: appid !== undefined
-  //     };
-  //   }) || [];
+  // if (isLoading) {
+  //   return <p>게임 상세 정보를 로딩중입니다...</p>;
+  // }
+  // if (isError) {
+  //   return <p>게임 상세 정보를 가져오는데 오류가 발생했습니다...</p>;
+  // }
+  // console.log(data);
 
-  // const gameDetailsQueries = useQueries(gameDetailsQueryConfigs);
+  // top-ten 상세 정보 가져오기
+  const gameDetailsQueries = useQueries({
+    queries: appids.map((appid: any) => ({
+      queryKey: ['gameDetails', appid],
+      queryFn: () => getGameDetails(appid)
+      // enabled: appid !== undefined
+      // staleTime: Infinity
+      // combine: (results: any) => {
+      //   return {
+      //     data: results.map((result: any) => result.data),
+      //     pending: results.some((result: any) => result.state === 'loading')
+      //   };
+      // }
+    }))
+  });
+
+  // console.log('Combined Data Array:', gameDetailsQueries[0]?.data);
 
   // if (gameDetailsQueries.some((query) => query.isLoading)) {
   //   return <p>게임 상세 정보를 로딩중입니다...</p>;
@@ -54,8 +64,6 @@ const RecommendList = () => {
   // if (gameDetailsQueries.some((query) => query.isError)) {
   //   return <p>게임 상세 정보를 가져오는데 오류가 발생했습니다...</p>;
   // }
-
-  // console.log(gameDetailsQueries);
 
   return (
     <div>

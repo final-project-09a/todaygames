@@ -1,27 +1,11 @@
 import axios from 'axios';
 
-// const getGames = async () => {
-//   try {
-//     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/applist`);
-//     if (response.status === 200) {
-//       const applist = response.data.applist.apps;
-//       console.log('전체 applist 데이터 :', applist);
-//       return applist;
-//     } else {
-//       console.error('응답에러: ', response.status);
-//     }
-//   } catch (error) {
-//     console.error('fetch 에러: ', error);
-//     throw error;
-//   }
-// };
-
 const getMostPlayedGames = async () => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/most-played-games`);
-    const applist = response.data.response.ranks;
-    console.log('most played games 데이터 :', applist);
-    return applist;
+    const mostPlayedGamesData = response.data.response.ranks;
+    console.log('most played games 데이터 :', mostPlayedGamesData);
+    return mostPlayedGamesData;
   } catch (error) {
     console.error('fetch 에러: ', error);
     throw error;
@@ -31,18 +15,32 @@ const getMostPlayedGames = async () => {
 const getGameDetails = async (appid: any) => {
   try {
     console.log(appid);
-    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/appdetail/${appid}`);
-    if (response.data && response.data.length > 0) {
-      console.log('detail 정보: ', response.data);
-      return response.data[0].data;
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/game-details/${appid}`);
+    const gameDetails = response.data[appid]?.data;
+
+    if (gameDetails) {
+      console.log('game details: ', gameDetails);
+      return gameDetails;
     } else {
-      console.error('유효하지 않은 response:', response.data[appid].data);
-      throw new Error('유효하지 않은 response');
+      console.error('Invalide game deatil', appid);
+      throw new Error('Invalid response');
     }
   } catch (error) {
-    console.error('fetch 에러: ', error);
+    console.error('fetch error: ', error);
     throw error;
   }
 };
 
-export { getMostPlayedGames, getGameDetails };
+const getTopTenGameDetails = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/top-ten`);
+    // const applist = response.data.response.ranks;
+    console.log('most played games 데이터 :', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('top ten fetch error: ', error);
+    throw error;
+  }
+};
+
+export { getMostPlayedGames, getGameDetails, getTopTenGameDetails };
