@@ -1,4 +1,3 @@
-import BoardRegister from 'components/board/BoardRegister';
 import {
   WrappingInput,
   TitleInput,
