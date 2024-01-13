@@ -4,16 +4,15 @@ const spacing = {
 };
 
 const color = {
-  black: '#000000de',
-  white: '#ffffff',
-  //   gray: '#999',
-  primary: '#FF6000',
-  secondary: '#454545',
-  'primary-alt': '#FFA559',
-  beige: '#FFE6C7'
+  black: '#000', //프로젝트 들어가는 모든 검정색
+  white: '#ffffff', // 프로젝트 들어가는 모든 하얀색
+  primary: '#2D4FA6', // 버튼색상
+  secondary: '#181924', // 카테고리 커버 색상
+  inputcolor: '#3A3A3A'
 };
 
 const fontSize = {
+  s: '1rem',
   md: '1.2rem',
   lg: '1.4rem',
   xl: '1.6rem',
