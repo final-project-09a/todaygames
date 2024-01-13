@@ -1,4 +1,4 @@
-import BoardRegister from 'components/board/BoardRegister';
+import { BoardRegister } from 'components/board/BoardRegister';
 
 export const Register = () => {
   return (
