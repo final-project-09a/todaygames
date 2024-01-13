@@ -112,7 +112,7 @@ function Login() {
         <StyledButton type="submit">로그인하기</StyledButton>
       </StyledForm>
       <StkakaoButton onClick={kakaologin}>카카오로그인</StkakaoButton>
-      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고 사용시 디자이너 수정필요*/}
+      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
       <Link to="/signup">
         <StyledButton>회원 가입</StyledButton>
       </Link>
