@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
+
 import { supabasedata } from 'shared/supabase';
 import { StUserinfoBOx } from './styles';
 
+interface User {
+  email: string;
+  avatar_url: string | null;
+  username: string | null;
+  admin: boolean | null;
+  id: string;
+}
 const MyPage = () => {
   const [userList, setUserList] = useState<User[]>([]);
-  interface User {
-    email: string;
-    avatar_url: string | null;
-    username: string | null;
-    admin: boolean | null;
-    id: string;
-  }
+
+  const [useruid, setuseruid] = useState<string | null>(null);
+
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -35,8 +40,18 @@ const MyPage = () => {
       }
     };
 
+    const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
+      setCurrentUser(session?.user?.email || null);
+
+      const userId = session?.user?.id;
+
+      setuseruid(userId || null);
+      //로그인한 유저의 uid값을 추출합니다
+    });
+
     fetchUserInfo();
   }, []);
+  console.log(useruid);
   console.log(userList);
 
   return (
