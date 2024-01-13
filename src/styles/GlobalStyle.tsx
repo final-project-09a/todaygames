@@ -44,8 +44,8 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
    line-height: 1;
-   font-family:'NanumSquareNeo-Variable';
-   background: black;
+   font-family:'Pretendard-Regular';
+   background: #191919;
 }
 ol, ul {
  list-style: none;
@@ -65,6 +65,10 @@ table {
 
 textarea:focus, input:focus{
  outline: none;
+}
+
+button {
+border: none;
 }
 
 div.swal2-icon { margin: 0 auto; } .swal2-popup { padding: 1.25em 0 1.25em }

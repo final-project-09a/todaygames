@@ -1,16 +1,18 @@
+import { useEffect } from 'react';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getGameDetails, getMostPlayedGames, getTopTenGameDetails } from 'api/games';
-import React, { useEffect } from 'react';
+import { getGameDetails, getMostPlayedGames } from 'api/games';
+import RecommendCard from './RecommendCard';
+import styled from 'styled-components';
 
 const RecommendList = () => {
   const queryClient = useQueryClient();
 
-  React.useEffect(() => {
+  useEffect(() => {
     // 마운트 될 때 캐시삭제
     queryClient.invalidateQueries({ queryKey: ['recommendGames'] });
   }, [queryClient]);
 
-  // 가장 많이 플레이된 게임 100개
+  // 가장 많이 플레이된 게임 100개 불러오기
   const {
     isLoading: mostPlayedLoading,
     isError: mostPlayedError,
@@ -47,16 +49,10 @@ const RecommendList = () => {
       queryFn: () => getGameDetails(appid)
       // enabled: appid !== undefined
       // staleTime: Infinity
-      // combine: (results: any) => {
-      //   return {
-      //     data: results.map((result: any) => result.data),
-      //     pending: results.some((result: any) => result.state === 'loading')
-      //   };
-      // }
     }))
   });
 
-  // console.log('Combined Data Array:', gameDetailsQueries[0]?.data);
+  const gameDetailsArray = gameDetailsQueries.map((query: any) => query.data);
 
   // if (gameDetailsQueries.some((query) => query.isLoading)) {
   //   return <p>게임 상세 정보를 로딩중입니다...</p>;
@@ -67,20 +63,23 @@ const RecommendList = () => {
 
   return (
     <div>
-      <ul>
-        {/* {gameDetailsQueries.map((query: any) => {
-          const appid = query.queryKey[1];
-          const gameDetails = query.data;
-
-          return (
-            <li key={appid}>
+      <StListContainer>
+        {gameDetailsArray.map((gameDetails) => (
+          <li key={gameDetails?.appid}>
+            <RecommendCard imageUrl={gameDetails?.header_image}>
               <h3>{gameDetails?.name}</h3>
-            </li>
-          );
-        })} */}
-      </ul>
+            </RecommendCard>
+          </li>
+        ))}
+      </StListContainer>
     </div>
   );
 };
 
 export default RecommendList;
+
+const StListContainer = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+`;
