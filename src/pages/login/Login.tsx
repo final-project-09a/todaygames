@@ -111,12 +111,9 @@ function Login() {
 
         <StyledButton type="submit">로그인하기</StyledButton>
       </StyledForm>
-
       <StkakaoButton onClick={kakaologin}>카카오로그인</StkakaoButton>
-      <StyledButton onClick={handleLogout}>로그아웃하기</StyledButton>
-
       <Link to="/signup">
-        <StyledButton>회원 가입하러 가기</StyledButton>
+        <StyledButton>회원 가입</StyledButton>
       </Link>
     </StyledLogin>
   );
