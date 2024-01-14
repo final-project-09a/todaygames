@@ -23,9 +23,24 @@ const Detail = () => {
   return (
     <StContainer>
       <StImageWrapper>
-        <img src={data.background} alt={data.name} />
+        <img src={data.background_raw} alt={data.name} />
       </StImageWrapper>
       <h2>{data.name}</h2>
+      <div>
+        <label>출시일</label>
+        <h2>{data.release_date.date}</h2>
+      </div>
+      <div>
+        <label>장르</label>
+        <h2>{data.genres.map((genre: any) => genre.description).join(' / ')}</h2>
+      </div>
+      <div>
+        <label>게임정보</label>
+        <p dangerouslySetInnerHTML={{ __html: data.about_the_game }} />
+        {/* <h3>{data.about_the_game}</h3> */}
+        <p dangerouslySetInnerHTML={{ __html: data.detailed_description }} />
+        {/* <p>{data.detailed_description}</p> */}
+      </div>
     </StContainer>
   );
 };
@@ -41,5 +56,9 @@ const StContainer = styled.div`
 
 const StImageWrapper = styled.figure`
   width: 100%;
-  height: 300px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 `;
