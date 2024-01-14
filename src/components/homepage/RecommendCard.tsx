@@ -4,17 +4,18 @@ import styled from 'styled-components';
 interface RecommendCardProps {
   children: ReactNode;
   imageUrl: string;
+  alt: string;
 }
 
-function RecommendCard({ children, imageUrl }: RecommendCardProps) {
+function RecommendCard({ children, imageUrl, alt }: RecommendCardProps) {
   return (
     <StCardWrapper>
       <StImageWrapper>
-        <StImage imageUrl={imageUrl} />
+        <StImage imageUrl={imageUrl}>
+          <img src={imageUrl} alt={alt} />
+        </StImage>
       </StImageWrapper>
-      <StNameOverlay>
-        <h3>{children}</h3>
-      </StNameOverlay>
+      <StNameOverlay>{children}</StNameOverlay>
     </StCardWrapper>
   );
 }
@@ -38,7 +39,7 @@ const StImageWrapper = styled.div`
   overflow: hidden;
 `;
 
-const StImage = styled.div<{ imageUrl: string }>`
+const StImage = styled.figure<{ imageUrl: string }>`
   width: 100%;
   height: 100%;
   background: url(${(props) => props.imageUrl}) center/cover no-repeat;

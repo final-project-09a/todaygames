@@ -4,31 +4,35 @@ import { getGameDetails, getMostPlayedGames } from 'api/games';
 import RecommendCard from './RecommendCard';
 import styled from 'styled-components';
 
-const RecommendList = () => {
-  const queryClient = useQueryClient();
+interface NewGamesProps {
+  mostPlayedGames: any;
+}
 
-  useEffect(() => {
-    // 마운트 될 때 캐시삭제
-    queryClient.invalidateQueries({ queryKey: ['recommendGames'] });
-  }, [queryClient]);
+const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
+  // const queryClient = useQueryClient();
 
-  // 가장 많이 플레이된 게임 100개 불러오기
-  const {
-    isLoading: mostPlayedLoading,
-    isError: mostPlayedError,
-    data: mostPlayedGames
-  } = useQuery({
-    queryKey: ['recommendGames'],
-    queryFn: async () => {
-      try {
-        const data = await getMostPlayedGames();
-        return data;
-      } catch (error) {
-        console.error('most played games 패치 에러: ', error);
-        throw error;
-      }
-    }
-  });
+  // useEffect(() => {
+  //   // 마운트 될 때 캐시삭제
+  //   queryClient.invalidateQueries({ queryKey: ['recommendGames'] });
+  // }, [queryClient]);
+
+  // // 가장 많이 플레이된 게임 100개 불러오기
+  // const {
+  //   isLoading: mostPlayedLoading,
+  //   isError: mostPlayedError,
+  //   data: mostPlayedGames
+  // } = useQuery({
+  //   queryKey: ['recommendGames'],
+  //   queryFn: async () => {
+  //     try {
+  //       const data = await getMostPlayedGames();
+  //       return data;
+  //     } catch (error) {
+  //       console.error('most played games 패치 에러: ', error);
+  //       throw error;
+  //     }
+  //   }
+  // });
 
   // // 가장 많이 플레이된 게임 100개 중 top 10만 가져오기
   const topTen = mostPlayedGames?.slice(0, 10);
@@ -42,7 +46,7 @@ const RecommendList = () => {
   // }
   // console.log(data);
 
-  // top-ten 상세 정보 가져오기
+  // top 10 상세 정보 가져오기
   const gameDetailsQueries = useQueries({
     queries: appids.map((appid: any) => ({
       queryKey: ['gameDetails', appid],
@@ -66,7 +70,7 @@ const RecommendList = () => {
       <StListContainer>
         {gameDetailsArray.map((gameDetails) => (
           <li key={gameDetails?.appid}>
-            <RecommendCard imageUrl={gameDetails?.header_image}>
+            <RecommendCard imageUrl={gameDetails?.header_image} alt={gameDetails?.name}>
               <h3>{gameDetails?.name}</h3>
             </RecommendCard>
           </li>
