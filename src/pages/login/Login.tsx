@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabasedata } from 'shared/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
-
+import kakaologo from 'assets/img/kakao_login_medium_wide.png';
 interface FormData {
   email: string;
   password: string;
@@ -111,12 +111,10 @@ function Login() {
 
         <StyledButton type="submit">로그인하기</StyledButton>
       </StyledForm>
-
       <StkakaoButton onClick={kakaologin}>카카오로그인</StkakaoButton>
-      <StyledButton onClick={handleLogout}>로그아웃하기</StyledButton>
-
+      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
       <Link to="/signup">
-        <StyledButton>회원 가입하러 가기</StyledButton>
+        <StyledButton>회원 가입</StyledButton>
       </Link>
     </StyledLogin>
   );

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { theme } from 'styles/theme';
 
 const NavContainer = styled.div`
   width: 97%;
@@ -32,20 +33,17 @@ const HeaderButton = styled.button`
   flex-direction: row;
   align-items: center;
   gap: 12px;
-  color: #fff;
+  color: ${(props) => props.theme.color.white};
+  background-color: #181924;
   cursor: pointer;
 
   & button {
+    color: ${(props) => props.theme.color.white};
     padding: 8px 12px;
-    border: 1px solid #fff;
+    border: 1px solid #181924;
     border-radius: 8px;
+    background-color: ${(props) => props.theme.color.primary};
   }
 `;
-
-// const LoginLink = styled`
-//   padding: 8px 12px;
-//   border: 1px solid #fff;
-//   border-radius: 8px;
-// `;
 
 export { NavContainer, NavLogo, BtnInputWrapper, HeaderButton };
