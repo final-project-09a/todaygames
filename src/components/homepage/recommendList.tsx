@@ -3,12 +3,14 @@ import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getGameDetails, getMostPlayedGames } from 'api/games';
 import RecommendCard from './RecommendCard';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 interface NewGamesProps {
   mostPlayedGames: any;
 }
 
 const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
+  const navigate = useNavigate();
   // const queryClient = useQueryClient();
 
   // useEffect(() => {
@@ -65,12 +67,18 @@ const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
   //   return <p>게임 상세 정보를 가져오는데 오류가 발생했습니다...</p>;
   // }
 
+  console.log(gameDetailsArray);
+
   return (
     <div>
       <StListContainer>
         {gameDetailsArray.map((gameDetails) => (
-          <li key={gameDetails?.appid}>
-            <RecommendCard imageUrl={gameDetails?.header_image} alt={gameDetails?.name}>
+          <li key={gameDetails?.steam_appid}>
+            <RecommendCard
+              onClick={() => navigate(`/detail/${gameDetails?.steam_appid}`)}
+              imageUrl={gameDetails?.header_image}
+              alt={gameDetails?.name}
+            >
               <h3>{gameDetails?.name}</h3>
             </RecommendCard>
           </li>

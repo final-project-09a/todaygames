@@ -61,7 +61,7 @@ const NewGames = ({ mostPlayedGames }: NewGamesProps) => {
   return (
     <StListContainer>
       {gameDetailsArray.map((gameDetails) => (
-        <li key={gameDetails?.appid}>{gameDetails && <NewGameCard imageUrl={gameDetails?.header_image} />}</li>
+        <li key={gameDetails?.steam_appid}>{gameDetails && <NewGameCard imageUrl={gameDetails?.header_image} />}</li>
       ))}
     </StListContainer>
   );

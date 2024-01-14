@@ -5,11 +5,12 @@ interface RecommendCardProps {
   children: ReactNode;
   imageUrl: string;
   alt: string;
+  onClick: any;
 }
 
-function RecommendCard({ children, imageUrl, alt }: RecommendCardProps) {
+function RecommendCard({ children, imageUrl, alt, onClick }: RecommendCardProps) {
   return (
-    <StCardWrapper>
+    <StCardWrapper onClick={onClick}>
       <StImageWrapper>
         <StImage imageUrl={imageUrl}>
           <img src={imageUrl} alt={alt} />
@@ -28,6 +29,7 @@ const StCardWrapper = styled.div`
   height: 200px;
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
 `;
 
 const StImageWrapper = styled.div`

@@ -36,7 +36,7 @@ const Home = () => {
   return (
     <StContainer>
       <StSection>
-        <Header />
+        <Header mostPlayedGames={mostPlayedGames} />
       </StSection>
       <StMainWrapper>
         <StSection>
