@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getComments } from 'api/comments';
+import { supabase } from 'shared/supabase';
 export const Comment = () => {
   const { data, isError } = useQuery({ queryKey: ['COMMENTLIST'], queryFn: getComments });
   return (

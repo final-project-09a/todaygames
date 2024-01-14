@@ -1,48 +1,50 @@
-// 게시판 상세정보  디자인 미정
-
-// import { useQuery } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
-import useSWR from 'swr';
+// 게사판 리스트
+import { useEffect, useState } from 'react';
 import { supabase } from 'shared/supabase';
-import { useQuery } from '@tanstack/react-query';
-import { Comment } from 'components/comment/Comment';
+import { Typedata } from 'shared/supabase.type';
+import { QUERY_KEYS } from 'query/keys';
+import styled from 'styled-components';
+import React from 'react';
+import { BoardCategory } from './BoardCategory';
+import { Seach } from './Seach';
 
-interface Post {
-  id: number;
-  title: string;
-  content: string;
+interface PostType {
+  data: Typedata['public']['Tables']['posts']['Row'];
 }
 
-export const Detail = () => {
+export const BoardDetail = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<PostType[]>([]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase.from('posts').select('*');
-      if (error) {
-        throw error;
-      }
-    };
-  });
+    getPosts();
+  }, []);
+
+  const getPosts = async () => {
+    try {
+      const { data } = await supabase.from(QUERY_KEYS.POSTS).select();
+      console.log('data 연결', data);
+      return data;
+    } catch (error) {
+      console.error('데이터 불러오기 실패:', error);
+      return null;
+    }
+  };
 
   return (
     <React.Fragment>
-      <StboardDetailContainer>
-        <Link to="">
-          <StregisterLinkButton>게시글 작성</StregisterLinkButton>
-        </Link>
-      </StboardDetailContainer>
-      <Comment />
+      <BoardCategory />
+      <StRegister>게시글 작성</StRegister>
+      <Seach />
     </React.Fragment>
   );
 };
 
-const StboardDetailContainer = styled.div`
+const StRegister = styled.label`
   display: flex;
-`;
-
-const StregisterLinkButton = styled.div`
-  display: flex;
-  padding: 20px;
-  width: 35%;
+  padding: 15px;
+  background: #2d4fa6;
+  width: 700px;
+  border-radius: 10px;
+  margin-top: 30px;
 `;
