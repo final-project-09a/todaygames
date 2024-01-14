@@ -4,7 +4,7 @@ const StyledLogin = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: black;
+  background: ${(props) => props.theme.color.balck};
   height: 100vh;
   justify-content: center;
 `;
@@ -27,8 +27,8 @@ const StyledButton = styled.button`
   width: 350px;
   height: 50px;
   flex-shrink: 0;
-  background-color: primary;
-  color: #ffffff;
+  background-color: ${(props) => props.theme.color.primary};
+  color: ${(props) => props.theme.color.white};
   border: none;
   margin-top: 10px;
   border-radius: 15px;
@@ -41,15 +41,15 @@ const StkakaoButton = styled.button`
   width: 350px;
   height: 50px;
   flex-shrink: 0;
-  background-color: yellow;
-  color: brown;
+  background-color: #f7e600;
+  color: #3a1d1d;
   border: none;
   margin-top: 10px;
   border-radius: 15px;
   font-weight: bolder;
 
   &:hover {
-    background-color: #1c3669;
+    background-color: #ccbe04;
   }
 `;
 

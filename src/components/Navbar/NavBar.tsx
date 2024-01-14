@@ -49,7 +49,10 @@ const NavBar: React.FC = () => {
           {currentUser ? (
             <>
               {/* 각자의 uid값으로 마이페이에 들어갈수있습니다 */}
-              <Link to={`/mypage/${useruid}`}>마이페이지</Link>
+              <button>
+                <Link to={`/mypage/${useruid}`}>마이페이지</Link>
+              </button>
+              {/* <Link to={`/mypage/${useruid}`}>마이페이지</Link> */}
               <button onClick={handleLogout}>로그아웃</button>
             </>
           ) : (

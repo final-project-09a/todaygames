@@ -4,11 +4,11 @@ const StyledSignup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #181924;
+  background: ${(props) => props.theme.color.balck};
   height: 100vh;
   justify-content: center;
-  margin: 0; /* Remove default margin */
-  padding: 0; /* Remove default padding */
+  margin: 0;
+  padding: 0;
 `;
 
 const StyledForm = styled.form`
@@ -19,7 +19,7 @@ const StyledForm = styled.form`
 `;
 
 const StyledLabel = styled.label`
-  color: #ffffff;
+  color: ${(props) => props.theme.color.white};
   font-family: Pretendard;
   font-size: 16px;
   font-style: normal;
@@ -44,8 +44,8 @@ const StyledButton = styled.button`
   width: 350px;
   height: 50px;
   flex-shrink: 0;
-  background-color: #2d4fa6;
-  color: #ffffff;
+  background-color: ${(props) => props.theme.color.primary};
+  color: ${(props) => props.theme.color.white};
   border: none;
   margin-top: 10px;
   border-radius: 15px;
@@ -56,7 +56,7 @@ const StyledButton = styled.button`
 `;
 
 const StyledH1 = styled.h1`
-  color: #ffffff;
+  color: ${(props) => props.theme.color.white};
   font-family: Pretendard;
   font-size: 34px;
   font-style: normal;
