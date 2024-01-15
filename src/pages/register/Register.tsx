@@ -1,22 +1,22 @@
 import {
-  WrappingInput,
-  TitleInput,
   MainBackground,
-  ContentInput,
   WrappingBtnAndInput,
   WrappingTitleAndBtn,
   WrappingBtns,
   TitleText,
   CancelBtn,
   RegisterBtn,
-  Titles
+  WrappingAllComponents
 } from './styles';
 import { ChangeEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getGameDetails } from 'api/games';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import InputSet from 'components/register/InputSet';
+import { ContentInput } from 'components/register/styles';
 
 const Register = () => {
+  const { id: paramId } = useParams();
   const navigate = useNavigate();
   const { isLoading, isError, data } = useQuery({
     queryKey: ['games'],
@@ -46,19 +46,10 @@ const Register = () => {
             <RegisterBtn>등록</RegisterBtn>
           </WrappingBtns>
         </WrappingTitleAndBtn>
-        <WrappingInput
-          onSubmit={() => {
-            titleTextHandler;
-          }}
-        >
-          <Titles>
-            제목
-            <TitleInput placeholder="제목을 입력하세요" value={title} onChange={titleTextHandler} />
-          </Titles>
-          <div>
-            <ContentInput placeholder="내용을 입력하세요" value={content} onChange={contentTextHandler} />
-          </div>
-        </WrappingInput>
+        <WrappingAllComponents>
+          <InputSet />
+          <ContentInput />
+        </WrappingAllComponents>
       </WrappingBtnAndInput>
     </MainBackground>
   );

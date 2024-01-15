@@ -9,7 +9,8 @@ const color = {
   primary: '#2D4FA6', // 버튼색상
   secondary: '#181924', // 카테고리 커버 색상
   inputcolor: '#3A3A3A',
-  gray: '#666' // 카테고리 커버 색상
+  gray: '#666', // 카테고리 커버 색상
+  postback: '#232323'
 };
 
 const fontSize = {

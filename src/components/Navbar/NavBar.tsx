@@ -10,7 +10,6 @@ const NavBar: React.FC = () => {
   const [useruid, setuseruid] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(supabasedata);
     const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
       setCurrentUser(session?.user?.email || null);
 

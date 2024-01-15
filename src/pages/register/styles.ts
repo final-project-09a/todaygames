@@ -3,8 +3,17 @@ import styled from 'styled-components';
 const MainBackground = styled.div`
   width: 100%;
   display: flex;
-  background: ${(props) => props.theme.color.black};
+  background-color: ${(props) => props.theme.color.black};
   justify-content: center;
+`;
+
+const WrappingAllComponents = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 708px;
+  background-color: ${(props) => props.theme.color.postback};
+  border-radius: 10px;
 `;
 
 const WrappingBtnAndInput = styled.div`
@@ -123,5 +132,6 @@ export {
   TitleText,
   CancelBtn,
   RegisterBtn,
-  Titles
+  Titles,
+  WrappingAllComponents
 };
