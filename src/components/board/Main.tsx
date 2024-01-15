@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { supabasedata } from 'shared/supabase';
 import { Avatar } from 'pages/mypage/styles';
+import { BoardCategory } from './BoardCategory';
 interface PostType {
   data: Typedata['public']['Tables']['posts']['Row'];
 }
@@ -22,12 +23,16 @@ interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
 }
 export const Main = () => {
-  const navigate = useNavigate();
   const [post, setPost] = useState<PostType[]>([]);
   const [users, setUsers] = useState<UserInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // post
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (postsData && userInfoData) {
+      //  setPost(postsData);
+      // setUsers(userInfoData);
+    }
+  }, []);
   const { isLoading: postsLoading, data: postsData = [] } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
@@ -36,19 +41,16 @@ export const Main = () => {
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
   });
-  // const user = useSelector((state: RootState) => state.user.id);
+
   if (postsLoading && userInfoLoading) {
     return <p>로딩 중 </p>;
   } else {
     console.log('데이터 정보 확인');
   }
 
-  useEffect(() => {
-    if (postsData && userInfoData) {
-      //  setPost(postsData);
-      // setUsers(userInfoData);
-    }
-  }, [postsData, userInfoData]);
+  // post
+
+  // const user = useSelector((state: RootState) => state.user.id);
 
   //  1. 문제 : 두 쿼리를 하나의 map에 사용하기
   // 두 쿼리의 id값이 일치할 경우 화면에 뿌려짐 로직
@@ -67,7 +69,7 @@ export const Main = () => {
   console.log('post 데이터 확인', postsData);
   console.log('user 데이터 확인', userInfoData);
   return (
-    <StboardListContainer>
+    <>
       <Stselectcontainer>
         <StyledBox>
           <option>최신순</option>
@@ -80,8 +82,10 @@ export const Main = () => {
           <option>전략</option>
           <option>레이싱 시뮬레이션</option>
         </StBox>
-        <Stseach />
-        <Stbutton onClick={() => moveregisterPageOnClick('write')}>글쓰기</Stbutton>
+        <StSeachandButton>
+          <Stseach />
+          <Stbutton onClick={() => moveregisterPageOnClick('write')}>글쓰기</Stbutton>
+        </StSeachandButton>
       </Stselectcontainer>
       {userInfoData.map((data) => (
         <StcontentBox key={data.id} onClick={(event) => movedetailPageOnClick(data.id, event)}>
@@ -89,18 +93,10 @@ export const Main = () => {
           <UserImage src={data.avatar_url} alt="프로필 이미지" />
         </StcontentBox>
       ))}
-    </StboardListContainer>
+    </>
   );
 };
 
-const StboardListContainer = styled.div`
-  display: flex;
-  margin: 30px 50px;
-  align-items: center;
-  justify-content: space-between;
-  text-align: center;
-  flex-direction: column;
-`;
 export const Username = styled.h3`
   font-size: ${(props) => props.theme.fontSize.xxxl};
   color: ${(props) => props.theme.color.white};
@@ -130,6 +126,9 @@ const StBox = styled.select`
   margin-right: 140px;
   color: #ffffff;
 `;
+const StSeachandButton = styled.form`
+  display: flex;
+`;
 
 const Stseach = styled.input`
   height: 48px;
@@ -137,9 +136,6 @@ const Stseach = styled.input`
   background-color: #232323;
   border-radius: 10px;
   color: white;
-  height: 48px;
-  margin-left: 40px;
-  margin-right: 10px; /* 여기에 margin을 추가 */
 `;
 
 const Stbutton = styled.button`
@@ -147,7 +143,6 @@ const Stbutton = styled.button`
   width: 80px;
   background-color: #2d4ea5;
   border-radius: 10px;
-  margin-left: 10px; /* 여기에 margin을 추가 */
 `;
 
 const StcontentBox = styled.div`
