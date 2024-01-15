@@ -45,8 +45,8 @@ export const Main = () => {
 
   useEffect(() => {
     if (postsData && userInfoData) {
-      setPost(postsData);
-      setUsers(userInfoData);
+      //  setPost(postsData);
+      // setUsers(userInfoData);
     }
   }, [postsData, userInfoData]);
 
