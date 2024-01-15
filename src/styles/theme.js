@@ -7,10 +7,10 @@ const color = {
   black: '#191919', //프로젝트 들어가는 모든 검정색
   white: '#ffffff', // 프로젝트 들어가는 모든 하얀색
   primary: '#2D4FA6', // 버튼색상
-  secondary: '#181924', // 카테고리 커버 색상
-  inputcolor: '#3A3A3A'
   secondary: '#2E2F3F', // 카테고리 커버 색상
-  gray: '#666'
+  inputcolor: '#3A3A3A',
+  gray: '#666', // 카테고리 커버 색상
+  postback: '#232323'
 };
 
 const fontSize = {

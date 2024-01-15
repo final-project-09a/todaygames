@@ -1,55 +1,64 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
-import { getGameDetails, getGames, getMostPlayedGames } from 'api/games';
-import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getGameDetails, getMostPlayedGames } from 'api/games';
+import RecommendCard from './RecommendCard';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
-const RecommendList = () => {
-  const [recommendGames, setRecommendGames] = useState([]);
+interface NewGamesProps {
+  mostPlayedGames: any;
+}
 
-  // 전체 게임 리스트
-  const {
-    isLoading: gamesLoading,
-    isError: gamesError,
-    data: games
-  } = useQuery({
-    queryKey: ['games'],
-    queryFn: () => getGames()
-  });
+const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
+  const navigate = useNavigate();
+  // const queryClient = useQueryClient();
 
-  // 가장 많이 플레이된 게임 100개
-  const {
-    isLoading: mostPlayedLoading,
-    isError: mostPlayedError,
-    data: mostPlayedGames
-  } = useQuery({
-    queryKey: ['recommendGames'],
-    queryFn: () => getMostPlayedGames()
-  });
+  // useEffect(() => {
+  //   // 마운트 될 때 캐시삭제
+  //   queryClient.invalidateQueries({ queryKey: ['recommendGames'] });
+  // }, [queryClient]);
 
-  if (gamesLoading || mostPlayedLoading) {
-    return <p>게임 리스트를 로딩중입니다...</p>;
-  }
-  if (gamesError || mostPlayedError) {
-    return <p>게임 리스트를 가져오는데 오류가 발생했습니다...</p>;
-  }
+  // // 가장 많이 플레이된 게임 100개 불러오기
+  // const {
+  //   isLoading: mostPlayedLoading,
+  //   isError: mostPlayedError,
+  //   data: mostPlayedGames
+  // } = useQuery({
+  //   queryKey: ['recommendGames'],
+  //   queryFn: async () => {
+  //     try {
+  //       const data = await getMostPlayedGames();
+  //       return data;
+  //     } catch (error) {
+  //       console.error('most played games 패치 에러: ', error);
+  //       throw error;
+  //     }
+  //   }
+  // });
 
-  console.log(games);
-  console.log(mostPlayedGames);
-
-  // 가장 많이 플레이된 게임 100개 중 top 10만 가져오기
+  // // 가장 많이 플레이된 게임 100개 중 top 10만 가져오기
   const topTen = mostPlayedGames?.slice(0, 10);
-  console.log(topTen);
+  const appids = topTen?.map((game: any) => game.appid) || [];
 
-  const appids = topTen?.map((game: any) => game.appid);
-  console.log(appids);
+  // if (isLoading) {
+  //   return <p>게임 상세 정보를 로딩중입니다...</p>;
+  // }
+  // if (isError) {
+  //   return <p>게임 상세 정보를 가져오는데 오류가 발생했습니다...</p>;
+  // }
+  // console.log(data);
 
-  // top 10 게임 details
-  // const gameDetailsQueries = useQueries(
-  //   appids?.map((appid: any) => ({
-  //     queryKey: ['gameDetails', appid],
-  //     queryFn: () => getGameDetails(appid),
-  //     enabled: appid !== undefined
-  //   })) || []
-  // );
+  // top 10 상세 정보 가져오기
+  const gameDetailsQueries = useQueries({
+    queries: appids.map((appid: any) => ({
+      queryKey: ['gameDetails', appid],
+      queryFn: () => getGameDetails(appid)
+      // enabled: appid !== undefined
+      // staleTime: Infinity
+    }))
+  });
+
+  const gameDetailsArray = gameDetailsQueries.map((query: any) => query.data);
 
   // if (gameDetailsQueries.some((query) => query.isLoading)) {
   //   return <p>게임 상세 정보를 로딩중입니다...</p>;
@@ -58,24 +67,31 @@ const RecommendList = () => {
   //   return <p>게임 상세 정보를 가져오는데 오류가 발생했습니다...</p>;
   // }
 
-  // console.log(gameDetailsQueries);
+  console.log(gameDetailsArray);
 
   return (
     <div>
-      <ul>
-        {/* {gameDetailsQueries.map((query: any) => {
-          const appid = query.queryKey[1];
-          const gameDetails = query.data;
-
-          return (
-            <li key={appid}>
+      <StListContainer>
+        {gameDetailsArray.map((gameDetails) => (
+          <li key={gameDetails?.steam_appid}>
+            <RecommendCard
+              onClick={() => navigate(`/detail/${gameDetails?.steam_appid}`)}
+              imageUrl={gameDetails?.header_image}
+              alt={gameDetails?.name}
+            >
               <h3>{gameDetails?.name}</h3>
-            </li>
-          );
-        })} */}
-      </ul>
+            </RecommendCard>
+          </li>
+        ))}
+      </StListContainer>
     </div>
   );
 };
 
 export default RecommendList;
+
+const StListContainer = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+`;

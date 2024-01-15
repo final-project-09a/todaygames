@@ -10,14 +10,14 @@ const upsertPost = async (newPost: Post) => {
   await supabasedata
     .from(QUERY_KEYS.POST)
     .upsert({
-      uid: newPost.user_id,
       id: newPost.id,
       category: newPost.category,
       title: newPost.title,
       image: newPost.image,
       content: newPost.content,
       commentCount: newPost.comments_count,
-      likeCount: newPost.like_count
+      likeCount: newPost.like_count,
+      uid: newPost.users_id
     })
     .select();
 };
