@@ -1,4 +1,4 @@
-import RecommendList from 'components/homepage/recommendList';
+import RecommendList from 'components/homepage/RecommendList';
 import NewGames from 'components/homepage/NewGames';
 import GenreSlider from 'components/homepage/GenreSlider';
 import Header from 'components/Header';

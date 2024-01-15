@@ -6,7 +6,7 @@ export interface Typedata {
       posts: {
         Row: {
           // create,select
-          id: number;
+          id: string;
           user_id: string;
           like_count: number;
           comments_count: number;
@@ -48,32 +48,39 @@ export interface Typedata {
       };
       comments: {
         Row: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
         };
         Insert: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
         };
         Update: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
         };
         Controll: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
+        };
+      };
+      userinfo: {
+        Row: {
+          id: string;
+          username: string;
+          avatar_url: string;
         };
       };
     };
