@@ -9,7 +9,7 @@ import {
   StButton,
   StInfoWrapper
 } from './styles';
-import { getGameDetails } from 'api/games';
+import { getGameDetails } from 'api/steamApis';
 import { useQueries } from '@tanstack/react-query';
 
 interface HeaderProps {

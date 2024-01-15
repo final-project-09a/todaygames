@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { getGameDetails, getTopReleases } from 'api/games';
+import { getGameDetails, getTopReleases } from 'api/steamApis';
 import NewGameCard from './NewGameCard';
 import styled from 'styled-components';
 

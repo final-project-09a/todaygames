@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getGameDetails } from 'api/games';
+import { getGameDetails } from 'api/steamApis';
 import { useParams } from 'react-router-dom';
 import { StContainer, StImageWrapper } from './styles';
 

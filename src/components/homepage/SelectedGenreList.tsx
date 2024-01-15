@@ -1,42 +1,85 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { getFilteredGenre, getGameDetails } from 'api/games';
-import React from 'react';
+import { getGames } from 'api/games';
+import { getSelectedGenre, getGameDetails } from 'api/steamApis';
+import React, { useEffect, useState } from 'react';
+import { GENRE_NAME } from 'constants/genre';
+import SelectedGenreCard from './SelectedGenreCard';
+import styled from 'styled-components';
 
 interface SelectedGenreListProps {
-  mostPlayedGames: any;
+  selectedTag: string | null;
 }
 
-const SelectedGenreList = ({ mostPlayedGames }: SelectedGenreListProps) => {
-  console.log(mostPlayedGames);
+interface GameInfo {
+  app_id: number;
+  capsule_image: string;
+  genres: string[];
+  header_image: string;
+  id: number;
+  is_free: boolean;
+  name: string;
+  required_age: number;
+  short_description: string;
+}
 
-  // // const topTen = mostPlayedGames?.slice(0, 10);
-  // const appids = mostPlayedGames?.map((game: any) => game.appid) || [];
+const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
+  const [gameInfoList, setGameInfoList] = useState<GameInfo[]>([]);
 
-  // // top 10 상세 정보 가져오기
-  // const gameDetailsQueries = useQueries({
-  //   queries: appids.map((appid: any) => ({
-  //     queryKey: ['selectedGenre', appid],
-  //     queryFn: () => getGameDetails(appid),
-  //     enabled: appid !== undefined
-  //     // staleTime: Infinity
-  //   }))
-  // });
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['selectedGenre', selectedTag],
+    queryFn: getGames,
+    enabled: selectedTag !== null
+  });
 
-  // // console.log(data);
-  // const gameDetailsArray = gameDetailsQueries.map((query: any) => query.data);
-  // console.log(gameDetailsArray);
+  useEffect(() => {
+    if (data && !isLoading && !isError) {
+      const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
+      setGameInfoList(
+        filteredGames.map((game) => ({
+          app_id: game.app_id,
+          capsule_image: game.capsule_image,
+          genres: game.genres,
+          header_image: game.header_image,
+          id: game.id,
+          is_free: game.is_free,
+          name: game.name,
+          required_age: game.required_age,
+          short_description: game.short_description
+        }))
+      );
+    }
+  }, [data, isLoading, isError, selectedTag]);
 
-  // if (isLoading) {
-  //   <p>게임 정보를 불러오는 중입니다...</p>;
-  // }
+  if (isLoading) {
+    return <p>게임 정보를 로딩중입니다...</p>;
+  }
 
-  // if (isError) {
-  //   <p>게임 정보를 불러오지 못했습니다.</p>;
-  // }
+  if (isError) {
+    return <p>게임 정보를 불러오지 못했습니다.</p>;
+  }
 
-  // console.log(data);
-
-  return <div>selectedTag</div>;
+  return (
+    <div>
+      {gameInfoList.length > 0 ? (
+        <StContainer>
+          {gameInfoList.map((game) => (
+            <li key={game.app_id}>
+              <SelectedGenreCard gameInfoList={game} />
+            </li>
+          ))}
+        </StContainer>
+      ) : (
+        <p>해당 장르의 게임을 찾지 못했습니다.</p>
+      )}
+    </div>
+  );
 };
 
 export default SelectedGenreList;
+
+const StContainer = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+  margin: 70px auto;
+`;

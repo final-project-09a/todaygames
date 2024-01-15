@@ -1,17 +1,13 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import GenreCard from './GenreCard';
-import { getFilteredGenre } from 'api/games';
-import { GENRE_ENGLISH_NAME } from 'constants/genre';
-import { useState } from 'react';
-import styled from 'styled-components';
+import { GENRE_NAME } from 'constants/genre';
+import { useCallback, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SelectedGenreList from './SelectedGenreList';
 
 const GenreSlider = () => {
-  const [selectedTag, setSelectedTag] = useState(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>('액션');
 
   const settings = {
     infinite: true,
@@ -20,23 +16,23 @@ const GenreSlider = () => {
     slidesToScroll: 1
   };
 
-  const handleGenreCardClick = (tag: any) => {
+  const handleGenreCardClick = useCallback((tag: string) => {
     setSelectedTag(tag);
-  };
-
-  console.log(selectedTag);
-
-  // const gameGenreArray = gameDetailsQueries?.map((query: any) => query.data);
-  // console.log(gameGenreArray);
+  }, []);
 
   return (
     <div>
       <Slider {...settings}>
-        {GENRE_ENGLISH_NAME.map((tag: any) => (
-          <GenreCard key={tag} tag={tag} onClick={() => handleGenreCardClick(tag)} />
+        {GENRE_NAME.map(({ tag, englishTag }: { tag: string; englishTag: string }) => (
+          <GenreCard
+            key={englishTag}
+            tag={englishTag}
+            onClick={() => handleGenreCardClick(tag)}
+            isSelected={selectedTag === tag}
+          />
         ))}
       </Slider>
-      {/* <SelectedGenreList selectedTag={selectedTag} /> */}
+      <SelectedGenreList selectedTag={selectedTag} />
     </div>
   );
 };

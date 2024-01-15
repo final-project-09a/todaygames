@@ -1,26 +1,12 @@
 export const GENRE_NAME = [
-  '액션',
-  '어드벤쳐',
-  '전략',
-  'RPG',
-  '인디',
-  '캐쥬얼',
-  '시뮬레이션',
-  '레이싱',
-  '스포츠',
-  '디자인',
-  '유틸리티'
-];
-
-export const GENRE_ENGLISH_NAME = [
-  'Action',
-  'Adventure',
-  'Strategy',
-  'RPG',
-  'Indie',
-  'Casual',
-  'Simulation',
-  'Racing',
-  'Sports',
-  'Design & Illustration'
+  { tag: '액션', englishTag: 'Action' },
+  { tag: '어드벤처', englishTag: 'Adventure' },
+  { tag: '전략', englishTag: 'Strategy' },
+  { tag: 'RPG', englishTag: 'RPG' },
+  { tag: '인디', englishTag: 'Indie' },
+  { tag: '캐주얼', englishTag: 'Casual' },
+  { tag: '시뮬레이션', englishTag: 'Simulation' },
+  { tag: '레이싱', englishTag: 'Racing' },
+  { tag: '스포츠', englishTag: 'Sports' },
+  { tag: '디자인', englishTag: 'Design & Illustration' }
 ];
