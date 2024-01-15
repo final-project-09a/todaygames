@@ -17,8 +17,8 @@ const Home = () => {
 
   // 가장 많이 플레이된 게임 100개 불러오기
   const {
-    isLoading: mostPlayedLoading,
-    isError: mostPlayedError,
+    isLoading,
+    isError,
     data: mostPlayedGames
   } = useQuery({
     queryKey: ['recommendGames'],
@@ -33,6 +33,14 @@ const Home = () => {
     }
   });
 
+  if (isLoading) {
+    <p>게임 정보를 불러오는 중입니다...</p>;
+  }
+
+  if (isError) {
+    <p>게임 정보를 불러오지 못했습니다.</p>;
+  }
+
   return (
     <StContainer>
       <StSection>
@@ -45,11 +53,11 @@ const Home = () => {
         </StSection>
         <StSection>
           <h1>새로나온 게임</h1>
-          <NewGames mostPlayedGames={mostPlayedGames} />
+          <NewGames />
         </StSection>
         <StSection>
           <h1>장르별 탐색</h1>
-          <GenreFilter />
+          <GenreFilter mostPlayedGames={mostPlayedGames} />
         </StSection>
       </StMainWrapper>
     </StContainer>

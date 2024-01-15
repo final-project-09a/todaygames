@@ -28,7 +28,7 @@ const BtnInputWrapper = styled.div`
   gap: 5px;
 `;
 
-const HeaderButton = styled.button`
+const HeaderButton = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;

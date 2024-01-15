@@ -1,7 +1,18 @@
 import React from 'react';
+import GenreCard from './GenreCard';
 
-const GenreFilter = () => {
-  return <div>GenreFilter</div>;
+interface GenreFilterProps {
+  mostPlayedGames: any;
+}
+
+const GenreFilter = ({ mostPlayedGames }: GenreFilterProps) => {
+  console.log(mostPlayedGames);
+
+  return (
+    <div>
+      <GenreCard />
+    </div>
+  );
 };
 
 export default GenreFilter;

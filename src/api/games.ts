@@ -7,7 +7,19 @@ const getMostPlayedGames = async () => {
     // console.log('most played games 데이터 :', mostPlayedGamesData);
     return mostPlayedGamesData;
   } catch (error) {
-    console.error('fetch 에러: ', error);
+    console.error('getMostPlayedGames fetch 에러: ', error);
+    throw error;
+  }
+};
+
+const getTopReleases = async () => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/top-releases`);
+    const topReleases = response.data.response.pages[0].item_ids;
+    // console.log('top releases 데이터 :', response.data.response.pages[0].item_ids);
+    return topReleases;
+  } catch (error) {
+    console.error('getTopReleases fetch 에러: ', error);
     throw error;
   }
 };
@@ -41,4 +53,4 @@ const getGameDetails = async (appid: any) => {
 //   }
 // };
 
-export { getMostPlayedGames, getGameDetails };
+export { getMostPlayedGames, getGameDetails, getTopReleases };
