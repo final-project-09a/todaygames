@@ -1,3 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
+// import { getGames } from 'api/games';
+import { useState } from 'react';
 import RecommendList from 'components/homepage/recommendList';
 import NewGames from 'components/homepage/NewGames';
 import GenreFilter from 'components/homepage/GenreFilter';

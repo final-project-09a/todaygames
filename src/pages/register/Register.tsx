@@ -12,12 +12,12 @@ import {
 } from './styles';
 import { ChangeEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getGames } from 'api/games';
+import { getGameDetails } from 'api/games';
 
 const Register = () => {
   const { isLoading, isError, data } = useQuery({
     queryKey: ['games'],
-    queryFn: getGames
+    queryFn: getGameDetails
   });
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
