@@ -39,6 +39,9 @@ const StImageWrapper = styled.div`
   right: 0;
   bottom: 0;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const StImage = styled.figure<{ $imageUrl: string }>`
@@ -48,6 +51,12 @@ const StImage = styled.figure<{ $imageUrl: string }>`
   transition: transform 0.3s ease;
   ${StCardWrapper}:hover & {
     transform: scale(1.05);
+  }
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
   }
 `;
 

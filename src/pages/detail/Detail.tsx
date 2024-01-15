@@ -36,7 +36,7 @@ const Detail = () => {
       <div>
         <label>게임정보</label>
         <p dangerouslySetInnerHTML={{ __html: data.about_the_game }} />
-        <p dangerouslySetInnerHTML={{ __html: data.detailed_description }} />
+        <p dangerouslySetInnerHTML={{ __html: data.short_description }} />
       </div>
     </StContainer>
   );

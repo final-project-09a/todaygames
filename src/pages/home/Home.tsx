@@ -1,11 +1,12 @@
 import RecommendList from 'components/homepage/recommendList';
 import NewGames from 'components/homepage/NewGames';
-import GenreFilter from 'components/homepage/GenreFilter';
+import GenreSlider from 'components/homepage/GenreSlider';
 import Header from 'components/Header';
 import { StContainer, StMainWrapper, StSection } from './styles';
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMostPlayedGames } from 'api/games';
+import SelectedGenreList from 'components/homepage/SelectedGenreList';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -57,7 +58,8 @@ const Home = () => {
         </StSection>
         <StSection>
           <h1>장르별 탐색</h1>
-          <GenreFilter mostPlayedGames={mostPlayedGames} />
+          <GenreSlider />
+          <SelectedGenreList mostPlayedGames={mostPlayedGames} />
         </StSection>
       </StMainWrapper>
     </StContainer>

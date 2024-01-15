@@ -24,6 +24,23 @@ const getTopReleases = async () => {
   }
 };
 
+const getFilteredGenre = async (tag: any) => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/genre/${tag}`);
+    const filteredGenre = response.data.applist.apps;
+
+    if (filteredGenre) {
+      return filteredGenre;
+    } else {
+      console.error('Invalide game genre', tag);
+      throw new Error('Invalid response');
+    }
+  } catch (error) {
+    console.error('fetch error: ', error);
+    throw error;
+  }
+};
+
 const getGameDetails = async (appid: any) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/game-details/${appid}`);
@@ -53,4 +70,4 @@ const getGameDetails = async (appid: any) => {
 //   }
 // };
 
-export { getMostPlayedGames, getGameDetails, getTopReleases };
+export { getMostPlayedGames, getGameDetails, getTopReleases, getFilteredGenre };

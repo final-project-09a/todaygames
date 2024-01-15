@@ -33,8 +33,7 @@ const StImageWrapper = styled.div`
 const StImage = styled.div<{ $imageUrl: string }>`
   width: 100%;
   height: 100%;
-  background: url(${(props) => props.$imageUrl}) center/cover no-repeat;
-  background-position: top;
+  background: url(${(props) => props.$imageUrl}) top/cover no-repeat;
   transition: transform 0.3s ease;
   ${StCardWrapper}:hover & {
     transform: scale(1.05);
