@@ -1,6 +1,6 @@
 // 게사판 리스트
 import { useEffect, useState } from 'react';
-import { supabase } from 'shared/supabase';
+import { supabase, supabasedata } from 'shared/supabase';
 import { Typedata } from 'shared/supabase.type';
 import { QUERY_KEYS } from 'query/keys';
 import styled from 'styled-components';
@@ -18,6 +18,9 @@ export const BoardDetail = () => {
 
   useEffect(() => {
     getPosts();
+    const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
+      const userId = session?.user?.id;
+    });
   }, []);
 
   const getPosts = async () => {

@@ -1,29 +1,65 @@
 // 게시판 상세정보  디자인 미정
 
 // import { useQuery } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import useSWR from 'swr';
-import { supabase } from 'shared/supabase';
 import { useQuery } from '@tanstack/react-query';
-import { Comment } from 'components/comment/Comment';
-
-interface Post {
-  id: number;
-  title: string;
-  content: string;
+import { QUERY_KEYS } from 'query/keys';
+import { UserInfo } from 'api/user';
+import { getPosts } from 'api/post';
+import { Typedata } from 'shared/supabase.type';
+import userimg from 'assets/img/userimg.png'; // 우선 이 이미지를  StcontentBox안에 넣음
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
+import { supabasedata } from 'shared/supabase';
+import { Avatar } from 'pages/mypage/styles';
+interface UserInfotype {
+  id: string;
 }
-
+interface PostWithUserInfo extends Typedata {
+  userInfo: string | undefined; // 사용자 정보가 없을 수도 있음
+}
 export const Main = () => {
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data, error } = await supabase.from('posts').select('*');
-      if (error) {
-        throw error;
-      }
-    };
+  const navigate = useNavigate();
+  const [postlist, setpostList] = useState([]); // 화면에 뿌려질 리스트 state
+  const [currentUserid, setCurrentUserId] = React.useState<string>('');
+  // post
+  const { isLoading: postsLoading, data: postsData = [] } = useQuery({
+    queryKey: [QUERY_KEYS.POSTS],
+    queryFn: getPosts
   });
+  const { isLoading: userInfoLoading, data: userInfoData = [] } = useQuery({
+    queryKey: [QUERY_KEYS.AUTH],
+    queryFn: UserInfo
+  });
+  // const user = useSelector((state: RootState) => state.user.id);
+  if (postsLoading && userInfoLoading) {
+    return <p>로딩 중 </p>;
+  } else {
+    console.log('데이터 정보 확인');
+  }
+  const userinitialState = {
+    Avatar
+  };
 
+  //
+  // 두 쿼리의 id값이 일치할 경우 화면에 뿌려짐 로직
+  // 게시판리스트를 만드는 것이기때문에 storage에서 이미지도 추출해야함
+  // 해당 유저  상세게시판 창으로 이동
+  //
+
+  const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
+    navigate(`/boarddetail/${item}`);
+  };
+  //  글쓰기로 이동
+  const moveregisterPageOnClick = (item: string) => {
+    if (item) navigate(`/Register/${item}`);
+  };
+
+  console.log('post 데이터 확인', postsData);
+  console.log('user 데이터 확인', userInfoData);
   return (
     <StboardListContainer>
       <Stselectcontainer>
@@ -39,9 +75,14 @@ export const Main = () => {
           <option>레이싱 시뮬레이션</option>
         </StBox>
         <Stseach />
-        <Stbutton>글쓰기</Stbutton>
+        <Stbutton onClick={() => moveregisterPageOnClick('write')}>글쓰기</Stbutton>
       </Stselectcontainer>
-      <StcontentBox></StcontentBox>
+      {userInfoData.map((user) => (
+        <StcontentBox key={user.id} onClick={(event) => movedetailPageOnClick(user.id, event)}>
+          <Username>{user.username}</Username>
+          <div> {user.avatar_url}</div>
+        </StcontentBox>
+      ))}
     </StboardListContainer>
   );
 };
@@ -53,6 +94,10 @@ const StboardListContainer = styled.div`
   justify-content: space-between;
   text-align: center;
   flex-direction: column;
+`;
+export const Username = styled.h3`
+  font-size: ${(props) => props.theme.fontSize.xxxl};
+  color: ${(props) => props.theme.color.white};
 `;
 
 const Stselectcontainer = styled.div`
@@ -110,3 +155,7 @@ const StcontentBox = styled.div`
   border-radius: 10px;
   margin-top: 30px;
 `;
+
+// 메인게시판 image 부분 그리기
+// post 데이터 가져오기
+// userid 가져와서 프로필뿌리기

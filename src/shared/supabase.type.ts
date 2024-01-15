@@ -48,32 +48,39 @@ export interface Typedata {
       };
       comments: {
         Row: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
         };
         Insert: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
         };
         Update: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
         };
         Controll: {
-          id: number;
+          id: string;
           comment_id: number;
           comments: string;
           parent_comment: string;
-          create_at: Date;
+          created_at: Date;
+        };
+      };
+      userinfo: {
+        Row: {
+          id: never;
+          username: string;
+          avatar_url: string;
         };
       };
     };
