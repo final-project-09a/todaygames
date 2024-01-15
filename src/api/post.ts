@@ -12,3 +12,10 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
     throw error;
   }
 };
+getPosts()
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });

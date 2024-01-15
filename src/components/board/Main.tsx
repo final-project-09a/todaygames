@@ -15,16 +15,18 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { supabasedata } from 'shared/supabase';
 import { Avatar } from 'pages/mypage/styles';
-interface UserInfotype {
-  id: string;
+interface PostType {
+  data: Typedata['public']['Tables']['posts']['Row'];
 }
-interface PostWithUserInfo extends Typedata {
-  userInfo: string | undefined; // 사용자 정보가 없을 수도 있음
+interface UserInfo {
+  userInfo: Typedata['public']['Tables']['userinfo']['Row'];
 }
 export const Main = () => {
   const navigate = useNavigate();
-  const [postlist, setpostList] = useState([]); // 화면에 뿌려질 리스트 state
-  const [currentUserid, setCurrentUserId] = React.useState<string>('');
+  const [post, setPost] = useState<PostType[]>([]);
+  const [users, setUsers] = useState<UserInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   // post
   const { isLoading: postsLoading, data: postsData = [] } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
@@ -40,11 +42,15 @@ export const Main = () => {
   } else {
     console.log('데이터 정보 확인');
   }
-  const userinitialState = {
-    Avatar
-  };
 
-  //
+  useEffect(() => {
+    if (postsData && userInfoData) {
+      setPost(postsData);
+      setUsers(userInfoData);
+    }
+  }, [postsData, userInfoData]);
+
+  //  1. 문제 : 두 쿼리를 하나의 map에 사용하기
   // 두 쿼리의 id값이 일치할 경우 화면에 뿌려짐 로직
   // 게시판리스트를 만드는 것이기때문에 storage에서 이미지도 추출해야함
   // 해당 유저  상세게시판 창으로 이동
@@ -77,10 +83,10 @@ export const Main = () => {
         <Stseach />
         <Stbutton onClick={() => moveregisterPageOnClick('write')}>글쓰기</Stbutton>
       </Stselectcontainer>
-      {userInfoData.map((user) => (
-        <StcontentBox key={user.id} onClick={(event) => movedetailPageOnClick(user.id, event)}>
-          <Username>{user.username}</Username>
-          <div> {user.avatar_url}</div>
+      {userInfoData.map((data) => (
+        <StcontentBox key={data.id} onClick={(event) => movedetailPageOnClick(data.id, event)}>
+          <Username>{data.username}</Username>
+          <UserImage src={data.avatar_url} alt="프로필 이미지" />
         </StcontentBox>
       ))}
     </StboardListContainer>
@@ -154,6 +160,12 @@ const StcontentBox = styled.div`
   background-color: #232323;
   border-radius: 10px;
   margin-top: 30px;
+`;
+
+const UserImage = styled.img`
+  width: 100px; // 이미지의 크기를 조절하거나 다른 스타일을 적용할 수 있습니다.
+  height: 100px;
+  object-fit: cover; // 이미지가 컨테이너에 꽉 차도록 설정합니다.
 `;
 
 // 메인게시판 image 부분 그리기

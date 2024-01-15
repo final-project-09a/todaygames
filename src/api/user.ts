@@ -7,3 +7,10 @@ export const UserInfo = async (): Promise<Typedata['public']['Tables']['userinfo
   console.log('userinfo', userinfoData);
   return userinfoData || [];
 };
+UserInfo()
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });

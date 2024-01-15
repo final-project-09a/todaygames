@@ -6,7 +6,7 @@ export interface Typedata {
       posts: {
         Row: {
           // create,select
-          id: number;
+          id: string;
           user_id: string;
           like_count: number;
           comments_count: number;
@@ -78,7 +78,7 @@ export interface Typedata {
       };
       userinfo: {
         Row: {
-          id: never;
+          id: string;
           username: string;
           avatar_url: string;
         };
