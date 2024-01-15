@@ -3,8 +3,17 @@ import styled from 'styled-components';
 const MainBackground = styled.div`
   width: 100%;
   display: flex;
-  background: ${(props) => props.theme.color.black};
+  background-color: ${(props) => props.theme.color.black};
   justify-content: center;
+`;
+
+const WrappingAllComponents = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 708px;
+  background-color: ${(props) => props.theme.color.postback};
+  border-radius: 10px;
 `;
 
 const WrappingBtnAndInput = styled.div`
@@ -77,6 +86,12 @@ const WrappingInput = styled.form`
   padding: 5px 0px 30px 0px;
 `;
 
+const Titles = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const TitleInput = styled.textarea`
   display: flex;
   width: 1223px;
@@ -116,5 +131,7 @@ export {
   WrappingBtns,
   TitleText,
   CancelBtn,
-  RegisterBtn
+  RegisterBtn,
+  Titles,
+  WrappingAllComponents
 };

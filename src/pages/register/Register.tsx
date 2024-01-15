@@ -1,23 +1,27 @@
 import {
-  WrappingInput,
-  TitleInput,
   MainBackground,
-  ContentInput,
   WrappingBtnAndInput,
   WrappingTitleAndBtn,
   WrappingBtns,
   TitleText,
   CancelBtn,
-  RegisterBtn
+  RegisterBtn,
+  WrappingAllComponents
 } from './styles';
 import { ChangeEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { getGameDetails } from 'api/games';
+import { useNavigate, useParams } from 'react-router-dom';
+import InputSet from 'components/register/InputSet';
+import { ContentInput } from 'components/register/styles';
 
 const Register = () => {
-  // const { isLoading, isError, data } = useQuery({
-  //   queryKey: ['games'],
-  //   queryFn: getGames
-  // });
+  const { id: paramId } = useParams();
+  const navigate = useNavigate();
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ['games'],
+    queryFn: getGameDetails
+  });
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
@@ -28,24 +32,24 @@ const Register = () => {
   const contentTextHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
+
+  const cancelBtnHandler = () => {
+    navigate(`/board`);
+  };
   return (
     <MainBackground>
       <WrappingBtnAndInput>
         <WrappingTitleAndBtn>
           <TitleText>게시글 작성</TitleText>
           <WrappingBtns>
-            <CancelBtn>취소</CancelBtn>
+            <CancelBtn onClick={cancelBtnHandler}>취소</CancelBtn>
             <RegisterBtn>등록</RegisterBtn>
           </WrappingBtns>
         </WrappingTitleAndBtn>
-        <WrappingInput
-          onSubmit={() => {
-            titleTextHandler;
-          }}
-        >
-          <TitleInput placeholder="제목을 입력하세요" value={title} onChange={titleTextHandler} />
-          <ContentInput placeholder="내용을 입력하세요" value={content} onChange={contentTextHandler} />
-        </WrappingInput>
+        <WrappingAllComponents>
+          <InputSet />
+          <ContentInput />
+        </WrappingAllComponents>
       </WrappingBtnAndInput>
     </MainBackground>
   );
