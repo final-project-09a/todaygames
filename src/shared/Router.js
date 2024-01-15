@@ -14,7 +14,7 @@ const Router = () => {
     <BrowserRouter>
       <NavBar />
       <Routes>
-        <Route path="/register" element={<Register />} />
+        <Route path="/register/" element={<Register />} />
         <Route path="/board" element={<Board />} />
         <Route path="/viewdetail" element={<BoardDetail />} />
         <Route path="/" element={<Home />} />

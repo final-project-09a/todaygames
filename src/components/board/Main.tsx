@@ -5,6 +5,8 @@ import { Typedata } from 'shared/supabase.type';
 import { QUERY_KEYS } from 'query/keys';
 import styled from 'styled-components';
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 interface PostType {
   data: Typedata['public']['Tables']['posts']['Row'];
@@ -13,6 +15,7 @@ interface PostType {
 export const Main = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [posts, setPosts] = useState<PostType[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getPosts();
@@ -29,9 +32,20 @@ export const Main = () => {
     }
   };
 
+  const moveToPosting = () => {
+    navigate(`/register`);
+  };
+
+  const { data: postData } = useQuery({
+    queryKey: [QUERY_KEYS.POST],
+    queryFn: getPosts
+  });
+
   return (
-    <React.Fragment>
-      <div></div>
-    </React.Fragment>
+    <>
+      <React.Fragment>
+        <button onClick={moveToPosting}>새 글 작성하기</button>
+      </React.Fragment>
+    </>
   );
 };

@@ -77,6 +77,12 @@ const WrappingInput = styled.form`
   padding: 5px 0px 30px 0px;
 `;
 
+const Titles = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const TitleInput = styled.textarea`
   display: flex;
   width: 1223px;
@@ -116,5 +122,6 @@ export {
   WrappingBtns,
   TitleText,
   CancelBtn,
-  RegisterBtn
+  RegisterBtn,
+  Titles
 };

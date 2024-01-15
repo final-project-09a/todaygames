@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabasedata } from 'shared/supabase';
+import { supabase, supabasedata } from 'shared/supabase';
 import { NavContainer, NavLogo, BtnInputWrapper, HeaderButton } from './styles';
 import logo from 'assets/img/logo.png';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabasedata } from 'shared/supabase';
+import { supabase, supabasedata } from 'shared/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
 import kakaologo from 'assets/img/kakao_login_medium_wide.png';
