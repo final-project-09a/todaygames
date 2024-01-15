@@ -15,11 +15,11 @@ const StHeader = styled.div`
   height: 100%;
 `;
 
-const StFigure = styled.figure`
+const StFigure = styled.figure<{ imageUrl: string }>`
   width: 100%;
   height: 600px;
   border-radius: 20px;
-  background: url(<path-to-image>), lightgray 0px -37.581px / 100% 125.333% no-repeat;
+  background: url(${(props) => props.imageUrl}), lightgray 0px -37.581px / 100% 125.333% no-repeat;
 `;
 
 const StInfoWrapper = styled.div`
