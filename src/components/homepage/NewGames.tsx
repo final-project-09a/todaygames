@@ -41,9 +41,9 @@ const NewGames = () => {
   return (
     <StListContainer>
       {gameDetailsArray
-        .filter((gameDetals) => gameDetals && gameDetals.steam_appid)
+        .filter((gameDetails) => gameDetails && gameDetails.steam_appid)
         .map((gameDetails) => (
-          <li key={gameDetails?.steam_appid}>{gameDetails && <NewGameCard $imageUrl={gameDetails?.header_image} />}</li>
+          <li key={gameDetails?.steam_appid}>{gameDetails && <NewGameCard gameDetails={gameDetails} />}</li>
         ))}
     </StListContainer>
   );
