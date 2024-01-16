@@ -10,7 +10,7 @@ import {
 } from './styles';
 import { ChangeEvent, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getGameDetails } from 'api/games';
+import { getGameDetails } from 'api/steamApis';
 import { useNavigate, useParams } from 'react-router-dom';
 import InputSet from 'components/register/InputSet';
 import { ContentInput } from 'components/register/styles';

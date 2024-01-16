@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   StContainer,
   StHeader,
@@ -10,7 +9,7 @@ import {
   StButton,
   StInfoWrapper
 } from './styles';
-import { getGameDetails } from 'api/games';
+import { getGameDetails } from 'api/steamApis';
 import { useQueries } from '@tanstack/react-query';
 
 interface HeaderProps {
@@ -33,22 +32,21 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
   });
 
   const gameDetailsArray = gameDetailsQueries.map((query: any) => query.data);
-  console.log(gameDetailsArray);
 
   if (!gameDetailsArray[0]) {
-    return <div>게임 상세 정보를 가져오지 못했습니다.</div>;
+    return <div>게임 상세 정보를 가져오는 중입니다...</div>;
   }
 
   return (
     <StContainer>
       <StHeader>
-        <StFigure imageUrl={gameDetailsArray[0]?.background_raw}></StFigure>
+        <StFigure $imageUrl={gameDetailsArray[0]?.background_raw}></StFigure>
         <StInfoWrapper>
           <StGameInfo>
             <StTitle>{gameDetailsArray[0]?.name}</StTitle>
             <StTagWrapper>
               {gameDetailsArray[0]?.genres.map((category: any, index: number) => (
-                <StTag key="index">
+                <StTag key={index}>
                   <p>{category.description}</p>
                 </StTag>
               ))}
