@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { supabasedata } from 'shared/supabase';
 import { StUserinfoBOx, Avatar, Username, UserDetails, UserDetail, UserWrapper } from './styles';
 import userimg from 'assets/img/userimg.png';
+import { useSelector } from 'react-redux';
 
 interface User {
   email: string;
