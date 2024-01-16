@@ -8,13 +8,16 @@ export const BoardCategory = () => {
     <React.Fragment>
       <StboardLeftCategory>
         <label>정렬</label>
-        <select>
-          <input type="radio" id="recent" />
-          <input type="radio" />
-        </select>
       </StboardLeftCategory>
     </React.Fragment>
   );
 };
 
-const StboardLeftCategory = styled.div``;
+const StboardLeftCategory = styled.form`
+  display: flex;
+  width: 30%;
+  overflow-y: auto;
+  &label {
+    padding: 20px;
+  }
+`;

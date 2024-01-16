@@ -15,11 +15,11 @@ const StHeader = styled.div`
   height: 100%;
 `;
 
-const StFigure = styled.figure`
+const StFigure = styled.figure<{ $imageUrl: string }>`
   width: 100%;
   height: 600px;
   border-radius: 20px;
-  background: url(<path-to-image>), lightgray 0px -37.581px / 100% 125.333% no-repeat;
+  background: url(${(props) => props.$imageUrl}), gray 0px -37.581px / 100% 125.333% no-repeat;
 `;
 
 const StInfoWrapper = styled.div`
@@ -44,39 +44,7 @@ const StTitle = styled.h1`
 
 const StTagWrapper = styled.div`
   display: flex;
-  gap: 6px;
+  gap: 7px;
 `;
 
-const StTag = styled.div`
-  display: flex;
-  padding: 11px 29px;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  background: ${(props) => props.theme.color.secondary};
-  & p {
-    color: ${(props) => props.theme.color.white};
-    font-size: 16px;
-    font-weight: 500;
-  }
-`;
-
-const StButton = styled.button`
-  width: 224px;
-  height: 50px;
-  border-radius: 10px;
-  background: ${(props) => props.theme.color.primary};
-  backdrop-filter: blur(7.5px);
-  color: ${(props) => props.theme.color.white};
-  text-align: center;
-  font-size: 18px;
-  font-weight: 500;
-  &:hover {
-    background: ${(props) => props.theme.color.white};
-    color: ${(props) => props.theme.color.gray};
-    transition: background 0.3s ease;
-    cursor: pointer;
-  }
-`;
-
-export { StContainer, StHeader, StFigure, StTitle, StTagWrapper, StTag, StGameInfo, StButton, StInfoWrapper };
+export { StContainer, StHeader, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };

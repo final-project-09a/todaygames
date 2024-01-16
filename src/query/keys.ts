@@ -1,5 +1,7 @@
 export const QUERY_KEYS = {
+  POST: 'posts',
   COMMENTS: 'comments',
+  GAMES: 'games',
   POSTS: 'posts',
   SEARCH: 'search',
   DETAIL: 'detail',
