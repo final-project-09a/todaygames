@@ -49,11 +49,11 @@ const Home = () => {
       </StSection>
       <StMainWrapper>
         <StSection>
-          <h1>이번 주 추천 리스트</h1>
+          <h1>이번 주 추천리스트</h1>
           <RecommendList mostPlayedGames={mostPlayedGames} />
         </StSection>
         <StSection>
-          <h1>새로나온 게임</h1>
+          <h1>새로 나온 게임</h1>
           <NewGames />
         </StSection>
         <StSection>

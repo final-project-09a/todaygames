@@ -1,16 +1,8 @@
-import {
-  StContainer,
-  StHeader,
-  StFigure,
-  StTitle,
-  StTagWrapper,
-  StTag,
-  StGameInfo,
-  StButton,
-  StInfoWrapper
-} from './styles';
+import { StContainer, StHeader, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper } from './styles';
 import { getGameDetails } from 'api/steamApis';
 import { useQueries } from '@tanstack/react-query';
+import Button from 'common/Button';
+import Tag from 'common/Tag';
 
 interface HeaderProps {
   mostPlayedGames: any;
@@ -37,6 +29,10 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
     return <div>게임 상세 정보를 가져오는 중입니다...</div>;
   }
 
+  const handleMoreButtonClick = () => {
+    console.log('button click');
+  };
+
   return (
     <StContainer>
       <StHeader>
@@ -46,13 +42,15 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
             <StTitle>{gameDetailsArray[0]?.name}</StTitle>
             <StTagWrapper>
               {gameDetailsArray[0]?.genres.map((category: any, index: number) => (
-                <StTag key={index}>
+                <Tag size="large" key={index}>
                   <p>{category.description}</p>
-                </StTag>
+                </Tag>
               ))}
             </StTagWrapper>
           </StGameInfo>
-          <StButton>Play Now</StButton>
+          <Button size="large" onClick={handleMoreButtonClick}>
+            Play Now
+          </Button>
         </StInfoWrapper>
       </StHeader>
     </StContainer>
