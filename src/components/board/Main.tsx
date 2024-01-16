@@ -68,7 +68,7 @@ export const Main = () => {
 
   console.log('post 데이터 확인', postsData);
   console.log('user 데이터 확인', userInfoData);
-  
+
   return (
     <>
       <Stselectcontainer>
