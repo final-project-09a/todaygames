@@ -7,7 +7,6 @@ interface NewGameCardProps {
 
 function NewGameCard({ gameDetails }: NewGameCardProps) {
   const gneres = gameDetails.genres;
-  console.log(gameDetails);
 
   return (
     <StCardWrapper>
