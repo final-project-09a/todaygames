@@ -3,6 +3,7 @@ import Home from '../pages/home';
 import Detail from '../pages/detail';
 import { Board } from '../pages/board/Board';
 import { BoardDetail } from '../pages/board/BoardDetail';
+import Register from '../pages/register/Register';
 import SignUp from '../pages/signup/signup';
 import Login from '../pages/login/Login';
 import NavBar from 'components/Navbar/NavBar';
@@ -13,6 +14,7 @@ const Router = () => {
     <BrowserRouter>
       <NavBar />
       <Routes>
+        <Route path="/register/" element={<Register />} />
         <Route path="/board" element={<Board />} />
         <Route path="/boarddetail:id" element={<BoardDetail />} />
         <Route path="/" element={<Home />} />

@@ -1,11 +1,12 @@
-import RecommendList from 'components/homepage/recommendList';
+import RecommendList from 'components/homepage/RecommendList';
 import NewGames from 'components/homepage/NewGames';
-import GenreFilter from 'components/homepage/GenreFilter';
+import GenreSlider from 'components/homepage/GenreSlider';
 import Header from 'components/Header';
 import { StContainer, StMainWrapper, StSection } from './styles';
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getMostPlayedGames } from 'api/games';
+import { getMostPlayedGames } from 'api/steamApis';
+import SelectedGenreList from 'components/homepage/SelectedGenreList';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -17,8 +18,8 @@ const Home = () => {
 
   // 가장 많이 플레이된 게임 100개 불러오기
   const {
-    isLoading: mostPlayedLoading,
-    isError: mostPlayedError,
+    isLoading,
+    isError,
     data: mostPlayedGames
   } = useQuery({
     queryKey: ['recommendGames'],
@@ -33,6 +34,14 @@ const Home = () => {
     }
   });
 
+  if (isLoading) {
+    <p>게임 정보를 불러오는 중입니다...</p>;
+  }
+
+  if (isError) {
+    <p>게임 정보를 불러오지 못했습니다.</p>;
+  }
+
   return (
     <StContainer>
       <StSection>
@@ -40,16 +49,16 @@ const Home = () => {
       </StSection>
       <StMainWrapper>
         <StSection>
-          <h1>이번 주 추천 리스트</h1>
+          <h1>이번 주 추천리스트</h1>
           <RecommendList mostPlayedGames={mostPlayedGames} />
         </StSection>
         <StSection>
-          <h1>새로나온 게임</h1>
-          <NewGames mostPlayedGames={mostPlayedGames} />
+          <h1>새로 나온 게임</h1>
+          <NewGames />
         </StSection>
         <StSection>
           <h1>장르별 탐색</h1>
-          <GenreFilter />
+          <GenreSlider />
         </StSection>
       </StMainWrapper>
     </StContainer>

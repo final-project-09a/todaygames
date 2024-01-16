@@ -1,7 +1,11 @@
 import { BoardCategory } from 'components/board/BoardCategory';
 import { Main } from 'components/board/Main';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { ToPostBtn } from './styles';
+
 export const Board = () => {
+  const navigate = useNavigate();
   return (
     <>
       <StboardListContainer>

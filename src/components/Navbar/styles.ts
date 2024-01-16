@@ -2,11 +2,10 @@ import styled from 'styled-components';
 import { theme } from 'styles/theme';
 
 const NavContainer = styled.div`
-  width: 97%;
+  width: 100%;
 
   height: 56px;
   display: flex;
-  padding: 0 20px;
   justify-content: space-between;
   align-items: center;
   background: #181924;
@@ -28,7 +27,7 @@ const BtnInputWrapper = styled.div`
   gap: 5px;
 `;
 
-const HeaderButton = styled.button`
+const HeaderButton = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
