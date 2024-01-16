@@ -10,6 +10,7 @@ const MainBackground = styled.div`
 const WrappingAllComponents = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 1280px;
   height: 708px;
   background-color: ${(props) => props.theme.color.postback};
@@ -24,11 +25,11 @@ const WrappingBtnAndInput = styled.div`
 `;
 
 const WrappingTitleAndBtn = styled.div`
-  width: 1240px;
+  width: 1270px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 60px;
+  margin: 60px 0px 20px 0px;
 `;
 
 const TitleText = styled.div`
@@ -81,7 +82,6 @@ const WrappingInput = styled.form`
   display: flex;
   flex-direction: column;
   background-color: #232323;
-  align-items: center;
   border-radius: 10px;
   padding: 5px 0px 30px 0px;
 `;
