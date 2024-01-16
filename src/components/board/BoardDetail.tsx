@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import React from 'react';
 import { BoardCategory } from './BoardCategory';
 import { Seach } from './Seach';
+import { getPosts } from 'api/post';
 
 interface PostType {
   data: Typedata['public']['Tables']['posts']['Row'];
@@ -22,17 +23,6 @@ export const BoardDetail = () => {
       const userId = session?.user?.id;
     });
   }, []);
-
-  const getPosts = async () => {
-    try {
-      const { data } = await supabase.from(QUERY_KEYS.POSTS).select();
-      console.log('data 연결', data);
-      return data;
-    } catch (error) {
-      console.error('데이터 불러오기 실패:', error);
-      return null;
-    }
-  };
 
   return (
     <React.Fragment>
