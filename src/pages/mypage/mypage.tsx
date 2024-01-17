@@ -1,94 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { UserInfo } from 'api/user';
+import { setError, setLoading } from '../../redux/modules/userSlice';
+import { setUser } from '../../redux/modules/userSlice';
+import { useParams } from 'react-router-dom';
+import { RootState } from 'redux/config/configStore';
 
-import { supabasedata } from 'shared/supabase';
-import { StUserinfoBOx, Avatar, Username, UserDetails, UserDetail, UserWrapper } from './styles';
-import userimg from 'assets/img/userimg.png';
-import { useSelector, useDispatch } from 'react-redux';
-import currentuserinfo from 'userSlice';
-
-interface User {
-  email: string;
-  avatar_url: any;
-  username: string | null;
-  admin: boolean | null;
-  id: string;
-  Profile: string | null;
-}
 const MyPage = () => {
-  const [userList, setUserList] = useState<User[]>([]);
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-  const [useruid, setuseruid] = useState<string | null>(null);
-
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
-
-  const user = useSelector((state: any) => state.user);
+  // userSlice의 상태관리를 위해 상태 가져오기
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
   console.log(user);
 
-  const userdata = useSelector;
+  // 리액트쿼리를 이용해서 supabase에서 user 데이터 가져오기
+  const { data } = useQuery({
+    queryKey: ['userInfo', id],
+    queryFn: UserInfo
+  });
+  console.log(data);
 
+  // params로 가져온 id값과 일치하는 데이터 찾기
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const { data, error } = await supabasedata.from('userinfo').select();
+    try {
+      dispatch(setLoading(true));
+      const userData = data?.find((userData) => userData.id === id) || null;
+      console.log(userData);
+      dispatch(setUser(userData));
+    } catch (error) {
+      dispatch(setError(true));
+    }
+  }, [dispatch, data, id]);
 
-        if (error) {
-          console.error('Error fetching user info:', error.message);
-        } else {
-          if (data && data.length > 0) {
-            setUserList(data);
-            console.log(data);
-
-            // 여기서 해야할거 map으로 모든 테이블 값을 출력후
-            //fillter를 이용 uid의 값이 현재 로그인 정보랑같은 경우에만 출력
-          } else {
-            console.warn('No user info found.');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user info:');
-      }
-    };
-
-    const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
-      setCurrentUser(session?.user?.email || null);
-
-      const userId = session?.user?.id;
-
-      setuseruid(userId || null);
-      //로그인한 유저의 uid값을 추출합니다
-    });
-
-    fetchUserInfo();
-  }, []);
-  // console.log(useruid);
-  // console.log(userList);
-  // console.log(currentUser);
-  // console.log(currentuserinfo());
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      <div>
-        {userList
-          .filter((user) => user.id === useruid)
-          .map((user: User, index: number) => (
-            <>
-              <StUserinfoBOx key={index}>
-                {/* <Avatar src={user.avatar_url} alt="User Avatar" /> */}
-                {/* 아바타 부분은 예시를 위해 assets 폴더에 기본이미지 추가하였습니다 */}
-                {/* userinfo테이블에 url을 담는 형식이나 dkslaus수파베이스 스토리지도 사용해야할듯싶네요 */}
-                <Avatar src={userimg} alt="User Avatar" />
-
-                <UserWrapper>
-                  <Username>{user.username}</Username>
-                  {user.Profile}
-                </UserWrapper>
-              </StUserinfoBOx>
-              <UserDetail>
-                <strong>Email:</strong> {user.email}
-              </UserDetail>
-            </>
-          ))}
-      </div>
+      {user && (
+        <>
+          <p>{user.email}</p>
+        </>
+      )}
     </div>
   );
 };

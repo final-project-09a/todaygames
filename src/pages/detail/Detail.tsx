@@ -1,7 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import { getGameDetails } from 'api/steamApis';
 import { useParams } from 'react-router-dom';
-import { StContainer, StImageWrapper } from './styles';
+import { StContainer, StInfoBox } from './styles';
+import GameTitle from 'components/detailpage/GameTitle';
+import GameInfo from 'components/detailpage/GameInfo';
+import GameDescription from 'components/detailpage/GameDescription';
+import ScreenShotSlide from 'components/detailpage/ScreenShotSlide';
+import RelationGames from 'components/detailpage/RelationGames';
+import React from 'react';
+import styled from 'styled-components';
+import SystemReqirement from 'components/detailpage/SystemReqirement';
+
+export const DataContext = React.createContext<GameData | null>(null);
+
+interface GameData {
+  name: string;
+  background_raw: string;
+  screenshots?: { path_thumbnail: string }[];
+  genres: { description: string }[];
+  short_description: string;
+  about_the_game: string;
+  developers: string;
+  publishers: string;
+  release_date: { date: string };
+  detailed_description: string;
+  pc_requirements: { minimum: string };
+}
 
 const Detail = () => {
   const { appid } = useParams();
@@ -20,25 +44,22 @@ const Detail = () => {
   }
 
   return (
-    <StContainer>
-      <StImageWrapper>
-        <img src={data.background_raw} alt={data.name} />
-      </StImageWrapper>
-      <h2>{data.name}</h2>
-      <div>
-        <label>출시일</label>
-        <h2>{data.release_date.date}</h2>
-      </div>
-      <div>
-        <label>장르</label>
-        <h2>{data.genres.map((genre: any) => genre.description).join(' / ')}</h2>
-      </div>
-      <div>
-        <label>게임정보</label>
-        <p dangerouslySetInnerHTML={{ __html: data.about_the_game }} />
-        <p dangerouslySetInnerHTML={{ __html: data.short_description }} />
-      </div>
-    </StContainer>
+    <DataContext.Provider value={data}>
+      <StContainer>
+        <GameTitle />
+        <ScreenShotSlide />
+        <StInfoBox>
+          <GameInfo />
+        </StInfoBox>
+        <StInfoBox>
+          <GameDescription />
+        </StInfoBox>
+        <StInfoBox>
+          <SystemReqirement />
+        </StInfoBox>
+        <RelationGames />
+      </StContainer>
+    </DataContext.Provider>
   );
 };
 
