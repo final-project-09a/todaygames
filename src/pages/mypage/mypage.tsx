@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { supabasedata } from 'shared/supabase';
 import { StUserinfoBOx, Avatar, Username, UserDetails, UserDetail, UserWrapper } from './styles';
 import userimg from 'assets/img/userimg.png';
+import { useSelector, useDispatch } from 'react-redux';
+import currentuserinfo from 'userSlice';
 
 interface User {
   email: string;
@@ -18,6 +20,11 @@ const MyPage = () => {
   const [useruid, setuseruid] = useState<string | null>(null);
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+
+  const user = useSelector((state: any) => state.user);
+  console.log(user);
+
+  const userdata = useSelector;
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -55,6 +62,8 @@ const MyPage = () => {
   }, []);
   // console.log(useruid);
   // console.log(userList);
+  // console.log(currentUser);
+  // console.log(currentuserinfo());
 
   return (
     <div>
