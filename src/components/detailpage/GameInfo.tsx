@@ -22,10 +22,10 @@ const GameInfo = () => {
           <label>출시일</label>
         </section>
         <section>
-          <p>{genres?.join(', ')}</p>
-          <p>{data?.developers}</p>
-          <p>{data?.publishers}</p>
-          <p>{data?.release_date.date}</p>
+          <h4>{genres?.join(', ')}</h4>
+          <h4>{data?.developers?.join(', ')}</h4>
+          <h4>{data?.publishers}</h4>
+          <h4>{data?.release_date.date}</h4>
         </section>
       </div>
     </>

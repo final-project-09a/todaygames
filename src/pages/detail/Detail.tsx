@@ -6,10 +6,11 @@ import GameTitle from 'components/detailpage/GameTitle';
 import GameInfo from 'components/detailpage/GameInfo';
 import GameDescription from 'components/detailpage/GameDescription';
 import ScreenShotSlide from 'components/detailpage/ScreenShotSlide';
-import RelationGames from 'components/detailpage/RelationGames';
+import RelatedGames from 'components/detailpage/RelatedGames';
 import React from 'react';
 import styled from 'styled-components';
-import SystemReqirement from 'components/detailpage/SystemReqirement';
+import SystemRequirements from 'components/detailpage/SystemRequirements';
+import axios from 'axios';
 
 export const DataContext = React.createContext<GameData | null>(null);
 
@@ -20,7 +21,7 @@ interface GameData {
   genres: { description: string }[];
   short_description: string;
   about_the_game: string;
-  developers: string;
+  developers?: string[] | undefined;
   publishers: string;
   release_date: { date: string };
   detailed_description: string;
@@ -43,6 +44,10 @@ const Detail = () => {
     return <div>게임 정보를 가져올 수 없습니다.</div>;
   }
 
+  console.log(data);
+  const genres = data.genres.map((genre: any) => genre.description);
+  console.log(genres);
+
   return (
     <DataContext.Provider value={data}>
       <StContainer>
@@ -55,9 +60,9 @@ const Detail = () => {
           <GameDescription />
         </StInfoBox>
         <StInfoBox>
-          <SystemReqirement />
+          <SystemRequirements appid={appid} />
         </StInfoBox>
-        <RelationGames />
+        <RelatedGames genres={genres} />
       </StContainer>
     </DataContext.Provider>
   );

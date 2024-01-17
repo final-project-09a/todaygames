@@ -5,25 +5,19 @@ import React, { useEffect, useState } from 'react';
 import { GENRE_NAME } from 'constants/genre';
 import SelectedGenreCard from './SelectedGenreCard';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
+import { GameData, setGame } from '../../redux/modules/gameSlice';
+import { UserState } from 'redux/modules/userSlice';
 
 interface SelectedGenreListProps {
   selectedTag: string | null;
 }
 
-interface GameInfo {
-  app_id: number;
-  capsule_image: string;
-  genres: string[];
-  header_image: string;
-  id: number;
-  is_free: boolean;
-  name: string;
-  required_age: number;
-  short_description: string;
-}
-
 const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
-  const [gameInfoList, setGameInfoList] = useState<GameInfo[]>([]);
+  const dispatch = useDispatch();
+  const games = useSelector((state: RootState) => state.gameSlice.data);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['selectedGenre', selectedTag],
@@ -33,20 +27,8 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
 
   useEffect(() => {
     if (data && !isLoading && !isError) {
-      const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
-      setGameInfoList(
-        filteredGames.map((game) => ({
-          app_id: game.app_id,
-          capsule_image: game.capsule_image,
-          genres: game.genres,
-          header_image: game.header_image,
-          id: game.id,
-          is_free: game.is_free,
-          name: game.name,
-          required_age: game.required_age,
-          short_description: game.short_description
-        }))
-      );
+      const filteredGames = data.filter((game: any) => game.genres.includes(selectedTag));
+      dispatch(setGame(filteredGames));
     }
   }, [data, isLoading, isError, selectedTag]);
 
@@ -57,12 +39,13 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
   if (isError) {
     return <p>게임 정보를 불러오지 못했습니다.</p>;
   }
+  console.log(games);
 
   return (
     <div>
-      {gameInfoList.length > 0 ? (
+      {games ? (
         <StContainer>
-          {gameInfoList.map((game) => (
+          {games?.map((game: GameData) => (
             <li key={game.app_id}>
               <SelectedGenreCard gameInfoList={game} />
             </li>

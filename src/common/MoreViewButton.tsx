@@ -9,7 +9,7 @@ interface MoreViewButtonProps {
 const MoreViewButton = ({ children, onClick }: MoreViewButtonProps) => {
   return (
     <StButton onClick={onClick}>
-      <p>{children}</p>
+      <h4>{children}</h4>
     </StButton>
   );
 };

@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 const GameDescription = () => {
   const data = useContext(DataContext);
-  console.log(data);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpansion = () => {
@@ -15,16 +14,14 @@ const GameDescription = () => {
   return (
     <>
       <h2>게임설명</h2>
-      <p>
-        {data && data.about_the_game !== undefined ? (
-          <>
-            <StDescriptionWrapper $isExpanded={isExpanded}>
-              <p dangerouslySetInnerHTML={{ __html: data.detailed_description }} />
-            </StDescriptionWrapper>
-            <MoreViewButton onClick={toggleExpansion}>{isExpanded ? '줄이기' : '더 알아보기'}</MoreViewButton>
-          </>
-        ) : null}
-      </p>
+      {data && data.about_the_game !== undefined ? (
+        <>
+          <StDescriptionWrapper $isExpanded={isExpanded}>
+            <p dangerouslySetInnerHTML={{ __html: data.detailed_description }} />
+          </StDescriptionWrapper>
+          <MoreViewButton onClick={toggleExpansion}>{isExpanded ? '줄이기 ▲' : '더 알아보기 ▼'}</MoreViewButton>
+        </>
+      ) : null}
     </>
   );
 };
@@ -39,8 +36,4 @@ const StDescriptionWrapper = styled.div<{ $isExpanded: boolean }>`
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-`;
-
-const StButton = styled.button`
-  margin-top: 30px;
 `;
