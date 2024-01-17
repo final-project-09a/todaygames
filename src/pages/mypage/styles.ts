@@ -79,7 +79,6 @@ export const UserWrapper = styled.div`
 `;
 
 export const ProfileBox = styled.div`
-  display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
@@ -87,7 +86,8 @@ export const ProfileBox = styled.div`
   padding: 20px;
   /* border: 1px solid #ddd; */
   border-radius: 10px;
-  width: calc(100% - 40px);
+  /* width: calc(100% - 40px); */
+  width: 95%;
   background-color: ${(props) => props.theme.color.white};
 `;
 
@@ -103,9 +103,10 @@ export const ProfileInput = styled.input`
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-bottom: 20px;
-  flex-grow: 2000px;
+  height: 50px;
+
   margin-right: 10px;
-  size: 100px;
+  size: 95px;
   &:focus {
     outline: none;
     border-color: ${(props) => props.theme.color.primary};
@@ -128,7 +129,7 @@ export const CharacterCount = styled.div`
 `;
 
 export const ManageButton = styled.button`
-  padding: 10px 30px;
+  padding: 8px 30px;
   color: ${(props) => props.theme.color.white};
   background-color: ${(props) => props.theme.color.primary};
   border: none;
@@ -138,8 +139,7 @@ export const ManageButton = styled.button`
   height: 100%;
   text-align: center;
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  margin-bottom: 15px;
 
   &:hover {
     background-color: ${(props) => props.theme.color.secondary};
