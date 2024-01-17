@@ -2,9 +2,9 @@ import styled from 'styled-components';
 
 export const StUserinfoBOx = styled.div`
   display: flex;
-  flex-direction: row; // 수정된 부분
-  align-items: flex-start; // 수정된 부분
-  justify-content: flex-start; // 추가된 부분
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
   margin: 20px;
   padding: 20px;
   border: 1px solid #ddd;
@@ -15,7 +15,7 @@ export const Avatar = styled.img`
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  margin-right: 20px; // 추가된 부분
+  margin-right: 20px;
 `;
 
 export const Username = styled.h3`

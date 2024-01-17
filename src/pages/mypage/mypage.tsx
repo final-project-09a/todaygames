@@ -7,7 +7,8 @@ import { setError, setLoading } from '../../redux/modules/userSlice';
 import { setUser } from '../../redux/modules/userSlice';
 import { useParams } from 'react-router-dom';
 import { RootState } from 'redux/config/configStore';
-
+import { StUserinfoBOx, Avatar, Username, UserDetails, UserDetail, UserWrapper } from './styles';
+import userimg from 'assets/img/userimg.png';
 const MyPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -43,7 +44,20 @@ const MyPage = () => {
     <div>
       {user && (
         <>
-          <p>{user.email}</p>
+          <StUserinfoBOx>
+            {/* <Avatar src={user.avatar_url} alt="User Avatar" /> */}
+            {/* 아바타 부분은 예시를 위해 assets 폴더에 기본이미지 추가하였습니다 */}
+            {/* userinfo테이블에 url을 담는 형식이나 dkslaus수파베이스 스토리지도 사용해야할듯싶네요 */}
+            <Avatar src={userimg} alt="User Avatar" />
+
+            <UserWrapper>
+              <Username>{user.username}</Username>
+              {user.Profile}
+            </UserWrapper>
+          </StUserinfoBOx>
+          <UserDetail>
+            <strong>Email:{user.email}</strong>
+          </UserDetail>
         </>
       )}
     </div>
