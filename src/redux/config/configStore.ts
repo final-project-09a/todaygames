@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userSlice from 'userSlice';
+import gameSlice from '../modules/gameSlice';
+import userSlice from '../modules/userSlice';
 
 export const store = configureStore({
-  reducer: { userSlice: userSlice }
+  reducer: { userSlice, gameSlice }
 });
 
 export type RootState = ReturnType<typeof store.getState>; // Redux 스토어의 상태에 대한 타입 => state에 대한 타입

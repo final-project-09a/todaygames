@@ -26,6 +26,7 @@ export interface Typedata {
           comments_count: number;
         };
         Update: {
+          postsData: any;
           id: string;
           user_id?: string;
           category: string;
@@ -81,6 +82,20 @@ export interface Typedata {
           id: string;
           username: string;
           avatar_url: string;
+        };
+      };
+      games: {
+        Row: {
+          add_id: number;
+          name: string;
+          required_age: number;
+          is_free: boolean;
+          short_description: string;
+          header_image: string;
+          capsule_image: string;
+          website: string;
+          genres: string;
+          id: string;
         };
       };
     };

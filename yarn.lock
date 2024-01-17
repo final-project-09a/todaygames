@@ -1269,10 +1269,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
-"@drizzle-team/studio@^0.0.37":
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/@drizzle-team/studio/-/studio-0.0.37.tgz#f86b18954592c2457286e094ac946e6b1469bc31"
-  integrity sha512-LZyAPGJBX43jsrVZh7+w1Jig/BC6PJx63ReHUYK+GRQYNY9UJNlPXmn1uC/LMRX+A7JwYM4Sr4Fg/hnJSqlfgA==
+"@drizzle-team/studio@^0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@drizzle-team/studio/-/studio-0.0.39.tgz#70e9155503f7343e8f1917d316f93e64c23760e1"
+  integrity sha512-c5Hkm7MmQC2n5qAsKShjQrHoqlfGslB8+qWzsGGZ+2dHMRTNG60UuzalF0h0rvBax5uzPXuGkYLGaQ+TUX3yMw==
   dependencies:
     superjson "^2.2.1"
 
@@ -2053,9 +2053,6 @@
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.9.2.tgz#39c839022ce73f4eb5da6fb7724fb6a6392150c7"
   integrity sha512-I6yHo8CC9cxhOo6DouDMy9uOfW7hjdsnCxZiaJuIVZm1dBGTFiQPgfMa9zXCamEWzNyWRjZvupAUuX+tqcl5Sw==
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.9.2.tgz#39c839022ce73f4eb5da6fb7724fb6a6392150c7"
-  integrity sha512-I6yHo8CC9cxhOo6DouDMy9uOfW7hjdsnCxZiaJuIVZm1dBGTFiQPgfMa9zXCamEWzNyWRjZvupAUuX+tqcl5Sw==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
@@ -2543,7 +2540,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/hoist-non-react-statics@*":
+"@types/hoist-non-react-statics@*", "@types/hoist-non-react-statics@^3.3.0":
   version "3.3.5"
   resolved "https://registry.yarnpkg.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.5.tgz#dab7867ef789d87e2b4b0003c9d65c49cc44a494"
   integrity sha512-SbcrWzkKBw2cdwRTwQAswfpB9g9LJWfjtUeW/jvNwbhC8cpmmNYVePa+ncbUe0rGTQ7G3Ff6mYUN2VMfLVr+Sg==
@@ -2683,6 +2680,16 @@
   integrity sha512-TJxDm6OfAX2KJWJdMEVTwWke5Sc/E/RlnPGvGfS0W7+6ocy2xhDVQVh/KvC2Uf7kACs+gDytdusDSdWfWkaNzw==
   dependencies:
     "@types/react" "*"
+
+"@types/react-redux@^7.1.33":
+  version "7.1.33"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.1.33.tgz#53c5564f03f1ded90904e3c90f77e4bd4dc20b15"
+  integrity sha512-NF8m5AjWCkert+fosDsN3hAlHzpjSiXlVy9EgQEmLoBhaNXbmyeGs/aj5dQzKuF+/q+S7JQagorGDW8pJ28Hmg==
+  dependencies:
+    "@types/hoist-non-react-statics" "^3.3.0"
+    "@types/react" "*"
+    hoist-non-react-statics "^3.3.0"
+    redux "^4.0.0"
 
 "@types/react-slick@^0.23.13":
   version "0.23.13"
@@ -4617,11 +4624,11 @@ dreamopt@~0.8.0:
     wordwrap ">=0.0.2"
 
 drizzle-kit@^0.20.10:
-  version "0.20.12"
-  resolved "https://registry.yarnpkg.com/drizzle-kit/-/drizzle-kit-0.20.12.tgz#edd05a4ef73a3a5f71325d0c17fb3722a01a09a2"
-  integrity sha512-JWJposyEO6QvGIdvj0CmnJK5sMWW9j5HPiGnRIKvYNaAfZEHbmWlemxV2np7g2FZzSvuzwpa9EGmO20PaPeUmA==
+  version "0.20.13"
+  resolved "https://registry.yarnpkg.com/drizzle-kit/-/drizzle-kit-0.20.13.tgz#6aa45a3b445ecfd05becb7bb679a54a3194f4fe4"
+  integrity sha512-j9oZSQXNWG+KBJm0Sg3S/zJpncHGKnpqNfFuM4NUxUMGTcihDHhP9SW6Jncqwb5vsP1Xm0a8JLm3PZUIspC/oA==
   dependencies:
-    "@drizzle-team/studio" "^0.0.37"
+    "@drizzle-team/studio" "^0.0.39"
     "@esbuild-kit/esm-loader" "^2.5.5"
     camelcase "^7.0.1"
     chalk "^5.2.0"
@@ -9113,6 +9120,13 @@ redux-thunk@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/redux-thunk/-/redux-thunk-3.1.0.tgz#94aa6e04977c30e14e892eae84978c1af6058ff3"
   integrity sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==
+
+redux@^4.0.0:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/redux/-/redux-4.2.1.tgz#c08f4306826c49b5e9dc901dee0452ea8fce6197"
+  integrity sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==
+  dependencies:
+    "@babel/runtime" "^7.9.2"
 
 redux@^5.0.0:
   version "5.0.1"

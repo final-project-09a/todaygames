@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const StContainer = styled.div`
   display: block;
-  flex-direction: column;
+  /* flex-direction: column; */
 `;
 
 const StMainWrapper = styled.div`
