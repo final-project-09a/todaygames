@@ -15,6 +15,7 @@ const WrappingAllComponents = styled.div`
   height: 708px;
   background-color: ${(props) => props.theme.color.postback};
   border-radius: 10px;
+  padding-top: 25px;
 `;
 
 const WrappingBtnAndInput = styled.div`
@@ -76,49 +77,108 @@ const RegisterBtn = styled.button`
 `;
 
 const WrappingInput = styled.form`
-  margin-top: 20px;
   width: fit-content;
+  height: 158px;
   align-items: center;
   display: flex;
   flex-direction: column;
   background-color: #232323;
   border-radius: 10px;
-  padding: 5px 0px 30px 0px;
+  /* padding: 5px 0px 30px 0px; */
 `;
 
 const Titles = styled.div`
+  width: 1223px;
+  height: 46px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 `;
 
 const TitleInput = styled.textarea`
   display: flex;
-  width: 1223px;
-  height: 50px;
+  width: 1173px;
+  height: 46px;
   border-radius: 10px;
   background: ${(props) => props.theme.color.inputcolor};
   color: white;
-  margin: 10px;
+  text-indent: 8px;
+  font-size: 20px;
+  padding-top: 10px;
+  resize: none;
+  &::placeholder {
+    color: white;
+  }
+`;
+
+const GameSelect = styled.textarea`
+  display: flex;
+  width: 1173px;
+  height: 46px;
+  border-radius: 10px;
+  background: ${(props) => props.theme.color.inputcolor};
+  color: white;
   text-indent: 8px;
   resize: none;
   &::placeholder {
     color: white;
   }
+`;
+
+const TagSelect = styled.select`
+  display: flex;
+  width: 1173px;
+  height: 46px;
+  border-radius: 10px;
+  background: ${(props) => props.theme.color.inputcolor};
+  color: white;
+  text-indent: 8px;
+  resize: none;
+  &::placeholder {
+    color: white;
+  }
+`;
+
+const TextSpace = styled.div`
+  width: 30px;
+  height: 20px;
+  font-size: 16px;
 `;
 
 const ContentInput = styled.textarea`
   display: flex;
   width: 1223px;
-  height: 380px;
+  height: 418px;
+  margin-top: 10px;
   border-radius: 10px;
   background: ${(props) => props.theme.color.inputcolor};
   color: white;
   text-indent: 8px;
   resize: none;
+  padding-top: 10px;
+  font-size: 16px;
   &::placeholder {
     color: white;
   }
+`;
+
+const BottomBtn = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 1223px;
+  height: 47px;
+`;
+
+const ImageUploadBtn = styled.button`
+  border-radius: 10px;
+  width: 143px;
+  height: 47px;
+  background-color: #e7e7e7;
+  color: #666666;
+  margin: 20px 0px 20px 0px;
+  cursor: pointer;
 `;
 
 export {
@@ -133,5 +193,10 @@ export {
   CancelBtn,
   RegisterBtn,
   Titles,
-  WrappingAllComponents
+  WrappingAllComponents,
+  TextSpace,
+  ImageUploadBtn,
+  BottomBtn,
+  TagSelect,
+  GameSelect
 };
