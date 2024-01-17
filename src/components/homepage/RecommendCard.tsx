@@ -3,17 +3,17 @@ import styled from 'styled-components';
 
 interface RecommendCardProps {
   children: ReactNode;
-  imageUrl: string;
+  $imageUrl: string;
   alt: string;
   onClick: any;
 }
 
-function RecommendCard({ children, imageUrl, alt, onClick }: RecommendCardProps) {
+function RecommendCard({ children, $imageUrl, alt, onClick }: RecommendCardProps) {
   return (
     <StCardWrapper onClick={onClick}>
       <StImageWrapper>
-        <StImage imageUrl={imageUrl}>
-          <img src={imageUrl} alt={alt} />
+        <StImage $imageUrl={$imageUrl}>
+          <img src={$imageUrl} alt={alt} />
         </StImage>
       </StImageWrapper>
       <StNameOverlay>{children}</StNameOverlay>
@@ -39,15 +39,24 @@ const StImageWrapper = styled.div`
   right: 0;
   bottom: 0;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const StImage = styled.figure<{ imageUrl: string }>`
+const StImage = styled.figure<{ $imageUrl: string }>`
   width: 100%;
   height: 100%;
-  background: url(${(props) => props.imageUrl}) center/cover no-repeat;
+  background: url(${(props) => props.$imageUrl}) center/cover no-repeat;
   transition: transform 0.3s ease;
   ${StCardWrapper}:hover & {
     transform: scale(1.05);
+  }
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
   }
 `;
 

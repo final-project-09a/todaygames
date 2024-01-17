@@ -1,54 +1,35 @@
-import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getGameDetails, getMostPlayedGames } from 'api/games';
-import React, { useEffect } from 'react';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import { getGameDetails, getTopReleases } from 'api/steamApis';
 import NewGameCard from './NewGameCard';
 import styled from 'styled-components';
 
-interface NewGamesProps {
-  mostPlayedGames: any;
-}
+const NewGames = () => {
+  // 월별 최신 출시 게임 30개
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ['topReleases'],
+    queryFn: getTopReleases
+  });
 
-const NewGames = ({ mostPlayedGames }: NewGamesProps) => {
-  // const queryClient = useQueryClient();
+  const appids = data?.map((item: any) => item.appid).slice(0, 2) || [];
 
-  // useEffect(() => {
-  //   // 마운트 될 때 캐시삭제
-  //   queryClient.invalidateQueries({ queryKey: ['newGames'] });
-  // }, [queryClient]);
+  // // 100개 중 가장 최근에 출시된 게임 2개 sorting
+  // const appids = mostPlayedGames
+  //   ?.map((game: any) => game.appid)
+  //   .sort((a: any, b: any) => b - a)
+  //   .slice(0, 2);
 
-  // // 가장 많이 플레이된 게임 100개 불러오기
-  // const {
-  //   isLoading: mostPlayedLoading,
-  //   isError: mostPlayedError,
-  //   data: mostPlayedGames
-  // } = useQuery({
-  //   queryKey: ['newGames'],
-  //   queryFn: async () => {
-  //     try {
-  //       const data = await getMostPlayedGames();
-  //       return data;
-  //     } catch (error) {
-  //       console.error('most played games 패치 에러: ', error);
-  //       throw error;
-  //     }
-  //   }
-  // });
+  if (isLoading) {
+    <p>게임 정보를 불러오는 중입니다...</p>;
+  }
 
-  const appids = mostPlayedGames
-    ?.map((game: any) => game.appid)
-    .sort((a: any, b: any) => b - a)
-    .slice(0, 2);
-
-  console.log(appids);
-
-  if (!appids) {
-    return null;
+  if (isError) {
+    <p>게임 정보를 불러오지 못했습니다.</p>;
   }
 
   // 최신 게임 2개 상세 정보 가져오기
   const gameDetailsQueries = useQueries({
     queries: appids?.map((appid: any) => ({
-      queryKey: ['gameDetails', appid],
+      queryKey: ['topReleasesInfo', appid],
       queryFn: () => getGameDetails(appid)
       // enabled: appid !== undefined
       // staleTime: Infinity
@@ -56,13 +37,14 @@ const NewGames = ({ mostPlayedGames }: NewGamesProps) => {
   });
 
   const gameDetailsArray = gameDetailsQueries?.map((query: any) => query.data);
-  console.log(gameDetailsArray);
 
   return (
     <StListContainer>
-      {gameDetailsArray.map((gameDetails) => (
-        <li key={gameDetails?.steam_appid}>{gameDetails && <NewGameCard imageUrl={gameDetails?.header_image} />}</li>
-      ))}
+      {gameDetailsArray
+        .filter((gameDetails) => gameDetails && gameDetails.steam_appid)
+        .map((gameDetails) => (
+          <li key={gameDetails?.steam_appid}>{gameDetails && <NewGameCard gameDetails={gameDetails} />}</li>
+        ))}
     </StListContainer>
   );
 };

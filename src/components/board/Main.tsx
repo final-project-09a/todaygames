@@ -3,16 +3,14 @@
 // import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { Typedata } from 'shared/supabase.type';
-import userimg from 'assets/img/userimg.png'; // 우선 이 이미지를  StcontentBox안에 넣음
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar } from 'pages/mypage/styles';
-import { getGameDetails, getGames } from 'api/games';
+import { getGames } from 'api/games';
 interface PostType {
   data: Typedata['public']['Tables']['posts']['Row'];
 }
@@ -81,9 +79,9 @@ export const Main = () => {
         <StcontentBox key={data.id} onClick={(event) => movedetailPageOnClick(data.id, event)}>
           <UserImage src={data.avatar_url} alt="프로필 이미지" />
           <Username>{data.username}</Username>
-          {getGames.map((game: any) => (
+          {/* {getGames.map((game: any) => (
             <GameComponent key={game.id}></GameComponent>
-          ))}
+          ))} */}
         </StcontentBox>
       ))}
     </>
