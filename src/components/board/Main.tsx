@@ -63,7 +63,7 @@ export const Main = () => {
   };
   //  글쓰기로 이동
   const moveregisterPageOnClick = (item: string) => {
-    if (item) navigate(`/Register/${item}`);
+    if (item) navigate(`/register/${item}`);
   };
 
   console.log('post 데이터 확인', postsData);
