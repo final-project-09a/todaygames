@@ -23,5 +23,3 @@ export const getGames = async () => {
 //     dispatch(setError(true));
 //   } finally {
 //     dispatch(setLoading(false));
-//   }
-// };
