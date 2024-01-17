@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { QUERY_KEYS } from 'query/keys';
+import { supabase } from 'shared/supabase';
+import { Typedata } from 'shared/supabase.type';
 
 const getMostPlayedGames = async () => {
   try {
@@ -30,6 +33,25 @@ const getGameDetails = async (appid: any) => {
   }
 };
 
+// supabase games
+const getGames = async () => {
+  try {
+    const { data } = await supabase.from(QUERY_KEYS.GAMES).select('*');
+    console.log(data);
+    return data || [];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+getGames()
+  .then((data) => {
+    console.log('supabasegameData', data);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
 // const getTopTenGameDetails = async () => {
 //   try {
 //     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/top-ten`);
@@ -41,4 +63,4 @@ const getGameDetails = async (appid: any) => {
 //   }
 // };
 
-export { getMostPlayedGames, getGameDetails };
+export { getMostPlayedGames, getGameDetails, getGames };

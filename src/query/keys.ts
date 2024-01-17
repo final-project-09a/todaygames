@@ -4,5 +4,6 @@ export const QUERY_KEYS = {
   SEARCH: 'search',
   DETAIL: 'detail',
   MEMOS: 'memos',
-  AUTH: 'auth'
+  AUTH: 'auth',
+  GAMES: 'games'
 };
