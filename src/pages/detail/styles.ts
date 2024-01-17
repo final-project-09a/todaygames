@@ -11,18 +11,26 @@ const StContainer = styled.div`
 const StInfoBox = styled.div`
   width: 1440px;
   height: fit-content;
-  padding: 40px 30px;
+  padding: 50px 40px;
   border-radius: 20px;
   margin-top: 30px;
   background: ${(props) => props.theme.color.postback};
+  display: flex;
+  flex-direction: column;
   & h2 {
     color: ${(props) => props.theme.color.white};
     font-size: 20px;
     font-weight: 700;
-    margin-bottom: 20px;
   }
   & p {
     color: #ccc;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    margin-top: 20px;
+  }
+  & h4 {
+    color: ${(props) => props.theme.color.white};
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
@@ -30,7 +38,8 @@ const StInfoBox = styled.div`
   & section {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    margin-top: 50px;
+    gap: 12px;
   }
   & label {
     color: #ccc;
@@ -40,7 +49,6 @@ const StInfoBox = styled.div`
   }
   & div {
     display: flex;
-    margin-top: 50px;
     gap: 50px;
   }
 `;
