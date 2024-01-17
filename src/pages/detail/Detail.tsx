@@ -8,9 +8,7 @@ import GameDescription from 'components/detailpage/GameDescription';
 import ScreenShotSlide from 'components/detailpage/ScreenShotSlide';
 import RelatedGames from 'components/detailpage/RelatedGames';
 import React from 'react';
-import styled from 'styled-components';
 import SystemRequirements from 'components/detailpage/SystemRequirements';
-import axios from 'axios';
 
 export const DataContext = React.createContext<GameData | null>(null);
 
@@ -44,9 +42,7 @@ const Detail = () => {
     return <div>게임 정보를 가져올 수 없습니다.</div>;
   }
 
-  console.log(data);
   const genres = data.genres.map((genre: any) => genre.description);
-  console.log(genres);
 
   return (
     <DataContext.Provider value={data}>
@@ -62,7 +58,7 @@ const Detail = () => {
         <StInfoBox>
           <SystemRequirements appid={appid} />
         </StInfoBox>
-        <RelatedGames genres={genres} />
+        <RelatedGames genres={genres} appid={appid} />
       </StContainer>
     </DataContext.Provider>
   );

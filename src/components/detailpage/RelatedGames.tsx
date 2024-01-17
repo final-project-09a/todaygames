@@ -8,7 +8,7 @@ interface Game {
   app_id: number;
 }
 
-const RelatedGames = ({ genres }: any) => {
+const RelatedGames = ({ genres, appid }: any) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['selectedGenre'],
     queryFn: getGames
@@ -20,10 +20,11 @@ const RelatedGames = ({ genres }: any) => {
     if (data && !isLoading && !isError) {
       const filteredGames: any = data
         .filter((game) => genres.some((genre: string) => game.genres.includes(genre)))
+        .filter((game) => game.app_id != appid)
         .slice(0, 4);
       setRelatedGameLists(filteredGames);
     }
-  }, [data, genres]);
+  }, [data, genres, appid]);
 
   return (
     <>

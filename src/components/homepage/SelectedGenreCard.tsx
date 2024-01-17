@@ -1,5 +1,4 @@
-import { useSelector } from 'react-redux';
-import { RootState } from 'redux/config/configStore';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface SelectedGenreCardProps {
@@ -7,12 +6,17 @@ interface SelectedGenreCardProps {
 }
 
 const SelectedGenreCard = ({ gameInfoList }: SelectedGenreCardProps) => {
-  const games = useSelector((state: RootState) => state.gameSlice.data);
+  const navigate = useNavigate();
+
+  const handleGameCardClick = () => {
+    navigate(`/detail/${gameInfoList.app_id}`);
+  };
 
   return (
-    <StContainer>
+    <StContainer onClick={handleGameCardClick}>
       <StCardWrapper>
         <StImageFigure $imageUrl={gameInfoList.header_image}></StImageFigure>
+        <StGameName>{gameInfoList.name}</StGameName> <StGameName>{gameInfoList.name}</StGameName>
         <StGameName>{gameInfoList.name}</StGameName>
       </StCardWrapper>
     </StContainer>
@@ -28,6 +32,11 @@ const StContainer = styled.div`
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 7px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  &:hover {
+    scale: calc(1.03);
+  }
 `;
 
 const StCardWrapper = styled.div`

@@ -32,7 +32,7 @@ const StDescriptionWrapper = styled.div<{ $isExpanded: boolean }>`
   overflow: hidden;
   & p {
     display: -webkit-box;
-    -webkit-line-clamp: ${(props) => (props.$isExpanded ? 'unset' : '6')};
+    -webkit-line-clamp: ${(props) => (props.$isExpanded ? 'unset' : '7')};
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
