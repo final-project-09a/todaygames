@@ -18,7 +18,6 @@ GenreCard.displayName = 'GenreCard';
 export default GenreCard;
 
 const StCardWrapper = styled.div<{ $isSelected: boolean }>`
-  width: 220px;
   height: 300px;
   flex-shrink: 0;
   border-radius: 20px;
