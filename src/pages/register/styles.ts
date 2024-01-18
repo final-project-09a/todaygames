@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import searchIcon from '../../assets/img/searchIcon.png';
+
 const MainBackground = styled.div`
   width: 100%;
   display: flex;
@@ -88,7 +88,6 @@ const WrappingInput = styled.form`
 `;
 
 const Titles = styled.div`
-  position: relative;
   width: 1223px;
   height: 46px;
   display: flex;
@@ -96,22 +95,6 @@ const Titles = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
-`;
-
-const SearchBtn = styled.button`
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  background-image: url(${searchIcon});
-  background-size: contain;
-  background-repeat: no-repeat;
-  width: 24px;
-  height: 24px;
-  border: 0px;
-  background-color: transparent;
-  filter: invert(1);
-  cursor: pointer;
-  z-index: 1;
 `;
 
 const TitleInput = styled.textarea`
@@ -128,7 +111,6 @@ const TitleInput = styled.textarea`
   &::placeholder {
     color: white;
   }
-  z-index: 0;
 `;
 
 const GameSelect = styled.textarea`
@@ -145,7 +127,7 @@ const GameSelect = styled.textarea`
   }
 `;
 
-const TagSelect = styled.div`
+const TagSelect = styled.select`
   display: flex;
   width: 1173px;
   height: 46px;
@@ -199,20 +181,6 @@ const ImageUploadBtn = styled.button`
   cursor: pointer;
 `;
 
-const ImageBox = styled.img`
-  width: 210px;
-  height: 150px;
-  border-radius: 10px;
-`;
-
-const WrappingImages = styled.div`
-  width: fit-content;
-  margin-top: 60px;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 4px;
-`;
-
 export {
   WrappingInput,
   TitleInput,
@@ -230,8 +198,5 @@ export {
   ImageUploadBtn,
   BottomBtn,
   TagSelect,
-  GameSelect,
-  ImageBox,
-  WrappingImages,
-  SearchBtn
+  GameSelect
 };
