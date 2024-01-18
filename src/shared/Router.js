@@ -15,7 +15,6 @@ const Router = () => {
       <NavBar />
       <Routes>
         <Route path="/register" element={<Register />} />
-
         <Route path="/board" element={<Board />} />
         <Route path="/boarddetail:id" element={<BoardDetail />} />
         <Route path="/" element={<Home />} />
