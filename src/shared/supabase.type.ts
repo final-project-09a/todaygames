@@ -7,7 +7,7 @@ export interface Typedata {
         Row: {
           // create,select
           id: string;
-          user_id: string;
+          users_id: string;
           like_count: number;
           comments_count: number;
           content: string;
@@ -17,7 +17,7 @@ export interface Typedata {
         };
         Insert: {
           id: string;
-          user_id?: string;
+          users_id?: string;
           category: string;
           title: string;
           image?: string;
@@ -26,19 +26,19 @@ export interface Typedata {
           comments_count: number;
         };
         Update: {
-          postsData: any;
+          getgamesData: any;
           id: string;
-          user_id?: string;
+          users_id: string;
           category: string;
           title: string;
-          image?: string;
+          image: string;
           content: string;
           like_count: number;
           comments_count: number;
         };
         Controll: {
           id: string;
-          user_id: string;
+          users_id: string;
           category: string;
           title: string;
           image: string;
