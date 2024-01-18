@@ -132,7 +132,7 @@ const Register = () => {
         <WrappingAllComponents>
           <WrappingInput>
             <Titles>
-              <TextSpace>제목</TextSpace>
+              <TextSpace>제목2</TextSpace>
               <TitleInput value={title} onChange={titleTextHandler} />
             </Titles>
             <Titles>
