@@ -1,37 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase, supabasedata } from 'shared/supabase';
-import { NavContainer, NavLogo, BtnInputWrapper, HeaderButton } from './styles';
-import logo from 'assets/img/logo.png';
+import { supabase } from 'shared/supabase';
+import { StNavContainer, StNavWrapper, StLogoWrapper, StMenuWrapper, StLogIn } from './styles';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/config/configStore';
+import Search from './Search';
+import styled from 'styled-components';
+import accountIcon from '../../assets/icons/accountIcon.svg';
 
 const NavBar: React.FC = () => {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
   const navigate = useNavigate();
-  const [useruid, setuseruid] = useState<string | null>(null);
 
-  useEffect(() => {
-    const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
-      setCurrentUser(session?.user?.email || null);
-
-      const userId = session?.user?.id;
-
-      setuseruid(userId || null);
-      //로그인한 유저의 uid값을 추출합니다
-    });
-
-    return () => {
-      authListener;
-    };
-  }, []);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   const handleLogout = async () => {
     try {
-      await supabasedata.auth.signOut();
-
+      await supabase.auth.signOut();
       alert('로그아웃 되었습니다.');
-
       navigate('/');
-      setCurrentUser(null);
     } catch (error) {
       console.error(error);
       alert('로그아웃 중에 오류가 발생했습니다.');
@@ -39,30 +25,56 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <NavContainer>
-      <Link to="/">
-        <NavLogo src={logo} />
-      </Link>
-      <BtnInputWrapper>
-        <HeaderButton>
-          {currentUser ? (
-            <>
-              {/* 각자의 uid값으로 마이페이에 들어갈수있습니다 */}
-              <button>
-                <Link to={`/mypage/${useruid}`}>마이페이지</Link>
-              </button>
-              {/* <Link to={`/mypage/${useruid}`}>마이페이지</Link> */}
-              <button onClick={handleLogout}>로그아웃</button>
-            </>
-          ) : (
-            <>
+    <StNavContainer>
+      <StNavWrapper>
+        <StLogoWrapper>
+          <Link to="/">Logo</Link>
+        </StLogoWrapper>
+
+        <StMenuWrapper>
+          <Link to={'/'}>
+            <h2>홈</h2>
+          </Link>
+          <Link to={'/board'}>
+            <h2>커뮤니티</h2>
+          </Link>
+          <Search />
+          <StLogIn>
+            {user ? (
+              <>
+                <Link to={`/mypage/${user.id}`}>
+                  <StMyPageLink>
+                    <StAccountIcon />
+                    <h2>마이페이지</h2>
+                  </StMyPageLink>
+                </Link>
+
+                <h2 onClick={handleLogout}>로그아웃</h2>
+              </>
+            ) : (
               <Link to="/login">로그인</Link>
-            </>
-          )}
-        </HeaderButton>
-      </BtnInputWrapper>
-    </NavContainer>
+            )}
+          </StLogIn>
+        </StMenuWrapper>
+      </StNavWrapper>
+    </StNavContainer>
   );
 };
 
 export default NavBar;
+
+const StMyPageLink = styled.div`
+  position: relative;
+`;
+
+const StAccountIcon = styled.div`
+  position: absolute;
+  top: 50%;
+  left: -50%;
+  width: 32px;
+  height: 32px;
+  transform: translateY(-50%);
+  background: url(${accountIcon}) no-repeat center center;
+  background-size: contain;
+  cursor: pointer;
+`;

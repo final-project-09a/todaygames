@@ -8,7 +8,6 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { Typedata } from 'shared/supabase.type';
-import userimg from 'assets/img/userimg.png'; // 우선 이 이미지를  StcontentBox안에 넣음
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGames } from 'api/games';
@@ -47,7 +46,8 @@ export const Main = () => {
 
   const [gameInfoList, setGameInfoList] = useState<GameInfo[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  console.log('user', user);
+  console.log(user);
+
   useEffect(() => {
     const currentDate = Date.now(); // 현재 시간을 가져옴
     const formatted = getFormattedDate(currentDate); // 날짜 포맷 변환
@@ -81,13 +81,16 @@ export const Main = () => {
     console.log('game name: ', getgamesData);
   }
   //  글쓰기로 이동
-  const moveregisterPageOnClick = () => {
+  const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (user) {
+      //  글쓰기로 이동
       navigate(`/register`);
+      // 로그인 상태가 아니라면 로그인으로 이동
     } else {
       navigate('/login');
     }
   };
+
   const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
     navigate(`/boarddetail/${item}`);
   };
