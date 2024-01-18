@@ -9,11 +9,13 @@ import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { Typedata } from 'shared/supabase.type';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getGames } from 'api/games';
 import { getFormattedDate } from 'util/date';
 import { AiFillLike } from 'react-icons/ai';
 import { IoChatbubbleOutline } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
 
 interface PostType {
   data: Typedata['public']['Tables']['posts']['Row'];
@@ -39,10 +41,11 @@ interface GameImageProps extends React.HTMLProps<HTMLImageElement> {
   src: string;
 }
 export const Main = () => {
-  // const {data} = useSelector()
+  const [selectedGenre, setSelectedGenre] = useState(null);
+  const { id } = useParams();
   const [formattedDate, setFormattedDate] = useState('');
 
-  const [gameInfoList, setGameInfoList] = useState<GameInfo[]>([]);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   useEffect(() => {
     const currentDate = Date.now(); // 현재 시간을 가져옴
@@ -76,9 +79,17 @@ export const Main = () => {
   } else if (getgamesData) {
     console.log('game name: ', getgamesData);
   }
-  //  글쓰기로 이동
+
+  console.log('user', user);
   const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`/Register`);
+    if (user) {
+      // 로그인 상태일 때는 바로 글쓰기 페이지로 이동
+      navigate('/register');
+    } else {
+      // 로그인 상태가 아니라면 로그인 페이지로 이동
+      // 로그인 되었다면     navigate(`/register`);  이동
+      navigate('/login');
+    }
   };
   const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
     navigate(`/boarddetail/${item}`);
@@ -86,6 +97,7 @@ export const Main = () => {
   const GameImage: React.FC<GameImageProps> = ({ src, ...otherProps }) => {
     return <img src={src} {...otherProps} />;
   };
+
   return (
     <>
       <Stselectcontainer>
@@ -107,10 +119,8 @@ export const Main = () => {
                   <Profileline>
                     <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
                     {userInfo.username}
-
                     {formattedDate}
                   </Profileline>
-
                   <h1>{post.title}</h1>
                   <h1>{post.content}</h1>
                   <p>#{post.category}</p>
@@ -191,6 +201,7 @@ const Stbutton = styled.button`
   width: 80px;
   background-color: #2d4ea5;
   border-radius: 10px;
+  cursor: grab;
 `;
 
 const UserImage = styled.img`
