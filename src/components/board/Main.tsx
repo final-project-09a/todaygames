@@ -78,8 +78,7 @@ export const Main = () => {
   }
   //  글쓰기로 이동
   const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { item } = event.currentTarget.dataset;
-    if (item) navigate(`/Register/${item}`);
+    navigate(`/Register`);
   };
   const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
     navigate(`/boarddetail/${item}`);
