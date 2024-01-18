@@ -43,4 +43,9 @@ const StTagWrapper = styled.div`
   gap: 7px;
 `;
 
-export { StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };
+const StMainCarousel = styled.div`
+  width: 80%;
+  margin: 0 auto;
+`;
+
+export { StMainCarousel, StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };

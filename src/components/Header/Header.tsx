@@ -1,9 +1,10 @@
-import { StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper } from './styles';
+import { StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper, StMainCarousel } from './styles';
 import { getGameDetails } from 'api/steamApis';
 import { useQueries } from '@tanstack/react-query';
 import Button from 'common/Button';
 import Tag from 'common/Tag';
 import Slider from 'react-slick';
+import CustomCarousel from 'common/CustomCarousel';
 
 interface HeaderProps {
   mostPlayedGames: any;
@@ -42,7 +43,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
 
   return (
     <StContainer>
-      <Slider {...settings}>
+      <CustomCarousel customStyle={StMainCarousel} settings={settings}>
         {gameDetailsArray &&
           gameDetailsArray?.map((game) => (
             <div key={game.steam_appid}>
@@ -66,7 +67,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
               </StInfoWrapper>
             </div>
           ))}
-      </Slider>
+      </CustomCarousel>
     </StContainer>
   );
 };
