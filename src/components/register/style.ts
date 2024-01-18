@@ -1,20 +1,22 @@
 import styled from 'styled-components';
 
 const ModalContainer = styled.div`
-  width: 100%;
-  height: 700px;
+  width: 50%;
+  height: 600px;
+  top: 10%;
+  left: 15%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  background-color: white;
+  position: absolute;
 `;
 
 const DialogBox = styled.dialog`
-  width: 100%;
-  height: 600px;
+  width: fit-content;
+  height: fit-content;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
   justify-content: center;
   align-items: center;
   border: none;
@@ -24,6 +26,7 @@ const DialogBox = styled.dialog`
   box-shadow: 0 0 30px rgba(30, 30, 30, 0.185);
   box-sizing: border-box;
   z-index: 10000;
+  background-color: ${(props) => props.theme.color.inputcolor};
 `;
 
 const Backdrop = styled.div`
@@ -31,6 +34,7 @@ const Backdrop = styled.div`
   height: 100vh;
   position: fixed;
   top: 0;
+  left: 0;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.5);
 `;

@@ -151,29 +151,14 @@ const TextSpace = styled.div`
   font-size: 16px;
 `;
 
-const WrappingModal = styled.div`
-  width: 100%;
-  height: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const WrappingModalCards = styled.li`
-  width: 1200px;
-  height: 1200px;
-  display: grid;
-  grid-template-columns: repeat(6 1fr);
-  background-color: wheat;
-`;
-
 const GameCard = styled.div`
   display: flex;
   flex-direction: column;
   width: 350px;
-  height: 304px;
+  height: 250px;
   border: none;
   border-radius: 10px;
+  z-index: 3;
 `;
 
 const ContentInput = styled.textarea`
@@ -244,7 +229,5 @@ export {
   ImageBox,
   WrappingImages,
   SearchBtn,
-  WrappingModal,
-  WrappingModalCards,
   GameCard
 };

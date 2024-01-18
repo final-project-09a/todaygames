@@ -18,9 +18,7 @@ import {
   ImageBox,
   WrappingImages,
   SearchBtn,
-  WrappingModal,
-  GameCard,
-  WrappingModalCards
+  GameCard
 } from './styles';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -164,25 +162,22 @@ const Register = () => {
             <ImageBox key={index} src={url} alt={`업로드된 이미지 ${index + 1}`} />
           ))}
         </WrappingImages>
-        <>
-          {isModalOpen && (
-            <Modal onClickToggleModal={onClickToggleModal}>
-              게임을 선택해주세요.
-              {data?.map((games) => {
-                console.log(games.header_image);
-                return (
-                  <WrappingModalCards key={games.id}>
-                    <GameCard>
-                      <img src={games.header_image}></img>
-                      <div>{games.name}</div>
-                    </GameCard>
-                  </WrappingModalCards>
-                );
-              })}
-            </Modal>
-          )}
-        </>
       </WrappingBtnAndInput>
+      {isModalOpen && (
+        <Modal onClickToggleModal={onClickToggleModal}>
+          {data?.map((games) => {
+            console.log(games.header_image);
+            return (
+              <>
+                <GameCard key={games.id}>
+                  <img style={{ borderRadius: '10px' }} src={games.header_image}></img>
+                  <div>{games.name}</div>
+                </GameCard>
+              </>
+            );
+          })}
+        </Modal>
+      )}
     </MainBackground>
   );
 };
