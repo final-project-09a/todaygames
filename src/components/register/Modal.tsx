@@ -1,29 +1,28 @@
-// import React from 'react';
-// import ReactModal from 'react-modal';
+import React, { PropsWithChildren } from 'react';
+import { ModalContainer, DialogBox, Backdrop } from './style';
 
-// interface ModalProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-//   children: React.ReactNode;
-// }
+interface ModalDefaultType {
+  onClickToggleModal: () => void;
+}
 
-// const customStyles = {
-//   content: {
-//     top: '50%',
-//     left: '50%',
-//     right: 'auto',
-//     bottom: 'auto',
-//     marginRight: '-50%',
-//     transform: 'translate(-50%, -50%)'
-//   }
-// };
+function Modal({ onClickToggleModal, children }: PropsWithChildren<ModalDefaultType>) {
+  return (
+    <ModalContainer>
+      <div>
+        <h1>게임을 선택해주세요.</h1>
+        <DialogBox>{children}</DialogBox>
+        <Backdrop
+          onClick={(e: React.MouseEvent) => {
+            e.preventDefault();
 
-// ReactModal.setAppElement('#root');
+            if (onClickToggleModal) {
+              onClickToggleModal();
+            }
+          }}
+        />
+      </div>
+    </ModalContainer>
+  );
+}
 
-// const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => (
-//   <ReactModal isOpen={isOpen} onRequestClose={onClose} style={customStyles}>
-//     {children}
-//   </ReactModal>
-// );
-
-// export default Modal;
+export default Modal;

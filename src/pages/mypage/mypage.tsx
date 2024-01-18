@@ -33,6 +33,8 @@ const MyPage = () => {
     return <div>Loading...</div>;
   }
 
+  console.log(user);
+
   return (
     <div>
       {user && (
