@@ -29,6 +29,7 @@ import { GENRE_NAME } from '../../constants/genre';
 import searchIcon from '../../assets/img/searchIcon.png';
 import Modal from 'components/register/Modal';
 import { getGames } from 'api/games';
+import { QUERY_KEYS } from 'query/keys';
 
 const Register = () => {
   const genres = GENRE_NAME;
@@ -100,7 +101,7 @@ const Register = () => {
   };
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ['games'],
+    queryKey: [QUERY_KEYS.GAMES],
     queryFn: getGames,
     enabled: isModalOpen
   });
