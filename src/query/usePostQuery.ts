@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { postContents, upsertPost } from '../api/supabaseData';
-import { Post } from 'types/global.d';
+import { postContents } from '../api/supabaseData';
 
 export const usePostQuery = () => {
   const queryClient = useQueryClient();

@@ -43,9 +43,7 @@ const Home = () => {
 
   return (
     <StContainer>
-      <StSection>
-        <Header mostPlayedGames={mostPlayedGames} />
-      </StSection>
+      <Header mostPlayedGames={mostPlayedGames} />
       <StMainWrapper>
         <StSection>
           <h1>이번 주 추천리스트</h1>

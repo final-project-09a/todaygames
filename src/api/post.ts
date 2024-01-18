@@ -5,17 +5,16 @@ import { QUERY_KEYS } from 'query/keys';
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Update'][]> => {
   try {
     const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*');
-    console.log(data);
     return data || [];
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-getPosts()
-  .then((data) => {
-    console.log(data);
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+// getPosts()
+//   .then((data) => {
+//     console.log(data);
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//   });
