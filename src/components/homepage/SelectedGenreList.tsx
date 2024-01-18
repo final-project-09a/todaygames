@@ -1,15 +1,12 @@
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getGames } from 'api/games';
-import { getSelectedGenre, getGameDetails } from 'api/steamApis';
-import React, { useEffect, useState } from 'react';
-import { GENRE_NAME } from 'constants/genre';
+import { useEffect } from 'react';
 import SelectedGenreCard from './SelectedGenreCard';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { GameData, setGame } from '../../redux/modules/gameSlice';
-import { UserState } from 'redux/modules/userSlice';
 
 interface SelectedGenreListProps {
   selectedTag: string | null;

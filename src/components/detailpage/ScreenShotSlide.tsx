@@ -1,5 +1,5 @@
 import { DataContext } from 'pages/detail/Detail';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 

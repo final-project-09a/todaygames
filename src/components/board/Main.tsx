@@ -8,7 +8,6 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { Typedata } from 'shared/supabase.type';
-import userimg from 'assets/img/userimg.png'; // 우선 이 이미지를  StcontentBox안에 넣음
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGames } from 'api/games';

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { supabase, supabasedata } from 'shared/supabase';
+import { supabase } from 'shared/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
-import kakaologo from 'assets/img/kakao_login_medium_wide.png';
 interface FormData {
   email: string;
   password: string;
@@ -15,7 +14,7 @@ function Login() {
     email: '',
     password: ''
   });
-  // const { user, session } = supabasedata.auth.session()
+  // const { user, session } = supabase.auth.session()
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,9 +26,9 @@ function Login() {
 
   const handlelogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(supabasedata.auth);
+    console.log(supabase.auth);
     try {
-      const { data, error } = await supabasedata.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
       });
@@ -51,7 +50,7 @@ function Login() {
 
   const handleLogout = async () => {
     try {
-      const { error } = await supabasedata.auth.signOut();
+      const { error } = await supabase.auth.signOut();
       if (error) {
         console.error(error);
         alert('로그아웃 중에 오류가 발생했습니다');
@@ -66,13 +65,13 @@ function Login() {
   };
 
   const kakaologin = async function signInWithKakao() {
-    const { data, error } = await supabasedata.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'kakao'
     });
   };
 
   // const googlelogin = async function signInWithgoogle() {
-  //   const { data, error } = await supabasedata.auth.signInWithOAuth({
+  //   const { data, error } = await supabase.auth.signInWithOAuth({
   //     provider: 'google',
   //     options: {
   //       queryParams: {

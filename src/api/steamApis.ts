@@ -59,15 +59,4 @@ const getGameDetails = async (appid: any) => {
   }
 };
 
-// const getTopTenGameDetails = async () => {
-//   try {
-//     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/top-ten`);
-//     console.log('most played games 데이터 :', response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error('top ten fetch error: ', error);
-//     throw error;
-//   }
-// };
-
 export { getMostPlayedGames, getGameDetails, getTopReleases, getSelectedGenre };

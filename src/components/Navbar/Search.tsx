@@ -37,7 +37,7 @@ const StSearchBox = styled.form`
   display: flex;
   align-items: center;
   padding: 15px 20px;
-
+  margin-right: 25px;
   & input {
     background-color: transparent;
     border: none;
