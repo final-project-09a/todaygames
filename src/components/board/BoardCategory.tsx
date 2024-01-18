@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getPosts } from 'api/post';
+import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -28,8 +29,8 @@ export const BoardCategory = () => {
           인기순
         </StLabel>
         <label>장르</label>
-        {postsData.map((list) => (
-          <button key={list.id}>{list.category}</button>
+        {GENRE_NAME.map((list, index) => (
+          <button key={index}>{list.tag}</button>
         ))}
       </StboardLeftCategory>
     </>
