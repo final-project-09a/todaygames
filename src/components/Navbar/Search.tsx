@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import searchIcon from '../../assets/img/searchIcon.svg';
+import searchIcon from '../../assets/icons/searchIcon.svg';
 
 const Search = () => {
   const [searchedText, setSearchedText] = useState('');
@@ -10,9 +10,17 @@ const Search = () => {
     setSearchedText('');
   };
 
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchedText(e.target.value);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
-    <StSearchBox>
-      <input type="text" value={searchedText} placeholder="검색" />
+    <StSearchBox onSubmit={handleFormSubmit}>
+      <input value={searchedText} onChange={handleOnChange} placeholder="검색" />
       <StSearchIcon onClick={handelSearchButtonClick} />
     </StSearchBox>
   );
@@ -20,7 +28,7 @@ const Search = () => {
 
 export default Search;
 
-const StSearchBox = styled.div`
+const StSearchBox = styled.form`
   position: relative;
   width: 300px;
   height: 46px;
