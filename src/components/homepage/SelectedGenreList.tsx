@@ -39,7 +39,6 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
   if (isError) {
     return <p>게임 정보를 불러오지 못했습니다.</p>;
   }
-  console.log(games);
 
   return (
     <div>

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const StContainer = styled.div`
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: flex-start;
   height: 792px;
@@ -19,6 +19,7 @@ const StFigure = styled.figure<{ $imageUrl: string }>`
   width: 100%;
   height: 600px;
   border-radius: 20px;
+  margin-top: 50px;
   background: url(${(props) => props.$imageUrl}), gray 0px -37.581px / 100% 125.333% no-repeat;
 `;
 
