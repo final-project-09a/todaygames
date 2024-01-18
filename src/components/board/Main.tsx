@@ -20,7 +20,7 @@ import { RootState } from 'redux/config/configStore';
 interface PostType {
   data: Typedata['public']['Tables']['posts']['Row'];
 }
-interface UserInfos {
+interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
 }
 interface Games {
@@ -41,11 +41,10 @@ interface GameImageProps extends React.HTMLProps<HTMLImageElement> {
   src: string;
 }
 export const Main = () => {
-  const [selectedGenre, setSelectedGenre] = useState(null);
-  const { id } = useParams();
   const [formattedDate, setFormattedDate] = useState('');
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  console.log(user);
 
   useEffect(() => {
     const currentDate = Date.now(); // 현재 시간을 가져옴
@@ -83,14 +82,14 @@ export const Main = () => {
   console.log('user', user);
   const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (user) {
-      // 로그인 상태일 때는 바로 글쓰기 페이지로 이동
-      navigate('/register');
+      //  글쓰기로 이동
+      navigate(`/register`);
+      // 로그인 상태가 아니라면 로그인으로 이동
     } else {
-      // 로그인 상태가 아니라면 로그인 페이지로 이동
-      // 로그인 되었다면     navigate(`/register`);  이동
       navigate('/login');
     }
   };
+
   const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
     navigate(`/boarddetail/${item}`);
   };

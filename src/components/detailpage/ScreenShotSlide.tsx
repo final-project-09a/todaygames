@@ -1,5 +1,5 @@
 import { DataContext } from 'pages/detail/Detail';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import Slider from 'react-slick';
 import styled from 'styled-components';
 
@@ -7,10 +7,7 @@ const settings = {
   infinite: true,
   speed: 500,
   slidesToShow: 6,
-  slidesToScroll: 1,
-  variableWidth: false, // Use variable width for slides
-  centerMode: false, // Set to true if you want the center slide to be larger
-  centerPadding: '50px' // Adjust th
+  slidesToScroll: 1
 };
 
 const ScreenShotSlide = () => {

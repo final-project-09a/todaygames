@@ -1,8 +1,7 @@
 // 게사판 리스트
-import { useEffect, useState } from 'react';
-import { supabase, supabasedata } from 'shared/supabase';
+import { useEffect } from 'react';
+import { supabase } from 'shared/supabase';
 import { Typedata } from 'shared/supabase.type';
-import { QUERY_KEYS } from 'query/keys';
 import styled from 'styled-components';
 import React from 'react';
 import { BoardCategory } from './BoardCategory';
@@ -14,14 +13,8 @@ interface PostType {
 }
 
 export const BoardDetail = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [posts, setPosts] = useState<PostType[]>([]);
-
   useEffect(() => {
     getPosts();
-    const authListener = supabasedata.auth.onAuthStateChange((event, session) => {
-      const userId = session?.user?.id;
-    });
   }, []);
 
   return (

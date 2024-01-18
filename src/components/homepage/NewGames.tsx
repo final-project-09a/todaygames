@@ -12,12 +12,6 @@ const NewGames = () => {
 
   const appids = data?.map((item: any) => item.appid).slice(0, 2) || [];
 
-  // // 100개 중 가장 최근에 출시된 게임 2개 sorting
-  // const appids = mostPlayedGames
-  //   ?.map((game: any) => game.appid)
-  //   .sort((a: any, b: any) => b - a)
-  //   .slice(0, 2);
-
   if (isLoading) {
     <p>게임 정보를 불러오는 중입니다...</p>;
   }
