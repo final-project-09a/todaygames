@@ -6,15 +6,20 @@ interface FormData {
   // displayname: string;
   email: string;
   password: string;
+  displayName: string;
+}
+
+interface UserExtraData {
+  displayName: string;
 }
 
 function Signup() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormData>({
-    // displayname: '',
     email: '',
-    password: ''
+    password: '',
+    displayName: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -32,10 +37,12 @@ function Signup() {
     try {
       const { data, error } = await supabasedata.auth.signUp({
         email: formData.email,
-        password: formData.password
-        // options: {
-        //     displayname: formData.displayname
-        //   }
+        password: formData.password,
+        options: {
+          data: {
+            displayName: formData.displayName
+          }
+        }
       });
 
       if (error) {
@@ -82,6 +89,17 @@ function Signup() {
           onChange={handleChange}
         />
         {errors.password && <p>{errors.password}</p>}
+
+        <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
+        <StyledInput
+          placeholder="닉네임"
+          type="text"
+          id="displayName"
+          name="displayName"
+          value={formData.displayName}
+          onChange={handleChange}
+        />
+        {errors.displayName && <p>{errors.displayName}</p>}
 
         <StyledButton type="submit">가입하기</StyledButton>
       </StyledForm>
