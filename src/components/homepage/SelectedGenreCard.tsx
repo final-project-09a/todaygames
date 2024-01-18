@@ -1,6 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
-import { getGames } from 'api/games';
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface SelectedGenreCardProps {
@@ -8,11 +6,17 @@ interface SelectedGenreCardProps {
 }
 
 const SelectedGenreCard = ({ gameInfoList }: SelectedGenreCardProps) => {
+  const navigate = useNavigate();
+
+  const handleGameCardClick = () => {
+    navigate(`/detail/${gameInfoList.app_id}`);
+  };
+
   return (
-    <StContainer>
+    <StContainer onClick={handleGameCardClick}>
       <StCardWrapper>
         <StImageFigure $imageUrl={gameInfoList.header_image}></StImageFigure>
-        <StGameName>{gameInfoList.name}</StGameName>
+        <StGameName>{gameInfoList.name}</StGameName> <StGameName>{gameInfoList.name}</StGameName>
         <StGameName>{gameInfoList.name}</StGameName>
       </StCardWrapper>
     </StContainer>
@@ -24,10 +28,15 @@ export default SelectedGenreCard;
 const StContainer = styled.div`
   height: 304px;
   width: 350px;
-  background-color: #232323;
+  background-color: ${(props) => props.theme.color.postback};
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 7px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  &:hover {
+    scale: calc(1.03);
+  }
 `;
 
 const StCardWrapper = styled.div`
@@ -45,9 +54,11 @@ const StImageFigure = styled.figure<{ $imageUrl: string }>`
 
 const StGameName = styled.div`
   position: absolute;
-  bottom: 0;
+  bottom: 14%;
   left: 0;
   width: 100%;
-  padding: 10px;
-  color: #fff;
+  padding: 20px;
+  font-size: 18px;
+  line-height: normal;
+  color: ${(props) => props.theme.color.white};
 `;

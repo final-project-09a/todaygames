@@ -1,6 +1,6 @@
 import { supabase } from 'shared/supabase';
 import { QUERY_KEYS } from 'query/keys';
-import { setData, setError, setLoading } from '../redux/modules/gameSlice';
+import { setGame, setError, setLoading } from '../redux/modules/gameSlice';
 import { getGameDetails } from './steamApis';
 
 export const getGames = async () => {

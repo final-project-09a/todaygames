@@ -9,11 +9,9 @@ const GameInfo = () => {
   return (
     <>
       <h2>게임정보</h2>
-      <p>
-        {data && data.about_the_game !== undefined ? (
-          <div dangerouslySetInnerHTML={{ __html: data.short_description }} />
-        ) : null}
-      </p>
+      {data && data.about_the_game !== undefined ? (
+        <p dangerouslySetInnerHTML={{ __html: data.short_description }} />
+      ) : null}
       <div>
         <section>
           <label>장르</label>
@@ -22,10 +20,10 @@ const GameInfo = () => {
           <label>출시일</label>
         </section>
         <section>
-          <p>{genres?.join(', ')}</p>
-          <p>{data?.developers}</p>
-          <p>{data?.publishers}</p>
-          <p>{data?.release_date.date}</p>
+          <h4>{genres?.join(', ')}</h4>
+          <h4>{data?.developers?.join(', ')}</h4>
+          <h4>{data?.publishers}</h4>
+          <h4>{data?.release_date.date}</h4>
         </section>
       </div>
     </>
