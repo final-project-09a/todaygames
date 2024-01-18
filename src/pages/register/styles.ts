@@ -145,24 +145,35 @@ const GameSelect = styled.textarea`
   }
 `;
 
-const TagSelect = styled.div`
-  display: flex;
-  width: 1173px;
-  height: 46px;
-  border-radius: 10px;
-  background: ${(props) => props.theme.color.inputcolor};
-  color: white;
-  text-indent: 8px;
-  resize: none;
-  &::placeholder {
-    color: white;
-  }
-`;
-
 const TextSpace = styled.div`
   width: 30px;
   height: 20px;
   font-size: 16px;
+`;
+
+const WrappingModal = styled.div`
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WrappingModalCards = styled.li`
+  width: 1200px;
+  height: 1200px;
+  display: grid;
+  grid-template-columns: repeat(6 1fr);
+  background-color: wheat;
+`;
+
+const GameCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  height: 304px;
+  border: none;
+  border-radius: 10px;
 `;
 
 const ContentInput = styled.textarea`
@@ -229,9 +240,11 @@ export {
   TextSpace,
   ImageUploadBtn,
   BottomBtn,
-  TagSelect,
   GameSelect,
   ImageBox,
   WrappingImages,
-  SearchBtn
+  SearchBtn,
+  WrappingModal,
+  WrappingModalCards,
+  GameCard
 };

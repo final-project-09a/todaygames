@@ -35,7 +35,6 @@ const MyPage = () => {
 
   // userSlice의 상태관리를 위해 상태 가져오기
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  console.log(user);
 
   // 리액트쿼리를 이용해서 supabase에서 user 데이터 가져오기
   const { data } = useQuery({
@@ -63,6 +62,8 @@ const MyPage = () => {
   if (!user) {
     return <div>Loading...</div>;
   }
+
+  console.log(user);
 
   return (
     <div>

@@ -78,9 +78,8 @@ export const Main = () => {
     console.log('game name: ', getgamesData);
   }
   //  글쓰기로 이동
-  const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const { item } = event.currentTarget.dataset;
-    if (item) navigate(`/Register/${item}`);
+  const moveregisterPageOnClick = () => {
+    navigate(`/register`);
   };
   const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
     navigate(`/boarddetail/${item}`);
