@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from 'shared/supabase';
-import { StNavContainer, StNavWrapper, StLogoWrapper, StMenuWrapper, StLogIn } from './styles';
+import {
+  StNavContainer,
+  StNavWrapper,
+  StLogoWrapper,
+  StMenuWrapper,
+  StLogIn,
+  StMyPageLink,
+  StAccountIcon
+} from './styles';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/config/configStore';
-import styled from 'styled-components';
-import accountIcon from '../../assets/icons/accountIcon.svg';
 import GameSearch from './GameSearch';
 import SuccessModal from 'common/SuccessModal';
 
@@ -57,7 +63,6 @@ const NavBar: React.FC = () => {
         <StLogoWrapper>
           <Link to="/">Logo</Link>
         </StLogoWrapper>
-
         <StMenuWrapper>
           <Link to={'/'}>
             <h2>홈</h2>
@@ -93,19 +98,3 @@ const NavBar: React.FC = () => {
 };
 
 export default NavBar;
-
-const StMyPageLink = styled.div`
-  position: relative;
-`;
-
-const StAccountIcon = styled.div`
-  position: absolute;
-  top: 50%;
-  left: -50%;
-  width: 32px;
-  height: 32px;
-  transform: translateY(-50%);
-  background: url(${accountIcon}) no-repeat center center;
-  background-size: contain;
-  cursor: pointer;
-`;

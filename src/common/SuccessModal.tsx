@@ -36,6 +36,7 @@ const StModalWrapper = styled.div`
   align-items: center;
   gap: 10px;
   user-select: none;
+  z-index: 10;
 `;
 
 const StSuccessIcon = styled.div`
