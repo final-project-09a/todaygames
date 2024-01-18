@@ -27,7 +27,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from 'shared/supabase';
 import { GENRE_NAME } from '../../constants/genre';
 import searchIcon from '../../assets/img/searchIcon.png';
-import Modal from 'components/register/Modal';
+// import Modal from 'components/register/Modal';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
 
@@ -139,11 +139,11 @@ const Register = () => {
               <TextSpace>게임</TextSpace>
               <GameSelect />
               <SearchBtn onClick={gamesearchHandle} />
-              <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+              {/* <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 {data?.map((game) => {
                   return <p key={game.id}>{game.name}</p>;
                 })}
-              </Modal>
+              </Modal> */}
             </Titles>
             <Titles>
               <TextSpace>태그</TextSpace>

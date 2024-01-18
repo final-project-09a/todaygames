@@ -1,11 +1,8 @@
 import { BoardCategory } from 'components/board/BoardCategory';
 import { Main } from 'components/board/Main';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { ToPostBtn } from './styles';
 
 export const Board = () => {
-  const navigate = useNavigate();
   return (
     <>
       <StboardListContainer>
@@ -22,6 +19,7 @@ export const Board = () => {
 const StCategoryContainer = styled.div`
   display: flex;
   flex-basis: 30%;
+  margin-top: 80px;
 `;
 
 const StContentContainer = styled.div`
@@ -29,10 +27,8 @@ const StContentContainer = styled.div`
 `;
 const StboardListContainer = styled.div`
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-
-  text-align: center;
-  flex-direction: row;
-  margin-top: 40px;
+  justify-content: space-between;
+  margin: 50px;
+  position: absolute;
+  width: 1440px;
 `;
