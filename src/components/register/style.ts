@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const ModalContainer = styled.div`
   width: 50%;
-  height: 600px;
+  height: 601px;
   top: 10%;
   left: 15%;
   display: flex;
