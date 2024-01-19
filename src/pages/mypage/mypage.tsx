@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { RootState } from 'redux/config/configStore';
 import {
@@ -18,9 +18,12 @@ import {
   InputGroup
 } from './styles';
 import userimg from 'assets/img/userimg.png';
+import { supabase } from 'shared/supabase';
 
 const MyPage = () => {
   const [profile, setProfile] = useState('');
+  const [nickname, setNicknam] = useState('');
+  console.log(nickname);
 
   // userSlice의 상태관리를 위해 상태 가져오기
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
@@ -29,11 +32,43 @@ const MyPage = () => {
     setProfile(e.target.value);
   };
 
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNicknam(e.target.value);
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
 
-  console.log(user);
+  const handleNicknameUpdate = async () => {
+    if (nickname.length < 2 || nickname.length > 6) {
+      alert('닉네임은 최소 2글자, 최대 6글자로 작성해주세요.');
+      return;
+    }
+
+    const { error } = await supabase.from('userinfo').update({ username: nickname }).eq('id', user.id);
+    if (error) {
+      alert('닉네임 업데이트 중 에러가 발생했습니다.');
+    } else {
+      alert('닉네임이 성공적으로 업데이트되었습니다.');
+      window.location.reload();
+    }
+  };
+
+  const handleProfileUpdate = async () => {
+    if (profile.length < 10) {
+      alert('프로필은 최소 10글자로 작성해주세요.');
+      return;
+    }
+    const { data, error } = await supabase.from('userinfo').update({ profile: profile }).eq('id', user.id);
+    if (error) {
+      alert('프로필 업데이트 중 에러가 발생했습니다.');
+    } else {
+      console.log('ㅊㅋㅊㅋ');
+      alert('프로필이 성공적으로 업데이트되었습니다.');
+      window.location.reload();
+    }
+  };
 
   return (
     <div>
@@ -55,10 +90,18 @@ const MyPage = () => {
             <ProfileTitle>프로필 정보</ProfileTitle>
             <ProfileBox>
               <ProfileTitle>닉네임</ProfileTitle>
-              <ProfileInput type="text" maxLength={30} placeholder={user.username || '닉네임 수정'} />
+              <ProfileInput
+                type="text"
+                maxLength={5}
+                placeholder={user.username || '닉네임 수정'}
+                onChange={handleNicknameChange}
+              />{' '}
+              <CharacterCount>{nickname.length} / 6</CharacterCount>
+              <ManageButton onClick={handleNicknameUpdate}>업로드</ManageButton>
               <ProfileTitle>프로필 소개</ProfileTitle>
               <Textarea value={profile} onChange={handleProfileChange} placeholder="프로필 소개를 입력하세요." />
               <CharacterCount>{profile.length} / 200</CharacterCount>
+              <ManageButton onClick={handleProfileUpdate}>업로드</ManageButton>
             </ProfileBox>
           </StUserinfoBOx>
           <StUserinfoBOx>

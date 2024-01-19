@@ -17,9 +17,11 @@ const ScreenShotSlide = () => {
   return (
     <Slider {...settings}>
       {screenShots?.map((screenShot, index) => (
-        <StImageWrapper key={index}>
-          <img src={screenShot.path_thumbnail} />
-        </StImageWrapper>
+        <div key={index}>
+          <StImageWrapper>
+            <img src={screenShot.path_thumbnail} />
+          </StImageWrapper>
+        </div>
       ))}
     </Slider>
   );
@@ -28,8 +30,11 @@ const ScreenShotSlide = () => {
 export default ScreenShotSlide;
 
 const StImageWrapper = styled.figure`
+  width: 220px;
   height: 160px;
   border-radius: 10px;
+  display: flex;
+  margin-left: 10px;
   overflow: hidden;
   & img {
     width: 100%;
