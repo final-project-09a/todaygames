@@ -13,6 +13,23 @@ interface UserExtraData {
   displayName: string;
 }
 
+const isValidEmail = (email: string) => {
+  // 이메일 형식 검사
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+
+const isValidPassword = (password: string) => {
+  // 비밀번호 길이 검사
+  return password.length >= 6;
+};
+
+const isValidDisplayName = (displayName: string) => {
+  // 닉네임 길이 검사
+  return displayName.length >= 2 && displayName.length <= 10;
+};
+
 function Signup() {
   const navigate = useNavigate();
 
@@ -34,6 +51,21 @@ function Signup() {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!isValidEmail(formData.email)) {
+      alert('유효한 이메일 형식이 아닙니다.');
+      return;
+    }
+
+    if (!isValidPassword(formData.password)) {
+      alert('비밀번호는 최소 6자리 이상이어야 합니다.');
+      return;
+    }
+
+    if (!isValidDisplayName(formData.displayName)) {
+      alert('닉네임은 최소 2자리, 최대 10자리로 작성해주세요.');
+      return;
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
@@ -44,11 +76,13 @@ function Signup() {
           }
         }
       });
-
+      if (error) {
+        console.error(error.name);
+        alert('중복된 이메일 입니다 다른 이메일을 사용해주세요');
+      }
       if (error) {
         console.error(error);
-        alert('ID와 password를 확인해주세요'); //유효성 검사 더 추가 닉네임 없어도 가입되고
-        //동일한 이메일 안되고
+        alert('ID와 password를 확인해주세요');
       } else {
         console.log(data);
         alert('회원가입을 환영합니다');
