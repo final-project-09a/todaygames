@@ -21,14 +21,15 @@ import {
   GameCard,
   CardImage,
   TagArea,
-  TagText
+  TagText,
+  RemoveImgBtn,
+  WrappingCardAndBtn
 } from './styles';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from 'shared/supabase';
 import { GENRE_NAME } from '../../constants/genre';
-import searchIcon from '../../assets/img/searchIcon.png';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
 import Modal from 'components/register/Modal';
@@ -38,12 +39,10 @@ import { RootState } from 'redux/config/configStore';
 
 const Register = () => {
   const genres = GENRE_NAME;
-  const { id: paramId } = useParams();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('');
   const [gameName, setGameName] = useState('');
   const [tagText, setTagText] = useState('');
   const [searchedGame, setSearchedGame] = useState('');
@@ -68,7 +67,13 @@ const Register = () => {
       const files = Array.from(event.target.files);
       setImageFiles(files);
       setImageUrls(files.map((file) => URL.createObjectURL(file)));
+      console.log(files);
     }
+  };
+
+  const handleImageDelete = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    setImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   const searchOnClickHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -177,7 +182,15 @@ const Register = () => {
         </WrappingAllComponents>
         <WrappingImages>
           {imageUrls.map((url, index) => (
-            <ImageBox key={index} src={url} alt={`업로드된 이미지 ${index + 1}`} />
+            <WrappingCardAndBtn key={index}>
+              <RemoveImgBtn
+                onClick={() => {
+                  handleImageDelete(index);
+                  console.log(imageUrls);
+                }}
+              />
+              <ImageBox key={index} src={url} alt={`업로드된 이미지 ${index + 1}`} />
+            </WrappingCardAndBtn>
           ))}
         </WrappingImages>
       </WrappingBtnAndInput>
@@ -195,6 +208,7 @@ const Register = () => {
                   key={games.id}
                 >
                   <CardImage src={games.header_image}></CardImage>
+
                   <div style={{ fontSize: '15px' }}>{games.name}</div>
                 </GameCard>
               </>

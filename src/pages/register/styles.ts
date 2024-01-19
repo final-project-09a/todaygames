@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import searchIcon from '../../assets/img/searchIcon.png';
+import removeButton from '../../assets/img/removeButton.png';
 
 interface DivProps {
   isVisible: boolean;
@@ -202,11 +203,32 @@ const GameCard = styled.button`
   gap: 5px;
 `;
 
+const WrappingCardAndBtn = styled.div`
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+`;
+
 const CardImage = styled.img`
+  z-index: 0;
   border-radius: 10px;
   display: flex;
   width: 350px;
   height: 250px;
+`;
+
+const RemoveImgBtn = styled.button`
+  width: 24px;
+  height: 24px;
+  border: 0px;
+  z-index: 1;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  background-image: url(${removeButton});
+  cursor: pointer;
 `;
 
 const ContentInput = styled.textarea`
@@ -280,5 +302,7 @@ export {
   GameCard,
   CardImage,
   TagArea,
-  TagText
+  TagText,
+  RemoveImgBtn,
+  WrappingCardAndBtn
 };

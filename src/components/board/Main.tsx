@@ -141,6 +141,7 @@ export const Main = ({ filteredPosts }: any) => {
     </>
   );
 };
+
 export const Contentbox = styled.div`
   display: grid;
   grid-template-columns: repeat(1, 2fr);
