@@ -111,8 +111,8 @@ export const Main = ({ filteredPosts }: MainProps) => {
       {/* 박스 개수 = posts 컬럼 개수 = postData의 아이디와 userInfoData의 같다면 해당 유저 id만 출력 */}
       {/* {박스 안에 유저에 따라 프로필, 이름, 게임이름, 제목, 내용, 게임장르 순서대로 map} */}
       {/* games에서 게임명, 장르 => id로 판별 */}
-      {filteredPosts.map((post) => {
-        const userInfo = userInfoData.find((user) => user.id === post?.users_id);
+      {postsData.map((post) => {
+        const userInfo = userInfoData.find((user) => user.id === post.users_id);
         if (userInfo) {
           return (
             <>
