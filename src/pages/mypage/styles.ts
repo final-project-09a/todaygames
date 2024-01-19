@@ -70,6 +70,17 @@ export const StInput = styled.input`
   &:focus {
     outline: none;
   }
+  & p {
+    color: #999;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 15px;
+  margin-top: 15px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  }
 `;
 
 export const StCount = styled.div`
