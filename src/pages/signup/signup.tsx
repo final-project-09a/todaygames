@@ -3,15 +3,15 @@ import { supabase } from 'shared/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel } from './styles';
 interface FormData {
-  // displayname: string;
   email: string;
   password: string;
   displayName: string;
 }
 
-interface UserExtraData {
-  displayName: string;
-}
+const isValidConfirmPassword = (password: string, confirmPassword: string) => {
+  // 비밀번호 확인 검사
+  return password === confirmPassword;
+};
 
 const isValidEmail = (email: string) => {
   // 이메일 형식 검사
@@ -33,6 +33,8 @@ const isValidDisplayName = (displayName: string) => {
 function Signup() {
   const navigate = useNavigate();
 
+  const [confirmPassword, setConfirmPassword] = useState('');
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
@@ -40,6 +42,11 @@ function Signup() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 비밀번호 확인 변경 핸들러
+    setConfirmPassword(e.target.value);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -58,6 +65,11 @@ function Signup() {
 
     if (!isValidPassword(formData.password)) {
       alert('비밀번호는 최소 6자리 이상이어야 합니다.');
+      return;
+    }
+
+    if (!isValidConfirmPassword(formData.password, confirmPassword)) {
+      alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
       return;
     }
 
@@ -124,6 +136,17 @@ function Signup() {
           onChange={handleChange}
         />
         {errors.password && <p>{errors.password}</p>}
+
+        <StyledLabel htmlFor="confirmPassword">비밀번호 확인</StyledLabel>
+        <StyledInput
+          placeholder="비밀번호 확인"
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+        />
+        {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
 
         <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
         <StyledInput
