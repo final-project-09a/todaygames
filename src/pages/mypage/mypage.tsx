@@ -22,6 +22,7 @@ import { supabase } from 'shared/supabase';
 
 const MyPage = () => {
   const [profile, setProfile] = useState('');
+  console.log(profile);
 
   // userSlice의 상태관리를 위해 상태 가져오기
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
@@ -35,7 +36,7 @@ const MyPage = () => {
   }
 
   const handleProfileUpdate = async () => {
-    const { error } = await supabase.from('userinfo').update({ profile: 'Australia' }).eq('id', user.id);
+    const { error } = await supabase.from('userinfo').update({ profile: profile }).eq('id', user.id);
   };
   return (
     <div>
