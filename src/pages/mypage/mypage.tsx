@@ -22,7 +22,8 @@ import { supabase } from 'shared/supabase';
 
 const MyPage = () => {
   const [profile, setProfile] = useState('');
-  console.log(profile);
+  const [nickname, setNicknam] = useState('');
+  console.log(nickname);
 
   // userSlice의 상태관리를 위해 상태 가져오기
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
@@ -31,12 +32,20 @@ const MyPage = () => {
     setProfile(e.target.value);
   };
 
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNicknam(e.target.value);
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
 
   const handleProfileUpdate = async () => {
     const { error } = await supabase.from('userinfo').update({ profile: profile }).eq('id', user.id);
+  };
+
+  const handleNicknameUpdate = async () => {
+    const { error } = await supabase.from('userinfo').update({ username: nickname }).eq('id', user.id);
   };
   return (
     <div>
@@ -58,7 +67,14 @@ const MyPage = () => {
             <ProfileTitle>프로필 정보</ProfileTitle>
             <ProfileBox>
               <ProfileTitle>닉네임</ProfileTitle>
-              <ProfileInput type="text" maxLength={30} placeholder={user.username || '닉네임 수정'} />
+              <ProfileInput
+                type="text"
+                maxLength={30}
+                placeholder={user.username || '닉네임 수정'}
+                onChange={handleNicknameChange}
+              />{' '}
+              <CharacterCount>{nickname.length} / 30</CharacterCount>
+              <ManageButton onClick={handleNicknameUpdate}>업로드</ManageButton>
               <ProfileTitle>프로필 소개</ProfileTitle>
               <Textarea value={profile} onChange={handleProfileChange} placeholder="프로필 소개를 입력하세요." />
               <CharacterCount>{profile.length} / 200</CharacterCount>
