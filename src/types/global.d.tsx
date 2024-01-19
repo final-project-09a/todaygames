@@ -7,7 +7,7 @@ export type Post = {
   title: string;
   game: string;
   category: string;
-  image: string;
+  image: string[];
   content: string;
-  users_id?: string;
+  id?: string;
 };

@@ -14,7 +14,7 @@ const insertPost = async (newPost: Post) => {
       category: newPost.category,
       image: newPost.image,
       content: newPost.content,
-      uid: newPost.users_id
+      id: newPost.id
     }
   ]);
   if (error) {
