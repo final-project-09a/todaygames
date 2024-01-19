@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabasedata } from 'shared/supabase';
+import { supabase } from 'shared/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel } from './styles';
 interface FormData {
@@ -35,7 +35,7 @@ function Signup() {
     e.preventDefault();
 
     try {
-      const { data, error } = await supabasedata.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {

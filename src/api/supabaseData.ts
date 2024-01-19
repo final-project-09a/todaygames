@@ -1,13 +1,13 @@
 import { Post } from 'types/global.d';
-import { supabasedata } from '../shared/supabase';
+import { supabase } from '../shared/supabase';
 import { QUERY_KEYS } from 'query/keys';
 
 const postContents = async (newPost: Post) => {
-  await supabasedata.from(QUERY_KEYS.POST).insert(newPost);
+  await supabase.from(QUERY_KEYS.POST).insert(newPost);
 };
 
 const upsertPost = async (newPost: Post) => {
-  await supabasedata
+  await supabase
     .from(QUERY_KEYS.POST)
     .upsert({
       id: newPost.id,

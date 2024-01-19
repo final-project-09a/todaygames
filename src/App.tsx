@@ -1,10 +1,11 @@
+import AuthenticationLayer from 'AuthenticationLayer';
 import Router from './shared/Router';
-import authelntktictionLayer from 'authelntktictionLayer';
+
 function App() {
   return (
-    <authelntktictionLayer>
+    <AuthenticationLayer>
       <Router />
-    </authelntktictionLayer>
+    </AuthenticationLayer>
   );
 }
 
