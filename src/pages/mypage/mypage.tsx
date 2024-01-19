@@ -40,13 +40,27 @@ const MyPage = () => {
     return <div>Loading...</div>;
   }
 
-  const handleProfileUpdate = async () => {
-    const { error } = await supabase.from('userinfo').update({ profile: profile }).eq('id', user.id);
-  };
-
   const handleNicknameUpdate = async () => {
     const { error } = await supabase.from('userinfo').update({ username: nickname }).eq('id', user.id);
+    if (error) {
+      alert('닉네임 업데이트 중 에러가 발생했습니다.');
+    } else {
+      alert('닉네임이 성공적으로 업데이트되었습니다.');
+      window.location.reload();
+    }
   };
+
+  const handleProfileUpdate = async () => {
+    const { data, error } = await supabase.from('userinfo').update({ profile: profile }).eq('id', user.id);
+    if (error) {
+      alert('프로필 업데이트 중 에러가 발생했습니다.');
+    } else {
+      console.log('ㅊㅋㅊㅋ');
+      alert('프로필이 성공적으로 업데이트되었습니다.');
+      window.location.reload();
+    }
+  };
+
   return (
     <div>
       {user && (
