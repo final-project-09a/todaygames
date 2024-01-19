@@ -2,32 +2,28 @@ import { useQuery } from '@tanstack/react-query';
 import { getPosts } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import { Typedata } from 'shared/supabase.type';
 
 interface GenreType {
   postsData: Typedata['public']['Tables']['posts'][];
-  tag: string;
-  onClick: () => void;
 }
-export const BoardCategory = () => {
-  const [selectorGenre, useSelectorGenre] = useState<string | null>('액션');
+// type Genre = typeof GENRE_NAME;
+type BoardCategoryProps = {
+  genrefilterOnClick: (genre: string) => void;
+};
+export const BoardCategory = ({ genrefilterOnClick }: BoardCategoryProps) => {
   useEffect(() => {
     getPosts();
   });
-  const { data: postsData = [] } = useQuery({
+
+  const { data: GenreType = [] } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
-
-  const handleGenreCardClick = useCallback((tag: string) => {
-    useSelectorGenre(tag);
-  }, []);
-  // incluses 로   postsData 와 GENRE_NAME.tag와 일치하는 장르 필터링 하기
-  const genrefilterOnClick = GENRE_NAME.filter((genre) => {
-    postsData.some((post) => post.category.includes(genre.tag));
-  });
+  //  tag 클릭시 필터링 하여 게시판 리스트를  렌더링
+  // newFilterPosts를 props 로  Main.tsx 전달하여 contentbox 에 map으로 뿌려짐
 
   return (
     <>
@@ -43,7 +39,8 @@ export const BoardCategory = () => {
         </StLabel>
         <label>장르</label>
         {GENRE_NAME.map((list, index) => (
-          <button onClick={() => genrefilterOnClick(list.tag)} key={index}>
+          // 문제: button 태그는 컴포넌트가 아니다.
+          <button onClick={() => genrefilterOnClick(list.tag)} key={index} type="button">
             {list.tag}
           </button>
         ))}
@@ -51,6 +48,7 @@ export const BoardCategory = () => {
     </>
   );
 };
+
 const StvideoInput = styled.input`
   height: 17px;
   width: 39px;
