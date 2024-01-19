@@ -41,6 +41,11 @@ const MyPage = () => {
   }
 
   const handleNicknameUpdate = async () => {
+    if (nickname.length < 2 || nickname.length > 6) {
+      alert('닉네임은 최소 2글자, 최대 6글자로 작성해주세요.');
+      return;
+    }
+
     const { error } = await supabase.from('userinfo').update({ username: nickname }).eq('id', user.id);
     if (error) {
       alert('닉네임 업데이트 중 에러가 발생했습니다.');
@@ -51,6 +56,10 @@ const MyPage = () => {
   };
 
   const handleProfileUpdate = async () => {
+    if (profile.length < 10) {
+      alert('프로필은 최소 10글자로 작성해주세요.');
+      return;
+    }
     const { data, error } = await supabase.from('userinfo').update({ profile: profile }).eq('id', user.id);
     if (error) {
       alert('프로필 업데이트 중 에러가 발생했습니다.');
@@ -83,11 +92,11 @@ const MyPage = () => {
               <ProfileTitle>닉네임</ProfileTitle>
               <ProfileInput
                 type="text"
-                maxLength={30}
+                maxLength={5}
                 placeholder={user.username || '닉네임 수정'}
                 onChange={handleNicknameChange}
               />{' '}
-              <CharacterCount>{nickname.length} / 30</CharacterCount>
+              <CharacterCount>{nickname.length} / 6</CharacterCount>
               <ManageButton onClick={handleNicknameUpdate}>업로드</ManageButton>
               <ProfileTitle>프로필 소개</ProfileTitle>
               <Textarea value={profile} onChange={handleProfileChange} placeholder="프로필 소개를 입력하세요." />

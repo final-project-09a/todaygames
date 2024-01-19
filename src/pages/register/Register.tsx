@@ -14,22 +14,24 @@ import {
   TextSpace,
   ImageUploadBtn,
   BottomBtn,
-  TagSelect,
   GameSelect,
   ImageBox,
   WrappingImages,
-  SearchBtn
+  SearchBtn,
+  GameCard,
+  CardImage,
+  TagArea,
+  TagText
 } from './styles';
-import { ChangeEvent, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getGameDetails } from 'api/steamApis';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from 'shared/supabase';
 import { GENRE_NAME } from '../../constants/genre';
 import searchIcon from '../../assets/img/searchIcon.png';
-// import Modal from 'components/register/Modal';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
+import Modal from 'components/register/Modal';
 
 const Register = () => {
   const genres = GENRE_NAME;
@@ -39,58 +41,23 @@ const Register = () => {
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [game, setGame] = useState(''); //추후에 검색기능 후 삭제예정
+  const [gameName, setGameName] = useState('');
+  const [tagText, setTagText] = useState('');
+  const [searchedGame, setSearchedGame] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const titleTextHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
   const contentTextHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContentText(e.target.value);
   };
 
-  // const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     setImageFiles(event.target.files[0]);
-  //   }
-  // };
-
   const handleImageUploadClick = () => {
     imageInputRef.current?.click();
   };
-
-  // const saveImage = async () => {
-  //   // 이미지 파일이 선택된 경우
-  //   if (imageFiles) {
-  //     const filePath = `${selectedGenre}/${imageFiles}`;
-  //     // const { error: uploadError } = await supabase.storage.from('postImage').upload(imageUrl);
-
-  //     if (uploadError) {
-  //       throw uploadError;
-  //     }
-
-  //     const { data: imageUrlData } = supabase.storage.from('postImage').getPublicUrl(filePath);
-
-  //     const { data, error } = await supabase.from('posts').insert([
-  //       {
-  //         category: selectedGenre,
-  //         title: title,
-  //         content: contentText,
-  //         image: imageUrls,
-  //         comments_count: 5,
-  //         like_count: 8
-  //       }
-  //     ]);
-
-  //     if (error) throw error;
-
-  //     console.log(error, '에러');
-  //     console.log('Data saved: ', data);
-  //     console.log(selectedGenre);
-  //   }
-  // };
 
   const handleImageUploading = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -100,21 +67,41 @@ const Register = () => {
     }
   };
 
-  const { isLoading, isError, data } = useQuery({
+  const searchOnClickHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setGameName(e.target.value);
+  };
+
+  const {
+    isLoading,
+    isError,
+    data: allGames
+  } = useQuery({
     queryKey: [QUERY_KEYS.GAMES],
     queryFn: getGames,
     enabled: isModalOpen
   });
-  const gamesearchHandle = async () => {
-    setIsModalOpen(true);
-    try {
-      const games = await getGames(); // 게임을 가져옵니다.
-      console.log(games); // 결과를 확인하기 위해 콘솔에 출력합니다.
-    } catch (error) {
-      console.error('게임을 가져오는 데 실패했습니다.', error);
-      setIsModalOpen(false); // 에러가 발생하면 모달을 닫습니다.
+
+  const searchedGames = allGames?.filter((game) => game.name.toLowerCase().includes(gameName.toLowerCase()));
+
+  const onClickToggleModal = useCallback(() => {
+    if (gameName) {
+      setGameName(gameName);
+      if (gameName == searchedGame) {
+        setIsModalOpen(!isModalOpen);
+        setSearchedGame(gameName);
+      } else {
+        alert('검색 결과가 없습니다.');
+      }
+    } else if (gameName.length < 1) {
+      alert('게임 이름이 입력되지 않았습니다.');
     }
-  };
+  }, [isModalOpen, gameName]);
+
+  useEffect(() => {
+    if (gameName.length < 1) {
+      setTagText('');
+    }
+  }, [gameName]);
 
   const cancelBtnHandler = () => {
     navigate(`/board`);
@@ -130,24 +117,29 @@ const Register = () => {
           </WrappingBtns>
         </WrappingTitleAndBtn>
         <WrappingAllComponents>
-          <WrappingInput>
+          <WrappingInput
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
             <Titles>
-              <TextSpace>제목2</TextSpace>
+              <TextSpace>제목</TextSpace>
               <TitleInput value={title} onChange={titleTextHandler} />
             </Titles>
             <Titles>
               <TextSpace>게임</TextSpace>
-              <GameSelect />
-              <SearchBtn onClick={gamesearchHandle} />
-              {/* <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                {data?.map((game) => {
-                  return <p key={game.id}>{game.name}</p>;
-                })}
-              </Modal> */}
+              <GameSelect value={gameName} onChange={searchOnClickHandler} />
+              <SearchBtn onClick={onClickToggleModal} />
             </Titles>
             <Titles>
               <TextSpace>태그</TextSpace>
-              <TagSelect></TagSelect>
+              <TagArea>
+                {gameName ? (
+                  <TagText isVisible={true}>{tagText}</TagText>
+                ) : (
+                  <TagText isVisible={false}>{tagText}</TagText>
+                )}
+              </TagArea>
             </Titles>
           </WrappingInput>
           <ContentInput value={contentText} onChange={contentTextHandler} />
@@ -169,6 +161,27 @@ const Register = () => {
           ))}
         </WrappingImages>
       </WrappingBtnAndInput>
+      {isModalOpen && (
+        <Modal onClickToggleModal={onClickToggleModal}>
+          {searchedGames?.map((games) => {
+            return (
+              <>
+                <GameCard
+                  onClick={() => {
+                    setGameName(games.name);
+                    setTagText(games.genres);
+                    setIsModalOpen(false);
+                  }}
+                  key={games.id}
+                >
+                  <CardImage src={games.header_image}></CardImage>
+                  <div style={{ fontSize: '15px' }}>{games.name}</div>
+                </GameCard>
+              </>
+            );
+          })}
+        </Modal>
+      )}
     </MainBackground>
   );
 };
