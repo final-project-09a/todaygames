@@ -40,7 +40,7 @@ const StCarouselWrapper = styled.div`
   }
 
   .slick-next {
-    right: -70px;
+    right: -50px;
     z-index: 10;
   }
   [dir='rtl'] .slick-next {
@@ -56,6 +56,7 @@ const StFigure = styled.figure`
   margin-top: 50px;
   overflow: hidden;
   & img {
+    width: 100%;
     object-fit: cover;
   }
 `;
