@@ -1,26 +1,59 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from 'shared/supabase';
-import { StNavContainer, StNavWrapper, StLogoWrapper, StMenuWrapper, StLogIn } from './styles';
+import {
+  StNavContainer,
+  StNavWrapper,
+  StLogoWrapper,
+  StMenuWrapper,
+  StLogIn,
+  StMyPageLink,
+  StAccountIcon
+} from './styles';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/config/configStore';
-import Search from './Search';
-import styled from 'styled-components';
-import accountIcon from '../../assets/icons/accountIcon.svg';
+import GameSearch from './GameSearch';
+import SuccessModal from 'common/SuccessModal';
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
 
+  // 모달 상태 관리
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+
+  // 로그인 시 success 모달 오픈
+  useEffect(() => {
+    if (user) {
+      setModalContent('로그인에 성공하였습니다.');
+      setModalOpen(true);
+    }
+  }, [user]);
+
+  // success 모달 3초 뒤 사라지게
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setModalOpen(false);
+    }, 3000);
+
+    // Clean up
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isModalOpen, user]);
 
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
-      alert('로그아웃 되었습니다.');
+      setModalContent('로그아웃 되었습니다.');
+      setModalOpen(true);
       navigate('/');
     } catch (error) {
       console.error(error);
-      alert('로그아웃 중에 오류가 발생했습니다.');
+      setModalContent('로그아웃에 실패하였습니다.');
+      setModalOpen(true);
     }
   };
 
@@ -30,7 +63,6 @@ const NavBar: React.FC = () => {
         <StLogoWrapper>
           <Link to="/">Logo</Link>
         </StLogoWrapper>
-
         <StMenuWrapper>
           <Link to={'/'}>
             <h2>홈</h2>
@@ -38,7 +70,7 @@ const NavBar: React.FC = () => {
           <Link to={'/board'}>
             <h2>커뮤니티</h2>
           </Link>
-          <Search />
+          <GameSearch />
           <StLogIn>
             {user ? (
               <>
@@ -48,11 +80,15 @@ const NavBar: React.FC = () => {
                     <h2>마이페이지</h2>
                   </StMyPageLink>
                 </Link>
-
                 <h2 onClick={handleLogout}>로그아웃</h2>
               </>
             ) : (
               <Link to="/login">로그인</Link>
+            )}
+            {isModalOpen && (
+              <SuccessModal isOpen={isModalOpen}>
+                <p>{modalContent}</p>
+              </SuccessModal>
             )}
           </StLogIn>
         </StMenuWrapper>
@@ -62,19 +98,3 @@ const NavBar: React.FC = () => {
 };
 
 export default NavBar;
-
-const StMyPageLink = styled.div`
-  position: relative;
-`;
-
-const StAccountIcon = styled.div`
-  position: absolute;
-  top: 50%;
-  left: -50%;
-  width: 32px;
-  height: 32px;
-  transform: translateY(-50%);
-  background: url(${accountIcon}) no-repeat center center;
-  background-size: contain;
-  cursor: pointer;
-`;

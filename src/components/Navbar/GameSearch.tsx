@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 
-const Search = () => {
+const GameSearch = () => {
   const [searchedText, setSearchedText] = useState('');
 
   const handelSearchButtonClick = () => {
-    alert('dd');
     setSearchedText('');
   };
 
@@ -26,7 +25,7 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default GameSearch;
 
 const StSearchBox = styled.form`
   position: relative;
@@ -57,4 +56,14 @@ const StSearchIcon = styled.div`
   background: url(${searchIcon}) no-repeat center center;
   background-size: contain;
   cursor: pointer;
+`;
+
+const StModalWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* display: flex;
+  justify-content: center; */
 `;
