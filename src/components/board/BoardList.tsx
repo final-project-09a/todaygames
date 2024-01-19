@@ -1,12 +1,10 @@
-// 게시판 상세정보  디자인 미정
+// 게시판 리스트
 
-// import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
-import { getPosts } from 'api/post';
 import { Typedata } from 'shared/supabase.type';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,12 +14,11 @@ import { AiFillLike } from 'react-icons/ai';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { DetailedHTMLProps, HTMLAttributes } from 'react';
+import searchIcon from '../../assets/icons/searchIcon.svg';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
 }
-
 // interface GameInfo {
 //   app_id: number;
 //   capsule_image: string;
@@ -38,11 +35,7 @@ interface GameImageProps extends React.HTMLProps<HTMLImageElement> {
   src: string;
 }
 
-// interface MainProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-//   filteredPosts: (string | undefined)[];
-// }
-
-export const Main = ({ filteredPosts }: any) => {
+export const BoardList = ({ filteredPosts }: any) => {
   const [formattedDate, setFormattedDate] = useState('');
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
@@ -53,10 +46,6 @@ export const Main = ({ filteredPosts }: any) => {
   }, []);
   const navigate = useNavigate();
 
-  // const { data: postsData = [] } = useQuery({
-  //   queryKey: [QUERY_KEYS.POSTS],
-  //   queryFn: getPosts
-  // });
   const { data: userInfoData = [] } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
@@ -78,67 +67,63 @@ export const Main = ({ filteredPosts }: any) => {
   } else if (getgamesData) {
     console.log('game name: ', getgamesData);
   }
-
-  const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  // 글쓰기 이동
+  const moveregisterPageOnClick = () => {
     if (user) {
-      //  글쓰기로 이동
       navigate(`/register`);
-      // 로그인 상태가 아니라면 로그인으로 이동
     } else {
       navigate('/login');
     }
   };
 
-  const movedetailPageOnClick = (item: string, event: React.MouseEvent<HTMLDivElement>) => {
+  const movedetailPageOnClick = (item: string) => {
     navigate(`/boarddetail/${item}`);
   };
-  const GameImage: React.FC<GameImageProps> = ({ src, ...otherProps }) => {
-    return <img src={src} {...otherProps} />;
-  };
+  // const GameImage: React.FC<GameImageProps> = ({ src, ...otherProps }) => {
+  //   return <img src={src} {...otherProps} />;
+  // };
 
   return (
     <>
-      <Stselectcontainer>
-        <StSeachandButton>
-          <Stseach />
+      <div>
+        <StSeachContainer>
+          <StseachBox placeholder="게시글 검색" />
+          <StSearchIcon />
           <Stbutton onClick={moveregisterPageOnClick}>글쓰기</Stbutton>
-        </StSeachandButton>
-      </Stselectcontainer>
-      {/* 박스 개수 = posts 컬럼 개수 = postData의 아이디와 userInfoData의 같다면 해당 유저 id만 출력 */}
-      {/* {박스 안에 유저에 따라 프로필, 이름, 게임이름, 제목, 내용, 게임장르 순서대로 map} */}
-      {/* games에서 게임명, 장르 => id로 판별 */}
-      {filteredPosts.map((post: any) => {
-        const userInfo = userInfoData.find((user) => user.id === post?.users_id);
-        if (userInfo) {
-          return (
-            <>
-              <StcontentBox key={post?.id} onClick={(event) => movedetailPageOnClick(post?.id, event)}>
-                <Contentbox>
-                  <Profileline>
-                    <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
-                    {userInfo.username}
-                    {formattedDate}
-                  </Profileline>
-                  <h1>{post?.title}</h1>
-                  <h1>{post?.content}</h1>
-                  <p>#{post?.category}</p>
-                  <RowArray>
-                    <CommentCount>
-                      <IoChatbubbleOutline />
-                      {post?.comments_count}
-                    </CommentCount>
-                    <Liked>
-                      <AiFillLike />
-                      {post?.like_count}
-                    </Liked>
-                    <GameImage src={post?.image} />
-                  </RowArray>
-                </Contentbox>
-              </StcontentBox>
-            </>
-          );
-        }
-      })}
+        </StSeachContainer>
+        {filteredPosts.map((post: any) => {
+          const userInfo = userInfoData.find((user) => user.id === post?.users_id);
+          if (userInfo) {
+            return (
+              <>
+                <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
+                  <Contentbox>
+                    <Profileline>
+                      <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
+                      {userInfo.nickname}
+                      {formattedDate}
+                    </Profileline>
+                    <h1>{post?.title}</h1>
+                    <h1>{post?.content}</h1>
+                    <p>#{post?.category}</p>
+                    <RowArray>
+                      <CommentCount>
+                        <IoChatbubbleOutline />
+                        {post?.comments_count}
+                      </CommentCount>
+                      <Liked>
+                        <AiFillLike />
+                        {post?.like_count}
+                      </Liked>
+                      <GameImage src={post.image} />
+                    </RowArray>
+                  </Contentbox>
+                </StcontentBox>
+              </>
+            );
+          }
+        })}
+      </div>
     </>
   );
 };
@@ -147,14 +132,15 @@ export const Contentbox = styled.div`
   grid-template-columns: repeat(1, 2fr);
   margin: 15px;
   font-size: 15px;
-  color: #ffffff;
+  color: ${(props) => props.theme.color.white};
 `;
 const RowArray = styled.div`
   display: flex;
 `;
 const StcontentBox = styled.div`
-  display: grid;
-  grid-template-columns: repeat(0, 1fr);
+  display: flex;
+  box-sizing: border-box;
+  width: 1180px;
   height: 283px;
   margin: 15px;
   background-color: #232323;
@@ -177,21 +163,29 @@ export const GameComponent = styled.div`
   display: flex;
 `;
 
-const Stselectcontainer = styled.div`
+const StSeachContainer = styled.form`
   display: flex;
-  justify-content: space-around;
+  position: relative;
+  left: 440px;
+  margin: 30px;
 `;
 
-const StSeachandButton = styled.form`
-  display: flex;
-`;
-
-const Stseach = styled.input`
+const StseachBox = styled.input`
   height: 48px;
   width: 438px;
   background-color: #232323;
   border-radius: 10px;
-  color: white;
+`;
+const StSearchIcon = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 21%;
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  background: url(${searchIcon});
+  background-size: contain;
+  cursor: pointer;
 `;
 
 const Stbutton = styled.button`
@@ -199,15 +193,27 @@ const Stbutton = styled.button`
   width: 80px;
   background-color: #2d4ea5;
   border-radius: 10px;
+  margin-left: 20px;
   cursor: grab;
 `;
 
 const UserImage = styled.img`
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   border-radius: 10px;
   object-fit: cover;
   margin-right: 5px;
+`;
+
+const GameImage = styled.img`
+  display: flex;
+  position: relative;
+  left: 870px;
+  bottom: 30px;
+  width: 200px;
+  height: 168px;
+  border-radius: 10px;
+  object-fit: cover;
 `;
 
 // 메인게시판 image 부분 그리기

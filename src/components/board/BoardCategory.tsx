@@ -75,14 +75,17 @@ const StvideoInput = styled.input`
 `;
 const StLabel = styled.div`
   display: flex;
-  align-items: center;
-  margin: 5px auto 10px auto;
+  margin: 3px auto 15px 10px;
   transform: translate(-20%, -50%);
+  flex-direction: row;
+  align-content: stretch;
+  align-items: flex-end;
 `;
-const StboardLeftCategory = styled.form`
+const StboardLeftCategory = styled.div`
   display: flex;
   flex-direction: column;
-  width: 25%;
+  margin-top: 90px;
+  margin-left: 150px;
   button {
     display: inline-flex;
     flex-direction: column;
@@ -109,7 +112,5 @@ const StboardLeftCategory = styled.form`
     padding-left: 10px;
     color: #ffffff;
     border-radius: 7px;
-  }
-  h3 {
   }
 `;

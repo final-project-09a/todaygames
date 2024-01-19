@@ -1,5 +1,5 @@
 import { BoardCategory } from 'components/board/BoardCategory';
-import { Main } from 'components/board/Main';
+import { BoardList } from 'components/board/BoardList';
 import { useState } from 'react';
 import styled from 'styled-components';
 import { GENRE_NAME } from 'constants/genre';
@@ -8,7 +8,7 @@ import { GENRE_NAME } from 'constants/genre';
 
 type Genre = (typeof GENRE_NAME)[number]['tag'];
 export const Board = () => {
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState(['tag']);
 
   return (
     <>
@@ -17,25 +17,24 @@ export const Board = () => {
           <BoardCategory setFilteredPosts={setFilteredPosts} />
         </StCategoryContainer>
         <StContentContainer>
-          <Main filteredPosts={filteredPosts} />
+          <BoardList filteredPosts={filteredPosts} />
         </StContentContainer>
       </StboardListContainer>
     </>
   );
 };
 const StCategoryContainer = styled.div`
-  display: flex;
-  flex-basis: 30%;
-  margin-top: 80px;
+  display: grid;
 `;
 
 const StContentContainer = styled.div`
-  flex-basis: 70%;
+  display: grid;
 `;
 const StboardListContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+
   margin: 50px;
   position: absolute;
+  margin: 50px auto;
   width: 1440px;
 `;
