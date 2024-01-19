@@ -5,6 +5,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SelectedGenreList from './SelectedGenreList';
+import styled from 'styled-components';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');
@@ -21,7 +22,7 @@ const GenreSlider = () => {
   }, []);
 
   return (
-    <div>
+    <>
       <Slider {...settings}>
         {GENRE_NAME.map(({ tag, englishTag }: { tag: string; englishTag: string }) => (
           <GenreCard
@@ -33,7 +34,7 @@ const GenreSlider = () => {
         ))}
       </Slider>
       <SelectedGenreList selectedTag={selectedTag} />
-    </div>
+    </>
   );
 };
 

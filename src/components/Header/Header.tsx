@@ -1,23 +1,67 @@
-import { StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper, StMainCarousel } from './styles';
+import {
+  StContainer,
+  StFigure,
+  StTitle,
+  StTagWrapper,
+  StGameInfo,
+  StInfoWrapper,
+  StCarouselWrapper,
+  StWrapper
+} from './styles';
 import { getGameDetails } from 'api/steamApis';
 import { useQueries } from '@tanstack/react-query';
 import Button from 'common/Button';
 import Tag from 'common/Tag';
 import Slider from 'react-slick';
 import CustomCarousel from 'common/CustomCarousel';
+import { useState } from 'react';
 
 interface HeaderProps {
   mostPlayedGames: any;
 }
 
-const settings = {
-  infinite: true,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1
-};
-
 const Header = ({ mostPlayedGames }: HeaderProps) => {
+  const [currentGameIndex, setCurrentGameIndex] = useState(0);
+
+  const handleCarouselSlideChange = (index: number) => {
+    setCurrentGameIndex(index);
+  };
+
+  const settings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    // afterChange: handleCarouselSlideChange,
+    centerMode: true,
+    centerPadding: '550px',
+    autoplay: false,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
+    draggable: true,
+    cssEase: 'linear',
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          arrows: false,
+          centerMode: true,
+          centerPadding: '40px',
+          slidesToShow: 1
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          arrows: false,
+          centerMode: true,
+          centerPadding: '40px',
+          slidesToShow: 1
+        }
+      }
+    ]
+  };
+
   // // 가장 많이 플레이된 게임 100개 중 top 5 appid 가져오기
   const topTen = mostPlayedGames?.slice(0, 5);
   const appids = topTen?.map((game: any) => game.appid) || [];
@@ -43,13 +87,23 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
 
   return (
     <StContainer>
-      <CustomCarousel customStyle={StMainCarousel} settings={settings}>
+      {/* <StWrapper>
+        <StCarouselWrapper> */}
+      <CustomCarousel settings={settings}>
         {gameDetailsArray &&
-          gameDetailsArray?.map((game) => (
-            <div key={game.steam_appid}>
-              <StFigure>
-                <img src={game.background_raw} alt={game.name} />
-              </StFigure>
+          gameDetailsArray?.map((game, index) => (
+            <StFigure key={game.steam_appid}>
+              <img src={game.background_raw} alt={game.name} />
+            </StFigure>
+          ))}
+      </CustomCarousel>
+      {/* </StCarouselWrapper>
+      </StWrapper> */}
+
+      {gameDetailsArray &&
+        gameDetailsArray?.map((game, index) => (
+          <div key={game.steam_appid}>
+            {index === currentGameIndex && (
               <StInfoWrapper>
                 <StGameInfo>
                   <StTitle>{game?.name}</StTitle>
@@ -65,9 +119,9 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
                   Play Now
                 </Button>
               </StInfoWrapper>
-            </div>
-          ))}
-      </CustomCarousel>
+            )}
+          </div>
+        ))}
     </StContainer>
   );
 };

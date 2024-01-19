@@ -1,14 +1,22 @@
 import styled from 'styled-components';
 
 const StContainer = styled.div`
-  width: 1440px;
-  margin: 0 auto;
+  width: 100%;
   height: 800px;
   gap: 60px;
 `;
 
-const StFigure = styled.figure`
+const StWrapper = styled.div`
   width: 100%;
+`;
+
+const StCarouselWrapper = styled.div`
+  width: 100%;
+  margin: 0 auto;
+`;
+
+const StFigure = styled.figure`
+  width: 1440px;
   height: 600px;
   border-radius: 20px;
   margin-top: 50px;
@@ -19,9 +27,11 @@ const StFigure = styled.figure`
 `;
 
 const StInfoWrapper = styled.div`
+  width: 1440px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 0 auto;
   padding-top: 40px;
   padding-bottom: 50px;
 `;
@@ -43,9 +53,4 @@ const StTagWrapper = styled.div`
   gap: 7px;
 `;
 
-const StMainCarousel = styled.div`
-  width: 80%;
-  margin: 0 auto;
-`;
-
-export { StMainCarousel, StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };
+export { StWrapper, StCarouselWrapper, StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };
