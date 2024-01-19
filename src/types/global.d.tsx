@@ -4,12 +4,10 @@ export type SteamProfile = {
 };
 
 export type Post = {
-  id?: number;
-  category?: string;
-  title?: string;
-  image?: string;
-  content?: string;
-  comments_count?: number;
-  like_count?: number;
+  title: string;
+  game: string;
+  category: string;
+  image: string;
+  content: string;
   users_id?: string;
 };
