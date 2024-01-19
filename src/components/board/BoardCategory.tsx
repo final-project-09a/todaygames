@@ -2,26 +2,32 @@ import { useQuery } from '@tanstack/react-query';
 import { getPosts } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Typedata } from 'shared/supabase.type';
 
+interface GenreType {
+  postsData: Typedata['public']['Tables']['posts'][];
+  tag: string;
+  onClick: () => void;
+}
 export const BoardCategory = () => {
+  const [selectorGenre, useSelectorGenre] = useState<string | null>('액션');
   useEffect(() => {
     getPosts();
   });
-  const { isLoading: postsLoading, data: postsData = [] } = useQuery({
+  const { data: postsData = [] } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
 
-  const handleButtonClick: MouseEventHandler<HTMLButtonElement> = () => {
-    const genrefilterButton = GENRE_NAME.filter((genre) => postsData.some((post) => post.category === genre.tag));
-    console.log(genrefilterButton);
-    if (genrefilterButton.length === 0) {
-      return null;
-    }
-  };
+  const handleGenreCardClick = useCallback((tag: string) => {
+    useSelectorGenre(tag);
+  }, []);
+  // incluses 로   postsData 와 GENRE_NAME.tag와 일치하는 장르 필터링 하기
+  const genrefilterOnClick = GENRE_NAME.filter((genre) => {
+    postsData.some((post) => post.category.includes(genre.tag));
+  });
 
   return (
     <>
@@ -37,7 +43,7 @@ export const BoardCategory = () => {
         </StLabel>
         <label>장르</label>
         {GENRE_NAME.map((list, index) => (
-          <button onClick={handleButtonClick} key={index}>
+          <button onClick={() => genrefilterOnClick(list.tag)} key={index}>
             {list.tag}
           </button>
         ))}
@@ -90,6 +96,3 @@ const StboardLeftCategory = styled.form`
   h3 {
   }
 `;
-// BoardCategory의 카테고리의 버튼을 클릭 할 경우
-//  해당장르의  Main component에서  게시판리스트 필터링해서 보여줌 여기서 defalut는 모든 게시판 출력된 상태
-//  궁금증: 카테고리만 클릭해도 Main 에서 게시판 리스트에서 렌더링되면서  장르에 맞는 게시판리스트가 출력될까?
