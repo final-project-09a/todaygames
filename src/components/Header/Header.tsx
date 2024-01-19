@@ -74,7 +74,6 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
   const allQueriesSuccessful = gameDetailsQueries.every((query: any) => query.isSuccess);
 
   const gameDetailsArray = allQueriesSuccessful ? gameDetailsQueries.map((query: any) => query.data) : undefined;
-  console.log(gameDetailsArray);
 
   return (
     <StContainer>
