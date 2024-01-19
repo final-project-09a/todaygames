@@ -32,6 +32,9 @@ import searchIcon from '../../assets/img/searchIcon.png';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
 import Modal from 'components/register/Modal';
+import { insertPost } from 'api/supabaseData';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
 
 const Register = () => {
   const genres = GENRE_NAME;
@@ -59,6 +62,7 @@ const Register = () => {
     imageInputRef.current?.click();
   };
 
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const handleImageUploading = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
@@ -85,13 +89,8 @@ const Register = () => {
 
   const onClickToggleModal = useCallback(() => {
     if (gameName) {
-      setGameName(gameName);
-      if (gameName == searchedGame) {
-        setIsModalOpen(!isModalOpen);
-        setSearchedGame(gameName);
-      } else {
-        alert('검색 결과가 없습니다.');
-      }
+      setIsModalOpen(!isModalOpen);
+      setSearchedGame(gameName);
     } else if (gameName.length < 1) {
       alert('게임 이름이 입력되지 않았습니다.');
     }
@@ -103,6 +102,27 @@ const Register = () => {
     }
   }, [gameName]);
 
+  const { mutate } = useMutation({
+    mutationFn: insertPost,
+    onSuccess: () => {
+      navigate('/board');
+    },
+    onError: (error) => {
+      alert('에러가 발생했습니다.');
+    }
+  });
+
+  const registerPost = () => {
+    mutate({
+      title: title,
+      game: gameName,
+      category: tagText,
+      image: imageUrls,
+      content: contentText,
+      id: user?.id
+    });
+  };
+
   const cancelBtnHandler = () => {
     navigate(`/board`);
   };
@@ -113,7 +133,7 @@ const Register = () => {
           <TitleText>게시글 작성</TitleText>
           <WrappingBtns>
             <CancelBtn onClick={cancelBtnHandler}>취소</CancelBtn>
-            <RegisterBtn>등록</RegisterBtn>
+            <RegisterBtn onClick={registerPost}>등록</RegisterBtn>
           </WrappingBtns>
         </WrappingTitleAndBtn>
         <WrappingAllComponents>
