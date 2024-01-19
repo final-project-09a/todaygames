@@ -79,6 +79,7 @@ const MyPage = () => {
             {/* 아바타 부분은 예시를 위해 assets 폴더에 기본이미지 추가하였습니다 */}
             {/* userinfo테이블에 url을 담는 형식이나 dkslaus수파베이스 스토리지도 사용해야할듯싶네요 */}
             <Avatar src={userimg} alt="User Avatar" />
+            <input type="file" id="image" />
 
             <UserWrapper>
               <Username>{user.username}</Username>

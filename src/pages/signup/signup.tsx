@@ -47,7 +47,8 @@ function Signup() {
 
       if (error) {
         console.error(error);
-        alert('ID와 password를 확인해주세요');
+        alert('ID와 password를 확인해주세요'); //유효성 검사 더 추가 닉네임 없어도 가입되고
+        //동일한 이메일 안되고
       } else {
         console.log(data);
         alert('회원가입을 환영합니다');
