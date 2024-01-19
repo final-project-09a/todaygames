@@ -7,11 +7,7 @@ interface CustomCarouselProps {
 }
 
 const CustomCarousel = ({ settings, children }: CustomCarouselProps) => {
-  return (
-    <div>
-      <Slider {...settings}>{children}</Slider>
-    </div>
-  );
+  return <Slider {...settings}>{children}</Slider>;
 };
 
 export default CustomCarousel;

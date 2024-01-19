@@ -6,13 +6,47 @@ const StContainer = styled.div`
   gap: 60px;
 `;
 
+// 삭제
 const StWrapper = styled.div`
   width: 100%;
+  margin: 0 auto;
 `;
 
 const StCarouselWrapper = styled.div`
-  width: 100%;
+  width: 1440px;
   margin: 0 auto;
+  .slick-prev:hover:before,
+  .slick-prev:focus:before,
+  .slick-next:hover:before,
+  .slick-next:focus:before {
+    opacity: 0.6;
+  }
+
+  .slick-prev:before,
+  .slick-next:before {
+    height: 0;
+    font-size: 50px;
+    color: white;
+    opacity: 0.3;
+  }
+
+  .slick-prev {
+    left: -70px;
+    z-index: 10;
+  }
+  [dir='rtl'] .slick-prev {
+    right: -25px;
+    left: auto;
+  }
+
+  .slick-next {
+    right: -70px;
+    z-index: 10;
+  }
+  [dir='rtl'] .slick-next {
+    right: auto;
+    left: -25px;
+  }
 `;
 
 const StFigure = styled.figure`
