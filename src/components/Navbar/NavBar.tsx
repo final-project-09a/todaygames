@@ -74,7 +74,7 @@ const NavBar: React.FC = () => {
           <StLogIn>
             {user ? (
               <>
-                <Link to={`/mypage/${user.id}`}>
+                <Link to={'/mypage'}>
                   <StMyPageLink>
                     <StAccountIcon />
                     <h2>마이페이지</h2>

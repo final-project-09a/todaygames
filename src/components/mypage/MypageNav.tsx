@@ -1,17 +1,45 @@
-import React from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import styled from 'styled-components';
 import boomarkIcon from 'assets/icons/boomarkIcon.svg';
 import communityIcon from 'assets/icons/communityIcon.svg';
 import editProfileIcon from 'assets/icons/editProfileIcon.svg';
+import userimg from 'assets/img/userimg.png';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
 
-const MypageNav = ({ user }: any) => {
+const MypageNav = () => {
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files;
+    console.log('Selected file:', selectedFile);
+  }, []);
+
+  const triggerFileInput = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  }, [fileInputRef]);
+
+  const profileImageUrl = useMemo(() => user?.profile || userimg, [user]);
+
   return (
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          <img src={user.profile} alt="프로필이미지" />
+          <img src={profileImageUrl} alt="프로필이미지" />
         </StProfileImageWrapper>
+        <a onClick={triggerFileInput}>프로필 이미지 변경</a>
         <p>딱딱한 바게트빵</p>
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          ref={fileInputRef}
+          onChange={handleFileChange}
+        />
       </StUserProfileWrapper>
       <StCategoryWrapper>
         <div>
@@ -38,6 +66,7 @@ const StContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
+  user-select: none;
 `;
 
 const StUserProfileWrapper = styled.div`
@@ -49,10 +78,16 @@ const StUserProfileWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 30px;
-  & h {
+  & a {
+    font-size: 11px;
+    font-weight: 300;
+    margin-top: 15px;
+    color: gray;
+  }
+  & p {
     font-size: 14px;
     font-weight: 400;
+    margin-top: 15px;
   }
 `;
 
@@ -76,7 +111,18 @@ const StProfileImageWrapper = styled.figure`
   height: 82px;
   border-radius: 50%;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: ${(prosp) => prosp.theme.color.black};
+  & p {
+    font-size: 8px;
+  }
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const StEditProfileIcon = styled.div`
