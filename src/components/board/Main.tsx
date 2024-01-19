@@ -17,37 +17,34 @@ import { IoChatbubbleOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 
-interface PostType {
-  data: Typedata['public']['Tables']['posts']['Row'];
-}
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
 }
-interface Games {
-  getGames: Typedata['public']['Tables']['games']['Row'];
-}
-interface GameInfo {
-  app_id: number;
-  capsule_image: string;
-  genres: string[];
-  header_image: string;
-  id: number;
-  is_free: boolean;
-  name: string;
-  required_age: number;
-  short_description: string;
-}
+
+// interface GameInfo {
+//   app_id: number;
+//   capsule_image: string;
+//   genres: string[];
+//   header_image: string;
+//   id: number;
+//   is_free: boolean;
+//   name: string;
+//   required_age: number;
+//   short_description: string;
+// }
+
 interface GameImageProps extends React.HTMLProps<HTMLImageElement> {
   src: string;
 }
-export const Main = () => {
-  // const {data} = useSelector()
+
+// interface MainProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+//   filteredPosts: (string | undefined)[];
+// }
+
+export const Main = ({ filteredPosts }: any) => {
   const [formattedDate, setFormattedDate] = useState('');
 
-  const [gameInfoList, setGameInfoList] = useState<GameInfo[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  console.log(user);
-
   useEffect(() => {
     const currentDate = Date.now(); // 현재 시간을 가져옴
     const formatted = getFormattedDate(currentDate); // 날짜 포맷 변환
@@ -55,10 +52,10 @@ export const Main = () => {
   }, []);
   const navigate = useNavigate();
 
-  const { data: postsData = [] } = useQuery({
-    queryKey: [QUERY_KEYS.POSTS],
-    queryFn: getPosts
-  });
+  // const { data: postsData = [] } = useQuery({
+  //   queryKey: [QUERY_KEYS.POSTS],
+  //   queryFn: getPosts
+  // });
   const { data: userInfoData = [] } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
@@ -80,7 +77,7 @@ export const Main = () => {
   } else if (getgamesData) {
     console.log('game name: ', getgamesData);
   }
-  //  글쓰기로 이동
+
   const moveregisterPageOnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (user) {
       //  글쓰기로 이동
@@ -97,6 +94,7 @@ export const Main = () => {
   const GameImage: React.FC<GameImageProps> = ({ src, ...otherProps }) => {
     return <img src={src} {...otherProps} />;
   };
+
   return (
     <>
       <Stselectcontainer>
@@ -108,33 +106,31 @@ export const Main = () => {
       {/* 박스 개수 = posts 컬럼 개수 = postData의 아이디와 userInfoData의 같다면 해당 유저 id만 출력 */}
       {/* {박스 안에 유저에 따라 프로필, 이름, 게임이름, 제목, 내용, 게임장르 순서대로 map} */}
       {/* games에서 게임명, 장르 => id로 판별 */}
-      {postsData.map((post) => {
-        const userInfo = userInfoData.find((user) => user.id === post.users_id);
+      {filteredPosts.map((post: any) => {
+        const userInfo = userInfoData.find((user) => user.id === post?.users_id);
         if (userInfo) {
           return (
             <>
-              <StcontentBox key={post.id} onClick={(event) => movedetailPageOnClick(post.id, event)}>
+              <StcontentBox key={post?.id} onClick={(event) => movedetailPageOnClick(post?.id, event)}>
                 <Contentbox>
                   <Profileline>
                     <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
                     {userInfo.username}
-
                     {formattedDate}
                   </Profileline>
-
-                  <h1>{post.title}</h1>
-                  <h1>{post.content}</h1>
-                  <p>#{post.category}</p>
+                  <h1>{post?.title}</h1>
+                  <h1>{post?.content}</h1>
+                  <p>#{post?.category}</p>
                   <RowArray>
                     <CommentCount>
                       <IoChatbubbleOutline />
-                      {post.comments_count}
+                      {post?.comments_count}
                     </CommentCount>
                     <Liked>
                       <AiFillLike />
-                      {post.like_count}
+                      {post?.like_count}
                     </Liked>
-                    <GameImage src={post.image} />
+                    <GameImage src={post?.image} />
                   </RowArray>
                 </Contentbox>
               </StcontentBox>
@@ -202,6 +198,7 @@ const Stbutton = styled.button`
   width: 80px;
   background-color: #2d4ea5;
   border-radius: 10px;
+  cursor: grab;
 `;
 
 const UserImage = styled.img`

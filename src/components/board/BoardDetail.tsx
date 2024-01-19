@@ -4,7 +4,6 @@ import { supabase } from 'shared/supabase';
 import { Typedata } from 'shared/supabase.type';
 import styled from 'styled-components';
 import React from 'react';
-import { BoardCategory } from './BoardCategory';
 import { Seach } from './Seach';
 import { getPosts } from 'api/post';
 
@@ -19,7 +18,6 @@ export const BoardDetail = () => {
 
   return (
     <React.Fragment>
-      <BoardCategory />
       <StRegister>게시글 작성</StRegister>
       <Seach />
     </React.Fragment>
