@@ -60,7 +60,7 @@ export const BoardDetail = () => {
               <ProfileImage />
               <WrappingUserInfo>
                 <NickNameAndDate>
-                  <NickNameAndTitleText>{filteredUser[0].nickname}</NickNameAndTitleText>
+                  <NickNameAndTitleText>{filteredUser[0]?.nickname}</NickNameAndTitleText>
                   <DateText>1월9일</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>게임이름</NickNameAndTitleText>
