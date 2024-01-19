@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 import searchIcon from '../../assets/img/searchIcon.png';
+
+interface DivProps {
+  isVisible: boolean;
+}
+
 const MainBackground = styled.div`
   width: 100%;
   display: flex;
@@ -19,6 +24,7 @@ const WrappingAllComponents = styled.div`
 `;
 
 const WrappingBtnAndInput = styled.div`
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   width: 80%;
@@ -114,7 +120,8 @@ const SearchBtn = styled.button`
   z-index: 1;
 `;
 
-const TitleInput = styled.textarea`
+const TitleInput = styled.input`
+  border: 0px;
   display: flex;
   width: 1173px;
   height: 46px;
@@ -123,7 +130,6 @@ const TitleInput = styled.textarea`
   color: white;
   text-indent: 8px;
   font-size: 20px;
-  padding-top: 10px;
   resize: none;
   &::placeholder {
     color: white;
@@ -131,7 +137,9 @@ const TitleInput = styled.textarea`
   z-index: 0;
 `;
 
-const GameSelect = styled.textarea`
+const GameSelect = styled.input`
+  border: 0px;
+  font-size: 20px;
   display: flex;
   width: 1173px;
   height: 46px;
@@ -145,13 +153,41 @@ const GameSelect = styled.textarea`
   }
 `;
 
+const TagArea = styled.div`
+  border: 0px;
+  font-size: 20px;
+  display: flex;
+  width: 1173px;
+  height: 46px;
+  border-radius: 10px;
+  background: transparent;
+  color: white;
+  text-indent: 8px;
+  resize: none;
+  &::placeholder {
+    color: white;
+  }
+`;
+
+const TagText = styled.div<DivProps>`
+  padding: 0px 6px 0px 0px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  background: ${(props) => props.theme.color.inputcolor};
+  width: fit-content;
+  height: 46px;
+  font-size: 16px;
+  visibility: ${(props) => (props.isVisible ? 'visible' : 'hidden')};
+`;
+
 const TextSpace = styled.div`
   width: 30px;
   height: 20px;
   font-size: 16px;
 `;
 
-const GameCard = styled.div`
+const GameCard = styled.button`
   display: flex;
   flex-direction: column;
   width: 350px;
@@ -159,6 +195,18 @@ const GameCard = styled.div`
   border: none;
   border-radius: 10px;
   z-index: 3;
+  cursor: pointer;
+  top: 0px;
+  left: 0px;
+  background-color: transparent;
+  gap: 5px;
+`;
+
+const CardImage = styled.img`
+  border-radius: 10px;
+  display: flex;
+  width: 350px;
+  height: 250px;
 `;
 
 const ContentInput = styled.textarea`
@@ -229,5 +277,8 @@ export {
   ImageBox,
   WrappingImages,
   SearchBtn,
-  GameCard
+  GameCard,
+  CardImage,
+  TagArea,
+  TagText
 };

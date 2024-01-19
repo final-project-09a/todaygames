@@ -9,12 +9,10 @@ function Modal({ onClickToggleModal, children }: PropsWithChildren<ModalDefaultT
   return (
     <ModalContainer>
       <div>
-        <h1>게임을 선택해주세요.</h1>
         <DialogBox>{children}</DialogBox>
         <Backdrop
           onClick={(e: React.MouseEvent) => {
             e.preventDefault();
-
             if (onClickToggleModal) {
               onClickToggleModal();
             }

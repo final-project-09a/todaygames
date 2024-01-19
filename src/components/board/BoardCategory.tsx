@@ -11,19 +11,38 @@ interface GenreType {
 }
 // type Genre = typeof GENRE_NAME;
 type BoardCategoryProps = {
-  genrefilterOnClick: (genre: string) => void;
+  setFilteredPosts: any;
 };
-export const BoardCategory = ({ genrefilterOnClick }: BoardCategoryProps) => {
+
+export const BoardCategory = ({ setFilteredPosts }: BoardCategoryProps) => {
   useEffect(() => {
     getPosts();
   });
 
-  const { data: GenreType = [] } = useQuery({
+  const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
   //  tag 클릭시 필터링 하여 게시판 리스트를  렌더링
   // newFilterPosts를 props 로  Main.tsx 전달하여 contentbox 에 map으로 뿌려짐
+
+  // const tags = GENRE_NAME.tag
+
+  //   const newFilteredPosts: (string | undefined)[] = data?
+  //   .filter((post:any) => post.category.includes(tag))
+  //   // .map((post) => post.category);
+
+  //  tag 클릭시 필터링 하여 게시판 리스트를  렌더링
+  // newFilterPosts를 props 로  Main.tsx 전달하여 contentbox 에 map으로 뿌려짐
+
+  const genrefilterOnClick = (tag: any) => {
+    const newFilteredPosts = data?.filter((post: any) => post.category.includes(tag));
+    console.log(newFilteredPosts);
+    setFilteredPosts(newFilteredPosts);
+    // .map((post:any) => post.category);
+    // setFilteredPosts(newFilteredPosts); // 상태가 업데이트 되면 렌더링
+    // dispatch()
+  };
 
   return (
     <>

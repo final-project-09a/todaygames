@@ -6,20 +6,22 @@ const postContents = async (newPost: Post) => {
   await supabase.from(QUERY_KEYS.POST).insert(newPost);
 };
 
-const upsertPost = async (newPost: Post) => {
-  await supabase
-    .from(QUERY_KEYS.POST)
-    .upsert({
-      id: newPost.id,
-      category: newPost.category,
+const insertPost = async (newPost: Post) => {
+  const { data, error } = await supabase.from(QUERY_KEYS.POST).insert([
+    {
       title: newPost.title,
+      game: newPost.game,
+      category: newPost.category,
       image: newPost.image,
       content: newPost.content,
-      commentCount: newPost.comments_count,
-      likeCount: newPost.like_count,
-      uid: newPost.users_id
-    })
-    .select();
+      id: newPost.id
+    }
+  ]);
+  if (error) {
+    console.log('error', error);
+    return null;
+  }
+  return data;
 };
 
-export { postContents, upsertPost };
+export { postContents, insertPost };
