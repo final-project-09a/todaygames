@@ -1,4 +1,10 @@
-export const GENRE_NAME = [
+export interface Genre {
+  tag: string;
+  englishTag: string;
+  imageUrl: string;
+}
+
+export const GENRE_NAME: Genre[] = [
   {
     tag: '액션',
     englishTag: 'Action',
