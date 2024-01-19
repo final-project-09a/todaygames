@@ -96,7 +96,6 @@ export const Main = ({ filteredPosts }: any) => {
     return <img src={src} {...otherProps} />;
   };
 
-
   return (
     <>
       <Stselectcontainer>
@@ -113,7 +112,6 @@ export const Main = ({ filteredPosts }: any) => {
         if (userInfo) {
           return (
             <>
-              <StcontentBox key={post?.id} onClick={(event) => movedetailPageOnClick(post?.id, event)}>
               <StcontentBox key={post?.id} onClick={(event) => movedetailPageOnClick(post?.id, event)}>
                 <Contentbox>
                   <Profileline>
