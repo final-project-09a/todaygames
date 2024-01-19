@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import cancelIcon from 'assets/icons/cancelIcon.svg';
 
 export const StMypageContainer = styled.form`
   margin-top: 50px;
