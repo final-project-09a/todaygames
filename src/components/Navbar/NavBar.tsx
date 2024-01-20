@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from 'shared/supabase';
 import {
@@ -74,7 +74,7 @@ const NavBar: React.FC = () => {
           <StLogIn>
             {user ? (
               <>
-                <Link to={`/mypage/${user.id}`}>
+                <Link to={'/mypage'}>
                   <StMyPageLink>
                     <StAccountIcon />
                     <h2>마이페이지</h2>

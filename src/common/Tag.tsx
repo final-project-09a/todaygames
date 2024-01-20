@@ -29,7 +29,7 @@ const getSizeStyles = (size: string) => {
         `;
     case 'medium':
       return `
-        padding: 10px 25px;
+        padding: 10px 15px;
         font-size: 15px;
         font-weight: 500;
         `;
