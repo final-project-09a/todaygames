@@ -34,7 +34,7 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
   const genrefilterOnClick = (tag: any) => {
     const newFilteredPosts = data?.filter((post: any) => post.category.includes(tag));
     console.log(newFilteredPosts);
-    setFilteredPosts(newFilteredPosts);
+    setFilteredPosts(newFilteredPosts?.reverse());
   };
   // 최근순
 
