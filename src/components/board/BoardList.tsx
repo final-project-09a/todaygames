@@ -97,27 +97,19 @@ export const BoardList = ({ filteredPosts }: any) => {
             return (
               <>
                 <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
-                  <Contentbox>
-                    <Profileline>
-                      <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
-                      {userInfo.nickname}
-                      {formattedDate}
-                    </Profileline>
+                  <Profileline>
+                    <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
+                    <p>{userInfo.nickname}</p>
+                    <p>{formattedDate}</p>
+                  </Profileline>
+                  <Stcontentline>
                     <h1>{post?.title}</h1>
-                    <h1>{post?.content}</h1>
+                    <p>{post?.content}</p>
                     <p>#{post?.category}</p>
-                    <RowArray>
-                      <CommentCount>
-                        <IoChatbubbleOutline />
-                        {post?.comments_count}
-                      </CommentCount>
-                      <Liked>
-                        <AiFillLike />
-                        {post?.like_count}
-                      </Liked>
-                      <GameImage src={post.image} />
-                    </RowArray>
-                  </Contentbox>
+                    <IoChatbubbleOutline />
+                    <AiFillLike />
+                    <GameImage src={post.image} />
+                  </Stcontentline>
                 </StcontentBox>
               </>
             );
@@ -127,38 +119,41 @@ export const BoardList = ({ filteredPosts }: any) => {
     </>
   );
 };
-export const Contentbox = styled.div`
-  display: grid;
-  grid-template-columns: repeat(1, 2fr);
-  margin: 15px;
-  font-size: 15px;
-  color: ${(props) => props.theme.color.white};
-`;
-const RowArray = styled.div`
-  display: flex;
-`;
 const StcontentBox = styled.div`
-  display: flex;
+  display: grid;
   box-sizing: border-box;
   width: 1180px;
   height: 283px;
   margin: 15px;
   background-color: #232323;
   border-radius: 10px;
+  overflow: hidden;
+  grid-template-columns: repeat(1, 2fr);
+  font-size: 15px;
+  color: ${(props) => props.theme.color.white};
 `;
-
-const CommentCount = styled.h3`
-  width: 30px;
-`;
-const Liked = styled.h3`
-  display: flex;
-  width: 30px;
+const Stcontentline = styled.div`
+  display: grid;
+  margin: 0 20px 0 20px;
+  padding: auto;
+  transform: translate(-1%, -35%);
 `;
 const Profileline = styled.div`
   display: flex;
-  width: 100%;
+  position: relative;
+  width: 220px;
+  height: 150px;
+  margin: 15px;
+  flex-shrink: 0;
 `;
 
+const UserImage = styled.img`
+  width: 75px;
+  height: 75px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 5px;
+`;
 export const GameComponent = styled.div`
   display: flex;
 `;
@@ -197,19 +192,11 @@ const Stbutton = styled.button`
   cursor: grab;
 `;
 
-const UserImage = styled.img`
-  width: 75px;
-  height: 75px;
-  border-radius: 10px;
-  object-fit: cover;
-  margin-right: 5px;
-`;
-
 const GameImage = styled.img`
   display: flex;
   position: relative;
   left: 870px;
-  bottom: 30px;
+  bottom: 70px;
   width: 200px;
   height: 168px;
   border-radius: 10px;
