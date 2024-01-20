@@ -92,14 +92,13 @@ const MyPage = () => {
     <>
       {user && (
         <StMypageContainer onSubmit={handleOnSubmit}>
-          {/* <Avatar src={user.avatar_url} alt="User Avatar" /> */}
-          {/* 아바타 부분은 예시를 위해 assets 폴더에 기본이미지 추가하였습니다 */}
-          {/* userinfo테이블에 url을 담는 형식이나 dkslaus수파베이스 스토리지도 사용해야할듯싶네요 */}
           <MypageNav />
           <StUserInfoContainer>
             <StUserinfoBox>
               <h2>프로필 정보</h2>
+
               <label htmlFor="nickname">닉네임(필수)</label>
+
               <input
                 id="nickname"
                 type="text"
