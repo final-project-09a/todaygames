@@ -14,7 +14,6 @@ const NewGames = () => {
     queryKey: ['topReleases'],
     queryFn: getTopReleases
   });
-  console.log(data);
   const appids = data?.map((item: DataType) => item.appid).slice(0, 2) || [];
 
   if (isLoading) {

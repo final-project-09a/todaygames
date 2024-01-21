@@ -8,15 +8,25 @@ import SelectedGenreList from './SelectedGenreList';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');
-  // const [sliderIndex, setSliderIndex] = useState<number>(0);
+  const [sliderIndex, setSliderIndex] = useState<number>(0);
 
   const settings = {
     infinite: true,
     speed: 500,
     slidesToShow: 6,
     slidesToScroll: 1,
+    beforeChange: (currentSlide: number, nextSlide: number) => {
+      console.log(currentSlide);
+      console.log(nextSlide);
+
+      if (nextSlide === 0 && currentSlide === GENRE_NAME.length - 1) {
+        return false;
+      }
+      setSliderIndex(nextSlide);
+      return true;
+    },
     afterChange: (currentSlide: number) => {
-      // setSliderIndex(currentSlide);
+      console.log(sliderIndex);
       setSelectedTag(GENRE_NAME[currentSlide]?.tag || null);
     }
   };

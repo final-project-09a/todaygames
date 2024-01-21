@@ -21,7 +21,7 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['selectedGenre', selectedTag],
     queryFn: getGames,
-    enabled: selectedTag !== null
+    enabled: true
   });
 
   // if (data && !isLoading && !isError) {
@@ -34,7 +34,7 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
       const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
       dispatch(setGame(filteredGames));
     }
-  }, [data, isLoading, isError]);
+  }, [selectedTag, isLoading, isError]);
 
   if (isLoading) {
     return <p>게임 정보를 로딩중입니다...</p>;
