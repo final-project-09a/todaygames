@@ -7,8 +7,16 @@ import CustomCarousel from 'common/CustomCarousel';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+interface mostPlayedGame {
+  appid: number;
+}
+
 interface HeaderProps {
-  mostPlayedGames: any;
+  mostPlayedGames: mostPlayedGame[];
+}
+
+export interface GenreType {
+  description: string;
 }
 
 const Header = ({ mostPlayedGames }: HeaderProps) => {
@@ -59,11 +67,11 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
 
   // // 가장 많이 플레이된 게임 100개 중 top 5 appid 가져오기
   const topTen = mostPlayedGames?.slice(0, 5);
-  const appids = topTen?.map((game: any) => game.appid) || [];
+  const appids = topTen?.map((game: mostPlayedGame) => game.appid) || [];
 
   // top 5 상세 정보 가져오기
   const gameDetailsQueries = useQueries({
-    queries: appids.map((appid: any) => ({
+    queries: appids.map((appid: number) => ({
       queryKey: ['gameDetails', appid],
       queryFn: () => getGameDetails(appid)
       // enabled: appid !== undefined
@@ -71,9 +79,9 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
     }))
   });
 
-  const allQueriesSuccessful = gameDetailsQueries.every((query: any) => query.isSuccess);
+  const allQueriesSuccessful = gameDetailsQueries.every((query) => query.isSuccess);
 
-  const gameDetailsArray = allQueriesSuccessful ? gameDetailsQueries.map((query: any) => query.data) : undefined;
+  const gameDetailsArray = allQueriesSuccessful ? gameDetailsQueries.map((query) => query.data) : undefined;
 
   return (
     <StContainer>
@@ -98,9 +106,9 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
                 <StGameInfo>
                   <StTitle>{game?.name}</StTitle>
                   <StTagWrapper>
-                    {game.genres.map((category: any, index: number) => (
+                    {game.genres.map((genre: GenreType, index: number) => (
                       <Tag size="large" key={index}>
-                        <p>{category.description}</p>
+                        <p>{genre.description}</p>
                       </Tag>
                     ))}
                   </StTagWrapper>

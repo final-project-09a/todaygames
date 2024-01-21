@@ -25,17 +25,16 @@ const MypageNav = () => {
     }
   }, [fileInputRef]);
 
-  const profileImageUrl = useMemo(() => user?.avatar_url || userimg, [user]);
-  const profileNickname = useMemo(() => user?.nickname || '닉네임이없다구여?!', []);
+  // const profileImageUrl = useMemo(() => (user?.profile ? user.profile : userimg), [user]);
 
   return (
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          <img src={profileImageUrl} alt="프로필이미지" />
+          <img src={user?.profile ? user.profile : userimg} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        <p>{profileNickname}</p>
+        <p>{user?.nickname}</p>
         <input
           type="file"
           accept="image/*"

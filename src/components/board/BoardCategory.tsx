@@ -2,13 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getPosts } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Typedata } from 'shared/supabase.type';
+import cancelIcon from 'assets/icons/cancelIcon.svg';
 
-interface GenreType {
-  postsData: Typedata['public']['Tables']['posts'][];
-}
 // type Genre = typeof GENRE_NAME;
 type BoardCategoryProps = {
   setFilteredPosts: any;
@@ -17,6 +14,7 @@ type BoardCategoryProps = {
 
 export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategoryProps) => {
   const [sortOption, setSortOption] = useState('최근순');
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
@@ -26,85 +24,145 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
   useEffect(() => {
     fetchPosts();
   }, []);
+
   const fetchPosts = async () => {
     const data = await getPosts();
     setFilteredPosts(data.reverse());
   };
 
-  const genrefilterOnClick = (tag: any) => {
-    const newFilteredPosts = data?.filter((post: any) => post.category.includes(tag));
-    console.log(newFilteredPosts);
+  const genrefilterOnClick = (tag: string) => {
+    const updatedGenres = selectedGenres.includes(tag)
+      ? selectedGenres.filter((selectedGenre: string) => selectedGenre)
+      : [...selectedGenres, tag];
+
+    setSelectedGenres(updatedGenres);
+    const newFilteredPosts = data?.filter((post: any) => updatedGenres.some((genre) => post.category.includes(genre)));
     setFilteredPosts(newFilteredPosts?.reverse());
   };
-  // 최근순
+
+  const handleCancelIconClick = (genre: string) => {
+    const updatedGenres = selectedGenres.filter((selectedGenre) => selectedGenre !== genre);
+    setSelectedGenres(updatedGenres);
+    const newFilteredPosts = data?.filter(
+      (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre) => post.category.includes(genre))
+    );
+    setFilteredPosts(newFilteredPosts?.reverse());
+  };
 
   return (
     <>
-      <StboardLeftCategory>
-        <label>정렬</label>
-        <StLabel>
-          <StvideoInput type="radio" id="recent" name="sort" value={sortOption} checked={sortOption === '최근순'} />
-          {sortOption}
-        </StLabel>
-        <StLabel>
-          <StvideoInput type="radio" id="popular" name="sort" value="인기순" />
-          인기순
-        </StLabel>
-        <label>장르</label>
-        {GENRE_NAME.map((list, index) => (
-          // 문제: button 태그는 컴포넌트가 아니다.
-          <button onClick={() => genrefilterOnClick(list.tag)} key={index} type="button">
-            {list.tag}
-          </button>
-        ))}
-      </StboardLeftCategory>
+      <StboardCategory>
+        <div>
+          <label>정렬</label>
+          <StRadio>
+            <input
+              type="radio"
+              id="recent"
+              name="sort"
+              value={sortOption}
+              checked={sortOption === '최근순'}
+              onChange={() => setSortOption('최근순')}
+            />
+            <p>최근순</p>
+          </StRadio>
+          <StRadio>
+            <input type="radio" id="recent" name="sort" value="인기순" onChange={() => setSortOption('인기순')} />
+            <p>인기순</p>
+          </StRadio>
+        </div>
+        <div>
+          <label>장르</label>
+          <StGenreContainer>
+            {GENRE_NAME.map((list, index) => (
+              <StGenre
+                key={index}
+                onClick={() => genrefilterOnClick(list.tag)}
+                selected={selectedGenres.includes(list.tag)}
+              >
+                {list.tag}
+                {selectedGenres.includes(list.tag) && (
+                  <StCancelIcon
+                    src={cancelIcon}
+                    alt="취소버튼"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelIconClick(list.tag);
+                    }}
+                  />
+                )}
+              </StGenre>
+            ))}
+          </StGenreContainer>
+        </div>
+      </StboardCategory>
     </>
   );
 };
 
-const StvideoInput = styled.input`
-  height: 17px;
-  width: 39px;
-  background-color: #2d4ea5;
-`;
-const StLabel = styled.div`
-  display: flex;
-  margin: 3px auto 15px 10px;
-  transform: translate(-20%, -50%);
-  flex-direction: row;
-  align-content: stretch;
-  align-items: flex-end;
-`;
-const StboardLeftCategory = styled.div`
+const StboardCategory = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 90px;
-  margin-left: 150px;
+  margin-top: 70px;
+  gap: 30px;
   button {
-    display: inline-flex;
-    flex-direction: column;
-    width: 232px;
+    display: flex;
+    align-items: center;
+    width: 230px;
     height: 46px;
-    color: #ffffff;
-    border-color: #666666;
+    background: transparent;
+    color: ${(props) => props.theme.color.white};
     border: 1px solid;
     border-radius: 10px;
-    background-color: #191919;
-    line-height: normal;
-    align-items: center;
-    padding: 15px 0 0 10px;
+    background: transparent;
+    padding-left: 20px;
     cursor: pointer;
   }
   label {
-    margin-top: 40px;
-    background-color: #232323;
+    background-color: ${(props) => props.theme.color.postback};
     height: 60px;
     width: 230px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
-    padding-left: 10px;
-    color: #ffffff;
+    padding-left: 20px;
+    color: ${(props) => props.theme.color.white};
     border-radius: 7px;
   }
+`;
+
+const StRadio = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
+const StGenreContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+`;
+
+const StCancelIcon = styled.img`
+  width: 18px;
+  height: 18px;
+  color: #999999;
+  margin-left: 7px;
+  position: absolute;
+  top: 50%;
+  right: 10%;
+  transform: translateY(-50%);
+`;
+
+const StGenre = styled.div<{ selected: boolean }>`
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 230px;
+  height: 46px;
+  border-radius: 10px;
+  background: transparent;
+  padding-left: 20px;
+  color: ${(props) => (props.selected ? props.theme.color.white : '#666')};
+  border: 1px solid ${(props) => (props.selected ? props.theme.color.white : '#666')};
 `;

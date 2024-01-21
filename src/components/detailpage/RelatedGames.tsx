@@ -1,25 +1,31 @@
 import { useQuery } from '@tanstack/react-query';
 import { getGames } from 'api/games';
+import { GenreType } from 'components/Header/Header';
+import { Game } from 'components/homepage/RecommendList';
 import SelectedGenreCard from 'components/homepage/SelectedGenreCard';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { GameData } from './SystemRequirements';
 
-interface Game {
-  app_id: number;
-}
+type RelatedGamesProps = {
+  appid: string | undefined;
+  genres: GenreType[];
+};
 
-const RelatedGames = ({ genres, appid }: any) => {
+const RelatedGames = ({ genres, appid }: RelatedGamesProps) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['selectedGenre'],
     queryFn: getGames
   });
 
-  const [relatedGameLists, setRelatedGameLists] = useState<Game[] | undefined>();
+  console.log(genres);
+
+  const [relatedGameLists, setRelatedGameLists] = useState<GameData[] | undefined>();
 
   useEffect(() => {
     if (data && !isLoading && !isError) {
       const filteredGames: any = data
-        .filter((game) => genres.some((genre: string) => game.genres.includes(genre)))
+        .filter((game) => genres.some((genre: GenreType) => game.genres.includes(genre)))
         .filter((game) => game.app_id != appid)
         .slice(0, 4);
       setRelatedGameLists(filteredGames);
@@ -30,7 +36,7 @@ const RelatedGames = ({ genres, appid }: any) => {
     <>
       <StTitle>연관 게임</StTitle>
       <StContainer>
-        {relatedGameLists?.map((game: any) => (
+        {relatedGameLists?.map((game) => (
           <SelectedGenreCard key={game.app_id} gameInfoList={game} />
         ))}
       </StContainer>
