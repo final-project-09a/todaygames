@@ -89,7 +89,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
       <StCarouselWrapper>
         <CustomCarousel settings={settings}>
           {gameDetailsArray &&
-            gameDetailsArray?.map((game, index) => (
+            gameDetailsArray?.map((game) => (
               <StFigure key={game.steam_appid}>
                 <img src={game.background_raw} alt={game.name} />
               </StFigure>

@@ -32,7 +32,7 @@ const Detail = () => {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['gameDetailInfo', appid],
-    queryFn: () => getGameDetails(appid)
+    queryFn: () => getGameDetails(Number(appid))
   });
 
   if (isLoading) {

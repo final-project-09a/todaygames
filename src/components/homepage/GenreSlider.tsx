@@ -8,7 +8,7 @@ import SelectedGenreList from './SelectedGenreList';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');
-  const [sliderIndex, setSliderIndex] = useState<number>(0);
+  // const [sliderIndex, setSliderIndex] = useState<number>(0);
 
   const settings = {
     infinite: true,
@@ -16,7 +16,7 @@ const GenreSlider = () => {
     slidesToShow: 6,
     slidesToScroll: 1,
     afterChange: (currentSlide: number) => {
-      setSliderIndex(currentSlide);
+      // setSliderIndex(currentSlide);
       setSelectedTag(GENRE_NAME[currentSlide]?.tag || null);
     }
   };

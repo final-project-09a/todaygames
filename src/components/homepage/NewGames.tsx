@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Game } from './RecommendList';
 
 interface DataType {
-  appid: number;
+  appid: number | undefined;
 }
 
 const NewGames = () => {
@@ -14,7 +14,7 @@ const NewGames = () => {
     queryKey: ['topReleases'],
     queryFn: getTopReleases
   });
-
+  console.log(data);
   const appids = data?.map((item: DataType) => item.appid).slice(0, 2) || [];
 
   if (isLoading) {

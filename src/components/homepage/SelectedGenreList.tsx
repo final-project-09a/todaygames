@@ -24,12 +24,17 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
     enabled: selectedTag !== null
   });
 
+  // if (data && !isLoading && !isError) {
+  //   const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
+  //   dispatch(setGame(filteredGames));
+  // }
+
   useEffect(() => {
     if (data && !isLoading && !isError) {
       const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
       dispatch(setGame(filteredGames));
     }
-  }, [data, isLoading, isError, selectedTag]);
+  }, [data, isLoading, isError]);
 
   if (isLoading) {
     return <p>게임 정보를 로딩중입니다...</p>;
