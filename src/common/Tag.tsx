@@ -45,6 +45,7 @@ const getSizeStyles = (size: string) => {
 };
 
 const StTag = styled.div<{ size: any; $backgroundColor: string }>`
+  width: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;

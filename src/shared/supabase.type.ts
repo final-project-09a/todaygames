@@ -6,7 +6,7 @@ export interface Typedata {
       posts: {
         Row: {
           id: string;
-          users_id: string;
+          user_id: string;
           like_count: number;
           comments_count: number;
           content: string;
@@ -16,7 +16,7 @@ export interface Typedata {
         };
         Insert: {
           id: string;
-          users_id?: string;
+          user_id?: string;
           category: string;
           title: string;
           image?: string;
@@ -26,7 +26,7 @@ export interface Typedata {
         };
         Update: {
           id: string;
-          users_id: string;
+          user_id: string;
           category: string;
           title: string;
           image: string;
@@ -36,7 +36,7 @@ export interface Typedata {
         };
         Controll: {
           id?: string;
-          users_id?: string;
+          user_id?: string;
           category: string;
           title?: string;
           image?: string;

@@ -26,7 +26,7 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
 
   useEffect(() => {
     if (data && !isLoading && !isError) {
-      const filteredGames = data.filter((game: any) => game.genres.includes(selectedTag));
+      const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
       dispatch(setGame(filteredGames));
     }
   }, [data, isLoading, isError, selectedTag]);

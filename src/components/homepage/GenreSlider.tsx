@@ -5,7 +5,6 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SelectedGenreList from './SelectedGenreList';
-import styled from 'styled-components';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');

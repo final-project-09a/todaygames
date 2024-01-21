@@ -6,6 +6,8 @@ import editProfileIcon from 'assets/icons/editProfileIcon.svg';
 import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
+import { supabase } from 'shared/supabase';
+import { useState } from 'react';
 
 const MypageNav = () => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
@@ -23,16 +25,16 @@ const MypageNav = () => {
     }
   }, [fileInputRef]);
 
-  const profileImageUrl = useMemo(() => user?.profile || userimg, [user]);
+  // const profileImageUrl = useMemo(() => (user?.profile ? user.profile : userimg), [user]);
 
   return (
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          <img src={profileImageUrl} alt="프로필이미지" />
+          <img src={user?.profile ? user.profile : userimg} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        <p>딱딱한 바게트빵</p>
+        <p>{user?.nickname}</p>
         <input
           type="file"
           accept="image/*"

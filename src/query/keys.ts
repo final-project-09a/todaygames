@@ -7,5 +7,5 @@ export const QUERY_KEYS = {
   DETAIL: 'detail',
   MEMOS: 'memos',
   AUTH: 'auth',
-  USERINFO: 'usrinfo'
+  USERINFO: 'userinfo'
 };

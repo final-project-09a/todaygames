@@ -9,6 +9,7 @@ import ScreenShotSlide from 'components/detailpage/ScreenShotSlide';
 import RelatedGames from 'components/detailpage/RelatedGames';
 import React from 'react';
 import SystemRequirements from 'components/detailpage/SystemRequirements';
+import { GenreType } from 'components/Header/Header';
 
 export const DataContext = React.createContext<GameData | null>(null);
 
@@ -42,7 +43,7 @@ const Detail = () => {
     return <div>게임 정보를 가져올 수 없습니다.</div>;
   }
 
-  const genres = data.genres.map((genre: any) => genre.description);
+  const genres = data.genres.map((genre: GenreType) => genre.description);
 
   return (
     <DataContext.Provider value={data}>
