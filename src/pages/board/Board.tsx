@@ -1,6 +1,6 @@
 import { BoardCategory } from 'components/board/BoardCategory';
 import { BoardList } from 'components/board/BoardList';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { GENRE_NAME } from 'constants/genre';
 // 1. BoardCategory에 있는 filteredPosts 얘를 Board 컴포넌트에서 선언 후 props 넘기기 -> 채텍
@@ -14,7 +14,7 @@ export const Board = () => {
     <>
       <StboardListContainer>
         <StCategoryContainer>
-          <BoardCategory setFilteredPosts={setFilteredPosts} filteredPosts={undefined} />
+          <BoardCategory setFilteredPosts={setFilteredPosts} filteredPosts={filteredPosts} />
         </StCategoryContainer>
         <StContentContainer>
           <BoardList filteredPosts={filteredPosts} />

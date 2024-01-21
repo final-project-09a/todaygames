@@ -60,11 +60,10 @@ export const BoardList = ({ filteredPosts }: any) => {
           <Stbutton onClick={moveregisterPageOnClick}>글쓰기</Stbutton>
         </StSeachContainer>
         <Stzeropost>{filteredPosts.length}개의 일치하는 게시물.</Stzeropost>
-
         {filteredPosts.length > 0 ? (
           filteredPosts.map(
             (post: {
-              users_id: string;
+              user_id: string;
               post: string;
               id: string;
               create_At: string;
@@ -72,7 +71,8 @@ export const BoardList = ({ filteredPosts }: any) => {
               content: string;
               category: string;
             }) => {
-              const userInfo = userInfoData.find((user) => user.id === post?.users_id);
+              const userInfo = userInfoData.find((user) => user.id === post?.user_id);
+
               if (userInfo) {
                 return (
                   <>

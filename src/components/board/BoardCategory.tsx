@@ -36,7 +36,6 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
     console.log(newFilteredPosts);
     setFilteredPosts(newFilteredPosts?.reverse());
   };
-  // 최근순
 
   return (
     <>

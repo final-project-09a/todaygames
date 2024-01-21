@@ -17,7 +17,10 @@ export const BoardDetail = () => {
 
   return (
     <React.Fragment>
-      <StRegister>게시글 작성</StRegister>
+      <StRegister>
+        <span>홈</span>
+        <span>커뮤니티</span>
+      </StRegister>
       <Seach />
     </React.Fragment>
   );

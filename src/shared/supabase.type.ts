@@ -6,9 +6,7 @@ export interface Typedata {
       posts: {
         Row: {
           id: string;
-          users_id: string;
-          like_count: number;
-          comments_count: number;
+          user_id: string;
           content: string;
           image: string;
           title: string;
@@ -16,64 +14,77 @@ export interface Typedata {
         };
         Insert: {
           id: string;
-          users_id?: string;
+          user_id?: string;
           category: string;
           title: string;
           image?: string;
           content: string;
-          like_count: number;
-          comments_count: number;
         };
         Update: {
           id: string;
-          users_id: string;
+          user_id: string;
           category: string;
           title: string;
           image: string;
           content: string;
-          like_count: number;
-          comments_count: number;
         };
         Controll: {
           id?: string;
-          users_id?: string;
+          user_id?: string;
           category: string;
           title?: string;
           image?: string;
           content?: string;
-          like_count?: number;
-          comments_count?: number;
         };
       };
       comments: {
-        Row: {
-          id: string;
+        CommentsUrl: {
+          Select: {
+            userid: string;
+            comment_id: number;
+            comments: string;
+            created_at: Date;
+          };
+          Userinfo: {
+            avatar_url: string;
+            nickname: string;
+          };
+        };
+        Select: {
+          userid: string;
           comment_id: number;
           comments: string;
-          parent_comment: string;
           created_at: Date;
         };
         Insert: {
           id: string;
           comment_id: number;
           comments: string;
-          parent_comment: string;
+
           created_at: Date;
         };
         Update: {
           id: string;
           comment_id: number;
           comments: string;
-          parent_comment: string;
+
           created_at: Date;
         };
-        Controll: {
-          id: string;
-          comment_id: number;
-          comments: string;
-          parent_comment: string;
-          created_at: Date;
-        };
+        Controll: [
+          comment: {
+            id: string;
+            comment_id: number;
+            comments: string;
+            created_at: Date;
+          },
+          replies: {
+            user_id: string;
+            reply_id?: number;
+            reply_text?: string;
+            created_at?: string;
+            comment_id: string;
+          }
+        ];
       };
       userinfo: {
         Row: {
@@ -95,6 +106,13 @@ export interface Typedata {
           genres: string;
           id: string;
         };
+      };
+      replies: {
+        user_id: string;
+        reply_id: number;
+        reply_text: string;
+        created_at: string;
+        comment_id: string;
       };
     };
   };
