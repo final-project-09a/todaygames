@@ -1,6 +1,5 @@
 // 게사판 리스트
 import { useEffect } from 'react';
-import { supabase } from 'shared/supabase';
 import { Typedata } from 'shared/supabase.type';
 import styled from 'styled-components';
 import React from 'react';

@@ -1,6 +1,6 @@
 import { BoardCategory } from 'components/board/BoardCategory';
-import { Main } from 'components/board/Main';
-import { useState } from 'react';
+import { BoardList } from 'components/board/BoardList';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { GENRE_NAME } from 'constants/genre';
 // 1. BoardCategory에 있는 filteredPosts 얘를 Board 컴포넌트에서 선언 후 props 넘기기 -> 채텍
@@ -14,28 +14,27 @@ export const Board = () => {
     <>
       <StboardListContainer>
         <StCategoryContainer>
-          <BoardCategory setFilteredPosts={setFilteredPosts} />
+          <BoardCategory setFilteredPosts={setFilteredPosts} filteredPosts={filteredPosts} />
         </StCategoryContainer>
         <StContentContainer>
-          <Main filteredPosts={filteredPosts} />
+          <BoardList filteredPosts={filteredPosts} />
         </StContentContainer>
       </StboardListContainer>
     </>
   );
 };
 const StCategoryContainer = styled.div`
-  display: flex;
-  flex-basis: 30%;
-  margin-top: 80px;
+  display: grid;
 `;
 
 const StContentContainer = styled.div`
-  flex-basis: 70%;
+  display: flex;
 `;
 const StboardListContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   margin: 50px;
   position: absolute;
+  margin: 50px auto;
   width: 1440px;
+  flex-direction: row;
 `;

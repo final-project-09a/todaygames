@@ -36,6 +36,7 @@ import Modal from 'components/register/Modal';
 import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
+import { error } from 'console';
 
 const Register = () => {
   const genres = GENRE_NAME;
@@ -118,14 +119,18 @@ const Register = () => {
   });
 
   const registerPost = () => {
-    mutate({
-      title: title,
-      game: gameName,
-      category: tagText,
-      image: imageUrls,
-      content: contentText,
-      id: user?.id
-    });
+    if (user?.id) {
+      mutate({
+        title: title,
+        game: gameName,
+        category: tagText,
+        image: imageUrls,
+        content: contentText,
+        user_id: user.id
+      });
+    } else {
+      return null;
+    }
   };
 
   const cancelBtnHandler = () => {

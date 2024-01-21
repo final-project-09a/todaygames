@@ -115,7 +115,7 @@ export const Main = ({ filteredPosts }: any) => {
                 <Contentbox>
                   <Profileline>
                     <UserImage src={userInfo.avatar_url} alt="프로필 이미지" />
-                    {userInfo.username}
+                    {userInfo.nickname}
                     {formattedDate}
                   </Profileline>
                   <h1>{post?.title}</h1>

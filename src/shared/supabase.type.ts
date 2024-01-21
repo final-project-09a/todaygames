@@ -5,7 +5,6 @@ export interface Typedata {
     Tables: {
       posts: {
         Row: {
-          // create,select
           id: string;
           users_id: string;
           like_count: number;
@@ -26,7 +25,6 @@ export interface Typedata {
           comments_count: number;
         };
         Update: {
-          getgamesData: any;
           id: string;
           users_id: string;
           category: string;
@@ -37,14 +35,14 @@ export interface Typedata {
           comments_count: number;
         };
         Controll: {
-          id: string;
-          users_id: string;
+          id?: string;
+          users_id?: string;
           category: string;
-          title: string;
-          image: string;
-          content: string;
-          like_count: number;
-          comments_count: number;
+          title?: string;
+          image?: string;
+          content?: string;
+          like_count?: number;
+          comments_count?: number;
         };
       };
       comments: {
@@ -81,7 +79,6 @@ export interface Typedata {
         Row: {
           nickname: string;
           id: string;
-          username: string;
           avatar_url: string;
         };
       };
