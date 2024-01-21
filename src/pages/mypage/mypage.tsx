@@ -70,7 +70,7 @@ const MyPage = () => {
 
     supabase
       .from('userinfo')
-      .update({ email, nickname, profile, genres })
+      .update({ email, nickname, profile, genres: selectedGenres })
       .eq('id', id)
       .then((response) => {
         if (response.error) {
