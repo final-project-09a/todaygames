@@ -1,22 +1,30 @@
 import Tag from 'common/Tag';
 import styled from 'styled-components';
+import { Game } from './RecommendList';
+import { GenreType } from 'components/Header/Header';
+import { useNavigate } from 'react-router-dom';
 
 interface NewGameCardProps {
-  gameDetails: any;
+  gameDetails: Game;
 }
 
 function NewGameCard({ gameDetails }: NewGameCardProps) {
   const gneres = gameDetails.genres;
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/detail/${gameDetails.steam_appid}`);
+  };
 
   return (
-    <StCardWrapper>
+    <StCardWrapper onClick={handleCardClick}>
       <StImageWrapper>
         <StImage src={gameDetails.header_image} />
       </StImageWrapper>
       <StGameInfo>
         <div>
           <StTagWrapper>
-            {gneres.map((genre: any, index: number) => (
+            {gneres.map((genre: GenreType, index: number) => (
               <Tag backgroundColor="lightgray" size="small" key={index} prefix="#">
                 <p>{genre.description}</p>
               </Tag>
