@@ -4,7 +4,6 @@ import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Typedata } from 'shared/supabase.type';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 
 // type Genre = typeof GENRE_NAME;
@@ -49,8 +48,6 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
     );
     setFilteredPosts(newFilteredPosts?.reverse());
   };
-
-  console.log(selectedGenres);
 
   return (
     <>

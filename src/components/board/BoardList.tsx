@@ -45,8 +45,6 @@ export const BoardList = ({ filteredPosts }: any) => {
     queryFn: UserInfo
   });
 
-  console.log(userInfoData);
-
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
     if (user) {
