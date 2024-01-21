@@ -3,12 +3,18 @@ import { getGameDetails } from 'api/steamApis';
 import RecommendCard from './RecommendCard';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { GenreType } from 'components/Header/Header';
 
-interface Game {
+export interface Game {
   appid: number;
   header_image: string;
   name: string;
   steam_appid: number;
+  short_description: string;
+  release_date: {
+    date: string;
+  };
+  genres: GenreType[];
 }
 
 interface NewGamesProps {
@@ -32,7 +38,7 @@ const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
     }))
   });
 
-  const gameDetailsArray = gameDetailsQueries.map((query: any) => query.data);
+  const gameDetailsArray = gameDetailsQueries.map((query) => query.data);
 
   if (gameDetailsQueries.some((query) => query.isLoading)) {
     return <p>게임 상세 정보를 로딩중입니다...</p>;
