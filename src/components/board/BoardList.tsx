@@ -37,7 +37,6 @@ export const BoardList = ({ filteredPosts }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [searchText, SetSearchText] = useState<string>('');
-  const [selectedGenres, setSelectedGenres] = useState<string>('');
 
   const navigate = useNavigate();
 

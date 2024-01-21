@@ -15,7 +15,7 @@ type BoardCategoryProps = {
 
 export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategoryProps) => {
   const [sortOption, setSortOption] = useState('최근순');
-  const [selectedGenres, setSelectedGenres] = useState('');
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
@@ -31,16 +31,26 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
     setFilteredPosts(data.reverse());
   };
 
-  const genrefilterOnClick = (tag: any) => {
-    const newFilteredPosts = data?.filter((post: any) => post.category.includes(tag));
+  const genrefilterOnClick = (tag: string) => {
+    const updatedGenres = selectedGenres.includes(tag)
+      ? selectedGenres.filter((selectedGenre: string) => selectedGenre)
+      : [...selectedGenres, tag];
+
+    setSelectedGenres(updatedGenres);
+    const newFilteredPosts = data?.filter((post: any) => updatedGenres.some((genre) => post.category.includes(genre)));
     setFilteredPosts(newFilteredPosts?.reverse());
-    setSelectedGenres(tag);
   };
-  // 최근순
 
   const handleCancelIconClick = (genre: string) => {
-    setSelectedGenres('');
+    const updatedGenres = selectedGenres.filter((selectedGenre) => selectedGenre !== genre);
+    setSelectedGenres(updatedGenres);
+    const newFilteredPosts = data?.filter(
+      (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre) => post.category.includes(genre))
+    );
+    setFilteredPosts(newFilteredPosts?.reverse());
   };
+
+  console.log(selectedGenres);
 
   return (
     <>
@@ -65,18 +75,27 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
         </div>
         <div>
           <label>장르</label>
-          {GENRE_NAME.map((list, index) => (
-            <StGenreContainer key={index}>
-              <button
+          <StGenreContainer>
+            {GENRE_NAME.map((list, index) => (
+              <StGenre
+                key={index}
                 onClick={() => genrefilterOnClick(list.tag)}
-                type="button"
-                style={{ borderColor: selectedGenres === list.tag ? 'white' : '#666' }}
+                selected={selectedGenres.includes(list.tag)}
               >
                 {list.tag}
-                <StCancelIcon src={cancelIcon} alt="취소버튼" onClick={() => handleCancelIconClick(list.tag)} />
-              </button>
-            </StGenreContainer>
-          ))}
+                {selectedGenres.includes(list.tag) && (
+                  <StCancelIcon
+                    src={cancelIcon}
+                    alt="취소버튼"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelIconClick(list.tag);
+                    }}
+                  />
+                )}
+              </StGenre>
+            ))}
+          </StGenreContainer>
         </div>
       </StboardCategory>
     </>
@@ -122,7 +141,8 @@ const StRadio = styled.div`
 
 const StGenreContainer = styled.div`
   display: flex;
-  margin-bottom: 10px;
+  flex-direction: column;
+  gap: 10px;
   position: relative;
 `;
 
@@ -135,4 +155,17 @@ const StCancelIcon = styled.img`
   top: 50%;
   right: 10%;
   transform: translateY(-50%);
+`;
+
+const StGenre = styled.div<{ selected: boolean }>`
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 230px;
+  height: 46px;
+  border-radius: 10px;
+  background: transparent;
+  padding-left: 20px;
+  color: ${(props) => (props.selected ? props.theme.color.white : '#666')};
+  border: 1px solid ${(props) => (props.selected ? props.theme.color.white : '#666')};
 `;
