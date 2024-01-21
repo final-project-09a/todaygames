@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getPosts } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
-import { useEffect } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Typedata } from 'shared/supabase.type';
 
@@ -12,43 +12,39 @@ interface GenreType {
 // type Genre = typeof GENRE_NAME;
 type BoardCategoryProps = {
   setFilteredPosts: any;
+  filteredPosts: any;
 };
 
-export const BoardCategory = ({ setFilteredPosts }: BoardCategoryProps) => {
-  useEffect(() => {
-    getPosts();
-  });
+export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategoryProps) => {
+  const [sortOption, setSortOption] = useState('최근순');
 
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
 
-  // const tags = GENRE_NAME.tag
-
-  //   const newFilteredPosts: (string | undefined)[] = data?
-  //   .filter((post:any) => post.category.includes(tag))
-  //   // .map((post) => post.category);
-
-  //  tag 클릭시 필터링 하여 게시판 리스트를  렌더링
-  // newFilterPosts를 props 로  Main.tsx 전달하여 contentbox 에 map으로 뿌려짐
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  const fetchPosts = async () => {
+    const data = await getPosts();
+    setFilteredPosts(data.reverse());
+  };
 
   const genrefilterOnClick = (tag: any) => {
     const newFilteredPosts = data?.filter((post: any) => post.category.includes(tag));
     console.log(newFilteredPosts);
-    setFilteredPosts(newFilteredPosts);
-    // .map((post:any) => post.category);
-    // setFilteredPosts(newFilteredPosts); // 상태가 업데이트 되면 렌더링
-    // dispatch()
+    setFilteredPosts(newFilteredPosts?.reverse());
   };
+  // 최근순
 
   return (
     <>
       <StboardLeftCategory>
         <label>정렬</label>
         <StLabel>
-          <StvideoInput type="radio" id="recent" name="sort" value="최근순" />
-          최근순
+          <StvideoInput type="radio" id="recent" name="sort" value={sortOption} checked={sortOption === '최근순'} />
+          {sortOption}
         </StLabel>
         <StLabel>
           <StvideoInput type="radio" id="popular" name="sort" value="인기순" />
@@ -73,14 +69,17 @@ const StvideoInput = styled.input`
 `;
 const StLabel = styled.div`
   display: flex;
-  align-items: center;
-  margin: 5px auto 10px auto;
+  margin: 3px auto 15px 10px;
   transform: translate(-20%, -50%);
+  flex-direction: row;
+  align-content: stretch;
+  align-items: flex-end;
 `;
-const StboardLeftCategory = styled.form`
+const StboardLeftCategory = styled.div`
   display: flex;
   flex-direction: column;
-  width: 25%;
+  margin-top: 90px;
+  margin-left: 150px;
   button {
     display: inline-flex;
     flex-direction: column;
@@ -107,7 +106,5 @@ const StboardLeftCategory = styled.form`
     padding-left: 10px;
     color: #ffffff;
     border-radius: 7px;
-  }
-  h3 {
   }
 `;
