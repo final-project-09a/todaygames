@@ -22,16 +22,19 @@ const getSizeStyles = (size: string) => {
   switch (size) {
     case 'small':
       return `
+      font-size: 14px;
         width: 100px;
         height: 50px;
       `;
     case 'medium':
       return `
+      font-size: 16px;
         width: 120px;
         height: 50px;
       `;
     case 'large':
       return `
+      font-size: 18px;
         width: 224px;
         height: 50px;
       `;
@@ -46,7 +49,6 @@ const StButton = styled.button<{ size: string }>`
   backdrop-filter: blur(7.5px);
   color: ${(props) => props.theme.color.white};
   text-align: center;
-  font-size: 18px;
   font-weight: 500;
   ${(props) => getSizeStyles(props.size || 'medium')}
   &:hover {
