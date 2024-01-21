@@ -6,6 +6,8 @@ import editProfileIcon from 'assets/icons/editProfileIcon.svg';
 import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
+import { supabase } from 'shared/supabase';
+import { useState } from 'react';
 
 const MypageNav = () => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
