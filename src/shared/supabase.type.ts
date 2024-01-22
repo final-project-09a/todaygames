@@ -77,8 +77,8 @@ export interface Typedata {
       };
       userinfo: {
         Row: {
-          id: string;
           nickname: string;
+          id: string;
           avatar_url: string;
         };
       };

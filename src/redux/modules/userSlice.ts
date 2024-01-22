@@ -38,7 +38,6 @@ const userSlice = createSlice({
     }
   }
 });
-console.log('userSlice', userSlice);
 
 export const { setUser, setLoading, setError } = userSlice.actions;
 export default userSlice.reducer;
