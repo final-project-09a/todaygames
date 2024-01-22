@@ -86,6 +86,7 @@ const StTitle = styled.h1`
 const StTagWrapper = styled.div`
   display: flex;
   gap: 7px;
+  margin-top: 15px;
 `;
 
 export { StWrapper, StCarouselWrapper, StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };
