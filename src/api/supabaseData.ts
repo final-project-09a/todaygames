@@ -9,12 +9,12 @@ const postContents = async (newPost: Post) => {
 const insertPost = async (newPost: Post) => {
   const { data, error } = await supabase.from(QUERY_KEYS.POST).insert([
     {
+      user_id: newPost.user_id,
       title: newPost.title,
       game: newPost.game,
       category: newPost.category,
       image: newPost.image,
-      content: newPost.content,
-      id: newPost.id
+      content: newPost.content
     }
   ]);
   if (error) {
