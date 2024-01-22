@@ -16,6 +16,7 @@ import userimg from 'assets/img/userimg.png';
 import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
+import moreInfo from 'assets/icons/moreInfo.svg';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -68,6 +69,10 @@ export const BoardList = ({ filteredPosts }: any) => {
     SetSearchText(e.target.value);
   };
 
+  const handleEditPost = () => {
+    user?.id === filteredPosts.user_id ? <p>수정하기</p> : <p>신고하기</p>;
+  };
+
   return (
     <div>
       <StSeachContainer>
@@ -87,13 +92,18 @@ export const BoardList = ({ filteredPosts }: any) => {
             return (
               <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
                 <StProfileWrapper>
-                  <StUserImageWrapper>
-                    <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
-                  </StUserImageWrapper>
-                  <StUserNameWrapper>
-                    <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
-                    <p>{post.created_At}</p>
-                  </StUserNameWrapper>
+                  <section>
+                    <StUserImageWrapper>
+                      <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
+                    </StUserImageWrapper>
+                    <StUserNameWrapper>
+                      <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
+                      <p>{post.created_At}</p>
+                    </StUserNameWrapper>
+                  </section>
+                  <StEditPost onClick={handleEditPost}>
+                    <img src={moreInfo} />
+                  </StEditPost>
                 </StProfileWrapper>
                 <StContentWrapper>
                   <StText>
@@ -191,7 +201,16 @@ const StcontentBox = styled.div`
 const StProfileWrapper = styled.div`
   width: 100%;
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  & section {
+    display: flex;
+    align-items: center;
+  }
+`;
+
+const StEditPost = styled.div`
+  display: flex;
 `;
 
 const StUserImageWrapper = styled.figure`

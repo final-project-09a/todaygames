@@ -2,12 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from '../pages/home';
 import Detail from '../pages/detail';
 import { Board } from '../pages/board/Board';
-import { BoardDetail } from '../pages/board/BoardDetail';
 import Register from '../pages/register/Register';
 import SignUp from '../pages/signup/signup';
 import Login from '../pages/login/Login';
 import NavBar from 'components/Navbar/NavBar';
 import Mypage from '../pages/mypage/mypage';
+import { BoardDetail } from 'components/board/BoardDetail';
 
 const Router = () => {
   return (
