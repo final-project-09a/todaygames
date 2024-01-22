@@ -4,11 +4,14 @@ import { UserInfo } from 'api/user';
 import { mappingComments } from 'api/comments';
 import { getComments } from 'api/comments';
 import { QUERY_KEYS } from 'query/keys';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { getReplies } from 'api/replies';
-import { Typedata } from 'shared/supabase.type';
+import comments from 'assets/icons/comments.svg';
+import thumsUp from 'assets/icons/thumsUp.svg';
+import send from 'assets/icons/send.svg';
+import Button from 'common/Button';
 type userInfotypelist = {
   userInfoData: React.ReactNode;
 };
@@ -19,18 +22,6 @@ interface Comment {
   comments: string;
   created_at: Date;
 }
-interface mappingComment {
-  Select: {
-    userid: string;
-    comment_id: number;
-    comments: string;
-    created_at: Date;
-  };
-  Userinfo: {
-    avatar_url: string;
-    nickname: string;
-  };
-}
 
 interface replies {
   user_id: string;
@@ -39,8 +30,12 @@ interface replies {
   created_at: string;
   comment_id: string;
 }
+interface ButtonProps {
+  onClick(): () => ButtonProps;
+}
 
 const Comment = () => {
+  const [actionComment, setActionComment] = useState([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
@@ -68,10 +63,31 @@ const Comment = () => {
   // 댓글 0 대댓글 1 저장
   commentArrayContent[0] = commentData || [];
   commentArrayContent[1] = repliesData || [];
+  console.log('commentArrayContent', commentArrayContent);
   // 데이터 요청
-
+  const commentButtoneventHandler = (e: React.ChangeEvent<HTMLButtonElement>) => {
+    mappingData?.map((comm, index) => (
+      <div key={index}>
+        <div>{comm.avatar_url}</div>
+        <div>{comm.nickname}</div>
+        <form>
+          <p>{comm.comments}</p>
+          <div>
+            <img src={comments} />
+            <p>5</p>
+          </div>
+          <div>
+            <img src={thumsUp} />
+            <p>5</p>
+          </div>
+        </form>
+      </div>
+    ));
+  };
   // 댓글,대댓글 filter
+  const filtercommentData = mappingData?.filter((comm) => comm.userid === user?.id);
   // const filterArrayComments = commentArrayContent.filter(); // 댓글 필터링
+
   //댓글 테이블 저장 기능
   // 1. 먼저 댓글 ui부터하자
   // 2. 해당 유저가 댓글입력하면 본인 프로플이랑 내용 나오는지 테이블에 잘 들어가는지 확인
@@ -84,15 +100,10 @@ const Comment = () => {
       <>
         <StcommentContainer>
           <div>
-            {mappingData?.map((comm, index) => (
-              <div key={index}>
-                <div>{comm.avatar_url}</div>
-                <div>{comm.nickname}</div>
-                <form>
-                  <p>{comm.comments}</p>
-                </form>
-              </div>
-            ))}
+            <input placeholder="댓글 남기기" />
+            <Button onClick={commentButtoneventHandler} size="samll">
+              <img src={send} />
+            </Button>
           </div>
         </StcommentContainer>
       </>
