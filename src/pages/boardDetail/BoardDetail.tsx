@@ -24,19 +24,33 @@ import { useParams } from 'react-router-dom';
 
 export const BoardDetail = () => {
   const { id } = useParams();
-  const { data: userInfoData = [] } = useQuery({
+  const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
   });
 
+  const { data: gameData } = useQuery({
+    queryKey: [QUERY_KEYS.POSTS],
+    queryFn: getPosts
+  });
   // const { data: postData } = useQuery({
   //   queryKey: [QUERY_KEYS.POSTS],
   //   queryFn: getPosts
   // });
 
-  const filteredUser = userInfoData?.filter((userInfo) => {
-    return userInfo.id == id;
-  });
+  const filteredUser = userInfoData?.filter((user) => user.id == id);
+  const user = filteredUser ? filteredUser[0] : null;
+  console.log(filteredUser);
+
+  console.log(user?.nickname);
+  const filterdPost = gameData
+    ?.map((games) => {
+      return games;
+    })
+    .filter((onlyGames) => {
+      const postUserInfo = id;
+      return onlyGames.id == postUserInfo;
+    });
 
   // const filteredPostCategory = postData?.filter((post) => post.category);
 
@@ -57,24 +71,34 @@ export const BoardDetail = () => {
             {/* 아바타이미지, 닉네임, 날짜, 게임이름 -------edit버튼 */}
             <WrappingImgText>
               {/* 아바타이미지 || 닉네임&날짜&게임이름 */}
-              <ProfileImage />
+              <ProfileImage src={user?.avatar_url} />
               <WrappingUserInfo>
                 <NickNameAndDate>
-                  <NickNameAndTitleText>{filteredUser[0]?.nickname}</NickNameAndTitleText>
-                  <DateText>1월9일</DateText>
+                  <NickNameAndTitleText>{user?.nickname}</NickNameAndTitleText>
+                  <DateText></DateText>
                 </NickNameAndDate>
-                <NickNameAndTitleText>게임이름</NickNameAndTitleText>
+                <NickNameAndTitleText>{}</NickNameAndTitleText>
               </WrappingUserInfo>
             </WrappingImgText>
             <UserInfoAndBtn />
             <EditBtn />
           </UserInfoAndBtn>
-          <DetailImage />
-          <DetailTitle>글 제목</DetailTitle>
-          <DetailContent>글 내용</DetailContent>
+          {filterdPost?.map((post, index) => (
+            <DetailImage key={index} src={post.image.replace('blob:', '').replace('[', '').replace(']', '')} />
+          ))}
+          {filterdPost?.map((post, index) => (
+            <DetailTitle key={index}>{post.title}</DetailTitle>
+          ))}
+          {filterdPost?.map((post, index) => (
+            <DetailContent key={index}>{post.content}</DetailContent>
+          ))}
           <WrappingTags>
-            <EachTag />
+            {filterdPost?.map((post, index) => (
+              <EachTag key={index}>{post.category}</EachTag>
+            ))}
           </WrappingTags>
+          <br />
+          <h1>댓글이 보여질 곳입니다.</h1>
         </WrappingBoardDetail>
       </AllContainer>
     </>
