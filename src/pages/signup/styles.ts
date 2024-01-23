@@ -67,6 +67,8 @@ const StyledButton = styled.button`
 const StyledButtonShort = styled(StyledButton)`
   width: 131px;
   margin-left: 5px;
+  height: 48px;
+  margin-bottom: -16px;
 `;
 
 const StyledH1 = styled.h1`
