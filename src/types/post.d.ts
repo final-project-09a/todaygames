@@ -1,4 +1,4 @@
-// 각 테이블 전체 타입 정한 후
+//  게시판 타입 저장
 export type Json = string | Date | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 export interface Typedata {
   public: {
@@ -19,6 +19,7 @@ export interface Typedata {
           title: string;
           image?: string;
           content: string;
+          ㄴ;
         };
         Update: {
           id: string;
@@ -35,6 +36,11 @@ export interface Typedata {
           title?: string;
           image?: string;
           content?: string;
+        };
+        Delete: {
+          title: string;
+          image: string;
+          content: string;
         };
       };
       comments: {

@@ -21,6 +21,7 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
+import Comment from 'components/comment/Comment';
 
 export const BoardDetail = () => {
   const { id } = useParams();
@@ -98,7 +99,7 @@ export const BoardDetail = () => {
             ))}
           </WrappingTags>
           <br />
-          <h1>댓글이 보여질 곳입니다.</h1>
+          <Comment />
         </WrappingBoardDetail>
       </AllContainer>
     </>

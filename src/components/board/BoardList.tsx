@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
-import { Typedata } from 'shared/supabase.type';
+import { Typedata } from 'types/post';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ import userimg from 'assets/img/userimg.png';
 import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
+import editBtn from '../../assets/img/editBtn.png';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -32,14 +33,20 @@ interface PostDetail {
   image: string;
   game: string;
 }
+interface Post {
+  id: string;
+  text: string;
+}
 
 export const BoardList = ({ filteredPosts }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
-  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [isEditing, setIsEditing] = useState(false); // 수정 삭제
+  const [isdefault, setIsDefault] = useState(false); // 수정 삭제
   const [searchText, SetSearchText] = useState<string>('');
+  const [editingText, setEditText] = useState('');
 
   const navigate = useNavigate();
-
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
@@ -54,6 +61,8 @@ export const BoardList = ({ filteredPosts }: any) => {
     }
   };
 
+  //const { data } = useQuery({ queryKey: 'updatePosts' });
+
   const movedetailPageOnClick = (item: string) => {
     navigate(`/boarddetail/${item}`);
   };
@@ -67,6 +76,22 @@ export const BoardList = ({ filteredPosts }: any) => {
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     SetSearchText(e.target.value);
   };
+
+  const categoryOnclick = () => {
+    setIsDefault(isEditing);
+  };
+
+  const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
+    console.log('취소버튼 구현중');
+  };
+
+  const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (!editingText) return alert('수정 사항이 없습니다.');
+  }; //수정중 취소
+  const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) return;
+  }; // 삭제 버튼
 
   return (
     <div>
@@ -85,7 +110,21 @@ export const BoardList = ({ filteredPosts }: any) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
           if (userInfo) {
             return (
-              <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
+              <StcontentBox key={post?.id}>
+                <EditBtn onClick={categoryOnclick} />
+                {isEditing ? (
+                  <StrefetchForm>
+                    <StButton onClick={onCancelBtn}>취소</StButton>
+                    <StButton onClick={onEditDone}>수정완료</StButton>
+                  </StrefetchForm>
+                ) : (
+                  <>
+                    <StfetchForm>
+                      <StButton onClick={() => setIsEditing(true)}>수정</StButton>
+                      <StButton onClick={onDeleteBtn}>삭제</StButton>
+                    </StfetchForm>
+                  </>
+                )}
                 <StProfileWrapper>
                   <StUserImageWrapper>
                     <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
@@ -98,7 +137,20 @@ export const BoardList = ({ filteredPosts }: any) => {
                 <StContentWrapper>
                   <StText>
                     <h3>{post?.title}</h3>
-                    <p>{post?.content}</p>
+                    {isEditing ? (
+                      <>
+                        <StTextarea
+                          autoFocus
+                          defaultValue={post?.content}
+                          onChange={(event) => setEditText(event.target.value)}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <p>{post?.content}</p>
+                      </>
+                    )}
+
                     <StTagWrapper>
                       {post?.category
                         .split(',')
@@ -139,7 +191,50 @@ export const BoardList = ({ filteredPosts }: any) => {
     </div>
   );
 };
-
+const StTextarea = styled.textarea`
+  // 수정 textarea
+  display: flex;
+  max-width: 1180px;
+  flex-direction: column;
+  gap: 10px;
+  margin: 30px 0;
+  max-width: 900px;
+  height: 250px;
+  overflow: hidden;
+  resize: none;
+  border-radius: 5px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+`;
+const StButton = styled.button`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  right: 360px;
+`;
+const StfetchForm = styled.form`
+  display: flex;
+  width: 1200px;
+  justify-content: center;
+  margin-left: 900px;
+`;
+const StrefetchForm = styled.form`
+  display: flex;
+  width: 1200px;
+  justify-content: center;
+  margin-left: 900px;
+`;
+const EditBtn = styled.button`
+  display: flex;
+  position: relative;
+  top: 10px;
+  left: 1100px;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  background-image: url(${editBtn});
+  cursor: pointer;
+`;
 const StSeachContainer = styled.form`
   display: flex;
   align-items: center;
@@ -288,11 +383,4 @@ const StNullboard = styled.div`
   position: relative;
   bottom: 800px;
   left: 500px;
-`;
-
-const StCancelIcon = styled.img`
-  width: 18px;
-  height: 18px;
-  color: #999999;
-  margin-left: 7px;
 `;

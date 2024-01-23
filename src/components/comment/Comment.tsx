@@ -41,11 +41,13 @@ const Comment = () => {
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
   });
+  console.log('userinfoData', userInfoData);
 
   const { data: mappingData } = useQuery({
     queryKey: [QUERY_KEYS.COMMENTS],
     queryFn: mappingComments
   });
+  console.log('mappingData', mappingData);
 
   // 댓글 정보 가져오기
   useEffect(() => {
@@ -65,7 +67,7 @@ const Comment = () => {
   commentArrayContent[1] = repliesData || [];
   console.log('commentArrayContent', commentArrayContent);
   // 데이터 요청
-  const commentButtoneventHandler = (e: React.ChangeEvent<HTMLButtonElement>) => {
+  const commentButtoneventHandler = () => {
     mappingData?.map((comm, index) => (
       <div key={index}>
         <div>{comm.avatar_url}</div>
@@ -95,28 +97,36 @@ const Comment = () => {
   // 댓글 조회
   // 조회된 댓글 시각화
   //대댓글 기능 추가 =>댓글의 하위 항목으로
-  if (commentData)
-    return (
-      <>
-        <StcommentContainer>
-          <div>
-            <input placeholder="댓글 남기기" />
-            <Button onClick={commentButtoneventHandler} size="samll">
-              <img src={send} />
-            </Button>
-          </div>
-        </StcommentContainer>
-      </>
-    );
+
+  return (
+    <>
+      <StcommentContainer>
+        /
+        <div>
+          <input placeholder="댓글 남기기" />
+          <button onClick={commentButtoneventHandler}>
+            <img src={send} />
+          </button>{' '}
+          ?
+        </div>
+      </StcommentContainer>
+    </>
+  );
 };
 
 export default Comment;
 
 const StcommentContainer = styled.div`
   display: flex;
-  background-color: #292929;
-  max-width: 1281px;
-  max-height: 479px;
+  flex-direction: column;
+  max-width: 1180px;
+  height: max-content;
+  margin-bottom: 30px;
+  background-color: ${(props) => props.theme.color.gray};
+  border-radius: 10px;
+  white-space: nowrap;
+  color: ${(props) => props.theme.color.white};
+  padding: 20px;
 `;
 // 댓글 구현 로직
 //1. 테이블 확인
