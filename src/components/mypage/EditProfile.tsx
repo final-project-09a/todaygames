@@ -1,7 +1,7 @@
 import Button from 'common/Button';
 import Tag from 'common/Tag';
 import { StTagWrapper } from 'components/Header/styles';
-import { GENRE_NAME, Genre } from 'constants/genre';
+import { GENRE_NAME } from 'constants/genre';
 import {
   StButtonContainer,
   StCancelIcon,
@@ -18,6 +18,7 @@ import { RootState } from 'redux/config/configStore';
 import { UserData, setUser } from '../../redux/modules/userSlice';
 import { supabase } from 'types/supabase';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
+import { GenreNameType, GenreType } from 'types/games';
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -133,7 +134,7 @@ const EditProfile = () => {
         <label htmlFor="genres">관심장르 등록</label>
         <select id="genres" value={genres || ''} onChange={handleGenresChange}>
           <option value={genres}>관심 장르를 선택하세요</option>
-          {GENRE_NAME.map((genre: Genre) => (
+          {GENRE_NAME.map((genre: GenreNameType) => (
             <option key={genre.tag} value={genre.tag}>
               {genre.tag}
             </option>

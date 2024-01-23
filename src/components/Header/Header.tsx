@@ -7,6 +7,7 @@ import CustomCarousel from 'common/CustomCarousel';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameType, GenreType } from 'types/games';
+import HeaderTitleSkeleton from 'components/skeletons/HeaderTitleSkeleton';
 
 interface HeaderProps {
   mostPlayedGames: GameType[];
@@ -73,19 +74,21 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
   });
 
   const allQueriesSuccessful = gameDetailsQueries.every((query) => query.isSuccess);
-
   const gameDetailsArray = allQueriesSuccessful ? gameDetailsQueries.map((query) => query.data) : undefined;
 
   return (
     <StContainer>
       <StCarouselWrapper>
         <CustomCarousel settings={settings}>
-          {gameDetailsArray &&
-            gameDetailsArray?.map((game) => (
+          {gameDetailsArray ? (
+            gameDetailsArray.map((game) => (
               <StFigure key={game.steam_appid}>
                 <img src={game.background_raw} alt={game.name} />
               </StFigure>
-            ))}
+            ))
+          ) : (
+            <HeaderTitleSkeleton />
+          )}
         </CustomCarousel>
       </StCarouselWrapper>
 

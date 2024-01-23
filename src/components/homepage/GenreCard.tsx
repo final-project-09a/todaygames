@@ -4,7 +4,7 @@ import styled from 'styled-components';
 type GenreCardProps = {
   imageUrl: string;
   tag: string;
-  onClick: () => void;
+  onClick?: () => void;
   isSelected: boolean;
 };
 
@@ -21,11 +21,11 @@ export default GenreCard;
 
 const StCardWrapper = styled.div<{ $isSelected: boolean }>`
   position: relative;
+  overflow: hidden;
   width: 220px;
   height: 300px;
-  flex-shrink: 0;
-  border-radius: 20px;
   margin-left: 10px;
+  border-radius: 20px;
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0.17%, rgba(0, 0, 0, 0) 99.93%);
   border: ${(props) => (props.$isSelected ? '5px solid white' : 'none')};
   overflow: hidden;

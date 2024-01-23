@@ -24,6 +24,7 @@ export interface GameType {
 }
 
 export interface GenreNameType {
+  index: number;
   tag: string;
   englishTag: string;
   imageUrl: string;
