@@ -11,3 +11,9 @@ export type Post = {
   image: string[];
   content: string;
 };
+
+export type FormData = {
+  email: string;
+  password: string;
+  displayName: string;
+};

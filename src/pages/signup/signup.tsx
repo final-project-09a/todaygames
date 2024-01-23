@@ -13,11 +13,8 @@ import {
   StyledButtonShort,
   StInputBtwrap
 } from './styles';
-interface FormData {
-  email: string;
-  password: string;
-  displayName: string;
-}
+
+import { FormData } from 'types/global.d';
 
 const isValidPassword = (password: string) => {
   // 비밀번호 유효성 검사: 8~16자 영문, 숫자, 특수문자를 조합
@@ -70,7 +67,6 @@ const checkEmail = async (email: string) => {
 
 function Signup() {
   const navigate = useNavigate();
-  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [formData, setFormData] = useState<FormData>({
