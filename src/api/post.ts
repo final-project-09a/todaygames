@@ -30,8 +30,8 @@ console.log('updatePosts', updatePosts);
 //   try {
 //     const { data } = await supabase
 //       .from(QUERY_KEYS.POSTS)
-//       .delete('title,image,content')
-//       .eq('id', id)
+//       .delete('content')
+//       .eq('id', 1)
 //       .single()
 //       .then((response) => dispatch(response.data));
 //     //.order('create_At', { ascending: false }); // 날짜 컬럼

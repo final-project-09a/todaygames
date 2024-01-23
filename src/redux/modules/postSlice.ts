@@ -29,8 +29,15 @@ const postSlice = createSlice({
       if (post) {
         Object.assign(post, action.payload);
       }
+    },
+    deletePost: (state, action: PayloadAction<Post>) => {
+      const postIdToDelete = action.payload.id;
+      const newState = {
+        ...state,
+        posts: state.posts.filter((post) => post.id !== postIdToDelete)
+      };
+      return newState;
     }
-    //deletePost: (state, action: PayloadAction<Post>) => {}
   }
 });
 

@@ -46,7 +46,9 @@ export const BoardList = ({ filteredPosts }: any) => {
   const [editingText, setEditText] = useState('');
 
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const user = useSelector((state: any) => state.userSlice.userInfo);
+  const updatePost = useSelector((state: any) => state.postSlice.updatePost);
+  const deletePost = useSelector((state: any) => state.postSlice.deletePost);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
@@ -92,7 +94,6 @@ export const BoardList = ({ filteredPosts }: any) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
   }; // 삭제 버튼
-
   return (
     <div>
       <StSeachContainer>
@@ -108,9 +109,10 @@ export const BoardList = ({ filteredPosts }: any) => {
       {filteredPosts.length > 0 ? (
         initialDisplayedPosts.map((post: PostDetail) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
+
           if (userInfo) {
             return (
-              <StcontentBox key={post?.id}>
+              <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
                 <EditBtn onClick={categoryOnclick} />
                 {isEditing ? (
                   <StrefetchForm>
@@ -213,16 +215,16 @@ const StButton = styled.button`
   right: 360px;
 `;
 const StfetchForm = styled.form`
+  flex-direction: row;
   display: flex;
-  width: 1200px;
+
   justify-content: center;
-  margin-left: 900px;
 `;
 const StrefetchForm = styled.form`
+  flex-direction: row;
   display: flex;
-  width: 1200px;
+
   justify-content: center;
-  margin-left: 900px;
 `;
 const EditBtn = styled.button`
   display: flex;
