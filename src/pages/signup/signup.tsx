@@ -46,6 +46,17 @@ const checkNickname = async (nickname: string) => {
   //닉네임 중복이 맞다면 true를 뱉어냄
 };
 
+const checkEmail = async (email: string) => {
+  // email 중복 검사 (userinfo테이블 기준입니다 )
+  const { data, error } = await supabase.from('userinfo').select('email').eq('email', email);
+  if (error) {
+    console.log('email 중복 검사 에러');
+    return;
+  }
+  return data.length > 0;
+  //email 중복이 맞다면 true를 뱉어냄
+};
+
 function Signup() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -57,8 +68,21 @@ function Signup() {
     displayName: ''
   });
 
+  const handleCheckEmail = async () => {
+    if (!isValidEmail(formData.email)) {
+      alert('유효한 이메일 형식이 아닙니다.');
+      return;
+    }
+    const isDuplicate = await checkEmail(formData.email);
+    if (isDuplicate) {
+      alert('이미 사용중인 email입니다. 다른 email을 선택해주세요.');
+    } else {
+      alert('사용 가능한 email입니다.');
+    }
+  };
+
   const handleCheckNickname = async () => {
-    if (!isValidDisplayName(formData.displayName)) {
+    if (!isValidEmail(formData.email)) {
       alert('닉네임은 최소 2자,최대 6자로 설정해주세요');
       return;
     }
@@ -182,6 +206,9 @@ function Signup() {
           />
           {errors.email && <p>{errors.email}</p>}
         </StInputGroup>
+        <button onClick={handleCheckEmail} type="button">
+          email 중복 확인
+        </button>
         <StInputGroup>
           <StyledLabel htmlFor="password">비밀번호</StyledLabel>
           <StyledInput
