@@ -24,7 +24,7 @@ const getTopReleases = async () => {
   }
 };
 
-const getSelectedGenre = async (tag: any) => {
+const getSelectedGenre = async (tag: string) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/genre/${tag}`);
     const SelectedGenre = response.data.applist.apps;
@@ -41,7 +41,7 @@ const getSelectedGenre = async (tag: any) => {
   }
 };
 
-const getGameDetails = async (appid: any) => {
+const getGameDetails = async (appid: number) => {
   try {
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/api/game-details/${appid}`);
     const gameDetails = response.data[appid]?.data;

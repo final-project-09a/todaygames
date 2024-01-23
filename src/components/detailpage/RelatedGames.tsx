@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getGames } from 'api/games';
 import { GenreType } from 'components/Header/Header';
-import { Game } from 'components/homepage/RecommendList';
 import SelectedGenreCard from 'components/homepage/SelectedGenreCard';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -18,13 +17,13 @@ const RelatedGames = ({ genres, appid }: RelatedGamesProps) => {
     queryFn: getGames
   });
 
-  console.log(genres);
+  console.log(appid);
 
   const [relatedGameLists, setRelatedGameLists] = useState<GameData[] | undefined>();
 
   useEffect(() => {
     if (data && !isLoading && !isError) {
-      const filteredGames: any = data
+      const filteredGames: GameData[] = data
         .filter((game) => genres.some((genre: GenreType) => game.genres.includes(genre)))
         .filter((game) => game.app_id != appid)
         .slice(0, 4);

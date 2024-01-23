@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import boomarkIcon from 'assets/icons/boomarkIcon.svg';
 import communityIcon from 'assets/icons/communityIcon.svg';
@@ -6,17 +6,22 @@ import editProfileIcon from 'assets/icons/editProfileIcon.svg';
 import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { supabase } from 'shared/supabase';
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setUser } from 'redux/modules/userSlice';
 
-const MypageNav = () => {
+interface MypageProps {
+  onCategoryChange: (category: string) => void;
+}
+
+const MypageNav = ({ onCategoryChange }: MypageProps) => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const dispatch = useDispatch();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files;
-    console.log('Selected file:', selectedFile);
+    if (selectedFile) console.log('Selected file:', selectedFile);
   }, []);
 
   const triggerFileInput = useCallback(() => {
@@ -34,7 +39,7 @@ const MypageNav = () => {
           <img src={user?.profile ? user.profile : userimg} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        <p>{user?.nickname}</p>
+        <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p>
         <input
           type="file"
           accept="image/*"
@@ -44,18 +49,18 @@ const MypageNav = () => {
         />
       </StUserProfileWrapper>
       <StCategoryWrapper>
-        <div>
+        <StCategory onClick={() => onCategoryChange('profile')}>
           <StEditProfileIcon />
           <p>프로필 편집</p>
-        </div>
-        <div>
+        </StCategory>
+        <StCategory onClick={() => onCategoryChange('community')}>
           <StCommunityIcon />
-          <p>커뮤니티</p>
-        </div>
-        <div>
+          <p>내가 쓴 글</p>
+        </StCategory>
+        <StCategory onClick={() => onCategoryChange('bookmark')}>
           <StBookMarkIcon />
           <p>찜 목록</p>
-        </div>
+        </StCategory>
       </StCategoryWrapper>
     </StContainer>
   );
@@ -143,4 +148,8 @@ const StBookMarkIcon = styled.div`
   width: 24px;
   height: 24px;
   background: url(${boomarkIcon}) no-repeat center center;
+`;
+
+const StCategory = styled.div`
+  cursor: pointer;
 `;
