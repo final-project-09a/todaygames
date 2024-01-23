@@ -41,11 +41,34 @@ const EditProfile = () => {
     setProfileError(e.target.value.length < 10 ? '프로필은 최소 10글자 이상이어야 합니다.' : '');
   };
 
-  const handleNickNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setUser({ ...user, nickname: e.target.value } as UserData));
-    setNicknameError(
-      e.target.value.length < 2 || e.target.value.length > 6 ? '닉네임은 최소 2글자, 최대 6글자로 작성해주세요.' : ''
-    );
+  const checkNickname = async (nickname: string) => {
+    // 닉네임 중복 검사 (userinfo테이블 기준입니다 /mypage에서 닉네임 변경할때도 userinfo만 변경됩니다)
+    const { data, error } = await supabase.from('userinfo').select('nickname').eq('nickname', nickname);
+    if (error) {
+      console.log('닉네임 중복 검사 에러');
+      return;
+    }
+    return data.length > 0;
+    //닉네임 중복이 맞다면 true를 뱉어냄
+  };
+
+  const handleNickNameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nickname = e.target.value;
+
+    dispatch(setUser({ ...user, nickname: nickname } as UserData));
+
+    if (nickname.length < 2 || nickname.length > 6) {
+      setNicknameError('닉네임은 최소 2글자, 최대 6글자로 작성해주세요.');
+      return;
+    }
+
+    const isDuplicate = await checkNickname(nickname);
+    if (isDuplicate) {
+      setNicknameError('이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
+      return;
+    }
+
+    setNicknameError(''); // 에러가 없다면 에러 메시지를 초기화합니다.
   };
 
   const handleGenresChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -54,13 +77,6 @@ const EditProfile = () => {
       setSelectedGenres((prev) => [...prev, selectedOption]);
     }
   };
-
-  //   const handleGenresChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //     const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-
-  //     const updatedSelectedGenres = selectedOptions.filter((option) => option !== 'Select genres');
-  //     setSelectedGenres(updatedSelectedGenres);
-  //   };
 
   const handleCancelIconClick = (genreToRemove: string) => {
     setSelectedGenres((prev) => prev.filter((genre) => genre !== genreToRemove));
@@ -101,7 +117,7 @@ const EditProfile = () => {
         <input
           id="nickname"
           type="text"
-          value={nickname ? nickname : 'KAKAO USER'}
+          value={nickname ? nickname : ''}
           onChange={handleNickNameChange}
           maxLength={6}
           minLength={1}

@@ -7,7 +7,6 @@ import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { useDispatch } from 'react-redux';
-import { setUser } from 'redux/modules/userSlice';
 import { supabase } from 'shared/supabase';
 interface MypageProps {
   onCategoryChange: (category: string) => void;
@@ -66,16 +65,15 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
     }
   }, [fileInputRef]);
 
-  console.log(imageUrl);
   return (
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          {/* <img src={user?.profile ? user.profile : userimg} alt="프로필이미지" /> */}
           <img src={user?.avatar_url} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p>
+        {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
+        <p>{user?.nickname ? user.nickname : ' '}</p>
         <input
           type="file"
           accept="image/*"
