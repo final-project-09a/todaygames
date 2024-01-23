@@ -35,6 +35,17 @@ const isValidDisplayName = (displayName: string) => {
   return displayName.length >= 2 && displayName.length <= 10;
 };
 
+const checkNickname = async (nickname: string) => {
+  // 닉네임 중복 검사 (userinfo테이블 기준입니다 /mypage에서 닉네임 변경할때도 userinfo만 변경됩니다)
+  const { data, error } = await supabase.from('userinfo').select('nickname').eq('nickname', nickname);
+  if (error) {
+    console.log('닉네임 중복 검사 에러');
+    return;
+  }
+  return data.length > 0;
+  //닉네임 중복이 맞다면 true를 뱉어냄
+};
+
 function Signup() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -88,6 +99,12 @@ function Signup() {
 
     if (!isValidDisplayName(formData.displayName)) {
       alert('닉네임은 최소 2자리, 최대 6자리로 작성해주세요.');
+      return;
+    }
+
+    const isDeduplication = await checkNickname(formData.displayName);
+    if (isDeduplication) {
+      alert('이미 사용죽인 닉네임입니다, 다른 닉네임을 사용해주세요');
       return;
     }
 
