@@ -38,7 +38,7 @@ const isValidEmail = (email: string) => {
 
 const isValidPasswordlength = (password: string) => {
   // 비밀번호 길이 검사
-  return password.length >= 8;
+  return password.length >= 6;
 };
 
 const isValidDisplayName = (displayName: string) => {
@@ -93,7 +93,7 @@ function Signup() {
   };
 
   const handleCheckNickname = async () => {
-    if (!isValidEmail(formData.email)) {
+    if (!isValidDisplayName(formData.displayName)) {
       alert('닉네임은 최소 2자,최대 6자로 설정해주세요');
       return;
     }
