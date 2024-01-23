@@ -5,6 +5,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import SelectedGenreList from './SelectedGenreList';
+import { GenreNameType } from 'types/games';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');
@@ -38,7 +39,7 @@ const GenreSlider = () => {
   return (
     <>
       <Slider {...settings}>
-        {GENRE_NAME.map(({ tag, englishTag, imageUrl }: { tag: string; englishTag: string; imageUrl: string }) => (
+        {GENRE_NAME.map(({ tag, englishTag, imageUrl }: GenreNameType) => (
           <GenreCard
             imageUrl={imageUrl}
             key={englishTag}

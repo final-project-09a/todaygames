@@ -2,11 +2,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import { getGameDetails, getTopReleases } from 'api/steamApis';
 import NewGameCard from './NewGameCard';
 import styled from 'styled-components';
-import { Game } from './RecommendList';
-
-interface DataType {
-  appid: number | undefined;
-}
+import { GameType } from 'types/games';
 
 const NewGames = () => {
   // 월별 최신 출시 게임 30개
@@ -14,7 +10,7 @@ const NewGames = () => {
     queryKey: ['topReleases'],
     queryFn: getTopReleases
   });
-  const appids = data?.map((item: DataType) => item.appid).slice(0, 2) || [];
+  const appids = data?.map((item: GameType) => item.appid).slice(0, 2) || [];
 
   if (isLoading) {
     <p>게임 정보를 불러오는 중입니다...</p>;
@@ -34,7 +30,7 @@ const NewGames = () => {
     }))
   });
 
-  const gameDetailsArray = gameDetailsQueries?.map((query) => query.data as Game);
+  const gameDetailsArray = gameDetailsQueries?.map((query) => query.data as GameType);
 
   return (
     <StListContainer>

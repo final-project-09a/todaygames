@@ -2,26 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getGames } from 'api/games';
 
 type SystemRequirementsProps = {
-  appid: string | undefined;
+  appid: number;
 };
-
-export interface GameData {
-  name: string;
-  header_image: string;
-  app_id: number;
-  pcRequirements: {
-    DirectX: string;
-    etc: string;
-    graphics: string;
-    memory: string;
-    network: string;
-    os: string;
-    processor: string;
-    sound: string;
-    storage: string;
-  };
-  genres: string;
-}
 
 const SystemRequirements = ({ appid }: SystemRequirementsProps) => {
   const { data, isLoading, isError } = useQuery({

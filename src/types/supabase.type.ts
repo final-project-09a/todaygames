@@ -84,7 +84,7 @@ export interface Typedata {
       };
       games: {
         Row: {
-          add_id: number;
+          app_id: number;
           name: string;
           required_age: number;
           is_free: boolean;
@@ -93,7 +93,17 @@ export interface Typedata {
           capsule_image: string;
           website: string;
           genres: string;
-          id: string;
+          pcRequirements: {
+            DirectX: string;
+            etc: string;
+            graphics: string;
+            memory: string;
+            network: string;
+            os: string;
+            processor: string;
+            sound: string;
+            storage: string;
+          };
         };
       };
     };

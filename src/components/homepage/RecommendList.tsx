@@ -3,22 +3,10 @@ import { getGameDetails } from 'api/steamApis';
 import RecommendCard from './RecommendCard';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { GenreType } from 'components/Header/Header';
-
-export interface Game {
-  appid: number;
-  header_image: string;
-  name: string;
-  steam_appid: number;
-  short_description: string;
-  release_date: {
-    date: string;
-  };
-  genres: GenreType[];
-}
+import { GameType } from 'types/games';
 
 interface NewGamesProps {
-  mostPlayedGames: Game[];
+  mostPlayedGames: GameType[];
 }
 
 const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
@@ -26,7 +14,7 @@ const RecommendList = ({ mostPlayedGames }: NewGamesProps) => {
 
   // // 가장 많이 플레이된 게임 100개 중 top 10만 가져오기
   const topTen = mostPlayedGames?.slice(0, 10);
-  const appids = topTen?.map((game: Game) => game.appid) || [];
+  const appids = topTen?.map((game: GameType) => game.appid) || [];
 
   // top 10 상세 정보 가져오기
   const gameDetailsQueries = useQueries({

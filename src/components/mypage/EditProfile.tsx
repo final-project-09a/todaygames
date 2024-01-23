@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { UserData, setUser } from '../../redux/modules/userSlice';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 
 const EditProfile = () => {

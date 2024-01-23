@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StInputGroup } from './styles';
 interface FormData {
