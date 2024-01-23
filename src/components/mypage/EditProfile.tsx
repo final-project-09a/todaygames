@@ -27,13 +27,15 @@ const EditProfile = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [nicknameError, setNicknameError] = useState<string>('');
   const [profileError, setProfileError] = useState<string>('');
+  const [isValid, setIsValid] = useState<boolean>(true);
 
   const isButtonDisabled = !(
     nickname &&
     nickname.length >= 2 &&
     nickname.length <= 6 &&
     profile &&
-    profile.length >= 10
+    profile.length >= 10 &&
+    isValid
   );
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -59,16 +61,19 @@ const EditProfile = () => {
 
     if (nickname.length < 2 || nickname.length > 6) {
       setNicknameError('닉네임은 최소 2글자, 최대 6글자로 작성해주세요.');
+      setIsValid(false); // 유효성 검사에 실패하면 isValid를 false로 설정합니다.
       return;
     }
 
     const isDuplicate = await checkNickname(nickname);
     if (isDuplicate) {
       setNicknameError('이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
+      setIsValid(false); // 유효성 검사에 실패하면 isValid를 false로 설정합니다.
       return;
     }
 
     setNicknameError(''); // 에러가 없다면 에러 메시지를 초기화합니다.
+    setIsValid(true); // 모든 유효성 검사를 통과하면 isValid를 true로 설정합니다.
   };
 
   const handleGenresChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
