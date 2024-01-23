@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from 'shared/supabase';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   StyledInputShort,
   StyledSignup,
@@ -107,10 +107,6 @@ function Signup() {
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 비밀번호 확인 변경 핸들러
     setConfirmPassword(e.target.value);
@@ -149,12 +145,6 @@ function Signup() {
       alert('닉네임은 최소 2자리, 최대 6자리로 작성해주세요.');
       return;
     }
-
-    // const isDeduplication = await checkNickname(formData.displayName);
-    // if (isDeduplication) {
-    //   alert('이미 사용죽인 닉네임입니다, 다른 닉네임을 사용해주세요');
-    //   return;
-    // }
 
     try {
       const { data, error } = await supabase.auth.signUp({
