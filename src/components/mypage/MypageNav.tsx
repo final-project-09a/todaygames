@@ -21,25 +21,7 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
 
   const [imageUrl, setImageUrl] = useState(user?.profile ? user.profile : userimg);
 
-  // const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const selectedFile = e.target.files;
-  //   if (selectedFile) console.log('Selected file:', selectedFile);
-  // }, []);
-
-  // const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target) {
-  //     const selectedFile = e.target.files;
-  //     if (selectedFile && selectedFile.length > 0) {
-  //       const fileReader = new FileReader();
-  //       fileReader.onload = (event) => {
-  //         if (event.target) {
-  //           setImageUrl(event.target.result as string);
-  //         }
-  //       };
-  //       fileReader.readAsDataURL(selectedFile[0]);
-  //     }
-  //   }
-  // }, []);  이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
+  // 이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
 
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,13 +66,6 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
     }
   }, [fileInputRef]);
 
-  // const triggerFileInput = useCallback(() => {
-  //   if (fileInputRef.current) {
-  //     fileInputRef.current.click();
-  //   }
-  // }, [fileInputRef]);
-
-  // const profileImageUrl = useMemo(() => (user?.profile ? user.profile : userimg), [user]);
   console.log(imageUrl);
   return (
     <StContainer>
