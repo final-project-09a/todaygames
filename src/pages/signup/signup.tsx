@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
 import { supabase } from 'shared/supabase';
 import { Link, useNavigate } from 'react-router-dom';
-import { StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StInputGroup } from './styles';
+import {
+  StyledInputShort,
+  StyledSignup,
+  StyledForm,
+  StyledInput,
+  StyledButton,
+  StyledH1,
+  StyledLabel,
+  StInputGroup,
+  StyledButtonShort,
+  StInputBtwrap
+} from './styles';
 interface FormData {
   email: string;
   password: string;
@@ -177,38 +188,41 @@ function Signup() {
     <StyledSignup>
       <StyledH1>회원 가입</StyledH1>
       <StyledForm onSubmit={handleSignup}>
-        <StInputGroup>
-          {' '}
-          <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
-          <StyledInput
-            placeholder="사용할 닉네임을 적어주세요."
-            type="text"
-            id="displayName"
-            name="displayName"
-            value={formData.displayName}
-            onChange={handleChange}
-          />
-          {errors.displayName && <p>{errors.displayName}</p>}
-        </StInputGroup>
-        <button onClick={handleCheckNickname} type="button">
-          닉네임 중복 확인
-        </button>
-
-        <StInputGroup>
-          <StyledLabel htmlFor="email">이메일</StyledLabel>
-          <StyledInput
-            placeholder="이메일을 입력해 주세요."
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {errors.email && <p>{errors.email}</p>}
-        </StInputGroup>
-        <button onClick={handleCheckEmail} type="button">
-          email 중복 확인
-        </button>
+        <StInputBtwrap>
+          <StInputGroup>
+            {' '}
+            <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
+            <StyledInputShort
+              placeholder="사용할 닉네임을 적어주세요."
+              type="text"
+              id="displayName"
+              name="displayName"
+              value={formData.displayName}
+              onChange={handleChange}
+            />
+            {errors.displayName && <p>{errors.displayName}</p>}
+          </StInputGroup>
+          <StyledButtonShort onClick={handleCheckNickname} type="button">
+            닉네임 중복 확인
+          </StyledButtonShort>
+        </StInputBtwrap>
+        <StInputBtwrap>
+          <StInputGroup>
+            <StyledLabel htmlFor="email">이메일</StyledLabel>
+            <StyledInputShort
+              placeholder="이메일을 입력해 주세요."
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            {errors.email && <p>{errors.email}</p>}
+          </StInputGroup>
+          <StyledButtonShort onClick={handleCheckEmail} type="button">
+            email 중복 확인
+          </StyledButtonShort>
+        </StInputBtwrap>
         <StInputGroup>
           <StyledLabel htmlFor="password">비밀번호</StyledLabel>
           <StyledInput
