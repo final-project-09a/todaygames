@@ -32,7 +32,7 @@ const isValidPasswordlength = (password: string) => {
 
 const isValidDisplayName = (displayName: string) => {
   // 닉네임 길이 검사
-  return displayName.length >= 2 && displayName.length <= 10;
+  return displayName.length >= 2 && displayName.length <= 6;
 };
 
 const checkNickname = async (nickname: string) => {
@@ -56,6 +56,19 @@ function Signup() {
     password: '',
     displayName: ''
   });
+
+  const handleCheckNickname = async () => {
+    if (!isValidDisplayName(formData.displayName)) {
+      alert('닉네임은 최소 2자,최대 6자로 설정해주세요');
+      return;
+    }
+    const isDuplicate = await checkNickname(formData.displayName);
+    if (isDuplicate) {
+      alert('이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
+    } else {
+      alert('사용 가능한 닉네임입니다.');
+    }
+  };
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -102,11 +115,11 @@ function Signup() {
       return;
     }
 
-    const isDeduplication = await checkNickname(formData.displayName);
-    if (isDeduplication) {
-      alert('이미 사용죽인 닉네임입니다, 다른 닉네임을 사용해주세요');
-      return;
-    }
+    // const isDeduplication = await checkNickname(formData.displayName);
+    // if (isDeduplication) {
+    //   alert('이미 사용죽인 닉네임입니다, 다른 닉네임을 사용해주세요');
+    //   return;
+    // }
 
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -153,6 +166,9 @@ function Signup() {
           />
           {errors.displayName && <p>{errors.displayName}</p>}
         </StInputGroup>
+        <button onClick={handleCheckNickname} type="button">
+          닉네임 중복 확인
+        </button>
 
         <StInputGroup>
           <StyledLabel htmlFor="email">이메일</StyledLabel>
