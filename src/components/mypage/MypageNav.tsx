@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
 import boomarkIcon from 'assets/icons/boomarkIcon.svg';
 import communityIcon from 'assets/icons/communityIcon.svg';
@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { useDispatch } from 'react-redux';
 import { setUser } from 'redux/modules/userSlice';
-
+import { supabase } from 'shared/supabase';
 interface MypageProps {
   onCategoryChange: (category: string) => void;
 }
@@ -19,24 +19,85 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files;
-    if (selectedFile) console.log('Selected file:', selectedFile);
-  }, []);
+  const [imageUrl, setImageUrl] = useState(user?.profile ? user.profile : userimg);
+
+  // const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const selectedFile = e.target.files;
+  //   if (selectedFile) console.log('Selected file:', selectedFile);
+  // }, []);
+
+  // const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target) {
+  //     const selectedFile = e.target.files;
+  //     if (selectedFile && selectedFile.length > 0) {
+  //       const fileReader = new FileReader();
+  //       fileReader.onload = (event) => {
+  //         if (event.target) {
+  //           setImageUrl(event.target.result as string);
+  //         }
+  //       };
+  //       fileReader.readAsDataURL(selectedFile[0]);
+  //     }
+  //   }
+  // }, []);  이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
+
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target) {
+        const selectedFile = e.target.files;
+        if (selectedFile && selectedFile.length > 0) {
+          const fileReader = new FileReader();
+          fileReader.onload = async (event) => {
+            if (event.target) {
+              const imageUrl = event.target.result as string;
+              setImageUrl(imageUrl);
+
+              if (user) {
+                // id가 존재하는지 확인
+                // 'userinfo' 테이블의 'avatar_url' 업데이트
+                const { error } = await supabase.from('userinfo').update({ avatar_url: imageUrl }).eq('id', user.id);
+                if (error) {
+                  console.log('프로필 이미지 업데이트 중 에러가 발생했습니다:', error.message);
+                  alert('이미지 업로드 오류');
+                } else {
+                  console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
+                  alert('이미지 업로드 성공!');
+                  window.location.reload();
+                }
+              } else {
+                console.log('유저 ID가 존재하지 않습니다.');
+                alert('유저 ID가 존재하지 않습니다.');
+              }
+            }
+          };
+          fileReader.readAsDataURL(selectedFile[0]);
+        }
+      }
+    },
+    [user]
+  );
 
   const triggerFileInput = useCallback(() => {
     if (fileInputRef.current) {
+      fileInputRef.current.value = '';
       fileInputRef.current.click();
     }
   }, [fileInputRef]);
 
-  // const profileImageUrl = useMemo(() => (user?.profile ? user.profile : userimg), [user]);
+  // const triggerFileInput = useCallback(() => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // }, [fileInputRef]);
 
+  // const profileImageUrl = useMemo(() => (user?.profile ? user.profile : userimg), [user]);
+  console.log(imageUrl);
   return (
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          <img src={user?.profile ? user.profile : userimg} alt="프로필이미지" />
+          {/* <img src={user?.profile ? user.profile : userimg} alt="프로필이미지" /> */}
+          <img src={user?.avatar_url} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
         <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p>
