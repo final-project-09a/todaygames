@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const StContainer = styled.div`
   display: block;
   width: 100%;
+  height: fit-content;
 `;
 
 const StMainWrapper = styled.div`

@@ -16,7 +16,6 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { supabase } from 'shared/supabase';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];

@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { Typedata } from 'types/supabaseTable';
 
 interface SelectedGenreCardProps {
-  gameInfoList: any;
+  gameInfoList: Typedata['public']['Tables']['games']['Row'];
 }
 
 const SelectedGenreCard = ({ gameInfoList }: SelectedGenreCardProps) => {
@@ -25,9 +26,9 @@ const SelectedGenreCard = ({ gameInfoList }: SelectedGenreCardProps) => {
 
 export default SelectedGenreCard;
 
-const StContainer = styled.div`
-  height: 304px;
-  width: 350px;
+export const StContainer = styled.div`
+  height: 300px;
+  width: 340px;
   background-color: ${(props) => props.theme.color.postback};
   border-radius: 10px;
   overflow: hidden;

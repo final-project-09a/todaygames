@@ -5,34 +5,20 @@ import { StContainer, StInfoBox } from './styles';
 import GameTitle from 'components/detailpage/GameTitle';
 import GameInfo from 'components/detailpage/GameInfo';
 import GameDescription from 'components/detailpage/GameDescription';
-import ScreenShotSlide from 'components/detailpage/ScreenShotSlide';
 import RelatedGames from 'components/detailpage/RelatedGames';
 import React from 'react';
 import SystemRequirements from 'components/detailpage/SystemRequirements';
-import { GenreType } from 'components/Header/Header';
+import { GameType } from 'types/games';
 
-export const DataContext = React.createContext<GameData | null>(null);
-
-interface GameData {
-  name: string;
-  background_raw: string;
-  screenshots?: { path_thumbnail: string }[];
-  genres: { description: string }[];
-  short_description: string;
-  about_the_game: string;
-  developers?: string[] | undefined;
-  publishers: string;
-  release_date: { date: string };
-  detailed_description: string;
-  pc_requirements: { minimum: string };
-}
+export const DataContext = React.createContext<GameType | null>(null);
 
 const Detail = () => {
   const { appid } = useParams();
+  const numberAppId = Number(appid);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['gameDetailInfo', appid],
-    queryFn: () => getGameDetails(Number(appid))
+    queryFn: () => getGameDetails(numberAppId)
   });
 
   if (isLoading) {
@@ -43,13 +29,12 @@ const Detail = () => {
     return <div>게임 정보를 가져올 수 없습니다.</div>;
   }
 
-  const genres = data.genres.map((genre: GenreType) => genre.description);
+  const genres = data.genres.map((genre: { description: string }) => genre.description);
 
   return (
     <DataContext.Provider value={data}>
       <StContainer>
         <GameTitle />
-        <ScreenShotSlide />
         <StInfoBox>
           <GameInfo />
         </StInfoBox>
@@ -57,9 +42,9 @@ const Detail = () => {
           <GameDescription />
         </StInfoBox>
         <StInfoBox>
-          <SystemRequirements appid={appid} />
+          <SystemRequirements appid={numberAppId} />
         </StInfoBox>
-        <RelatedGames genres={genres} appid={appid} />
+        <RelatedGames genres={genres} appid={numberAppId} />
       </StContainer>
     </DataContext.Provider>
   );

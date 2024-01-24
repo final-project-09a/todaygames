@@ -1,5 +1,5 @@
 import { QUERY_KEYS } from 'query/keys';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 
 export const getReplies = async () => {
   try {

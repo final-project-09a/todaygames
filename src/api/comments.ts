@@ -1,4 +1,4 @@
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import { Typedata } from 'types/supabaseTable';
 import { QUERY_KEYS } from 'query/keys';
 

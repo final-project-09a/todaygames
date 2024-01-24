@@ -20,8 +20,7 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
-import Comment from 'components/comment/Comment';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import { useState } from 'react';
 import { Post } from 'types/global.d';
 
