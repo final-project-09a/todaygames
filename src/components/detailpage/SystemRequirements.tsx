@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { getGames } from 'api/games';
-import { GenreType } from 'components/Header/Header';
 
 type SystemRequirementsProps = {
   appid: string | undefined;

@@ -1,24 +1,29 @@
 import styled from 'styled-components';
 
-export const StMypageContainer = styled.div`
-  width: 100%;
-  margin-top: 50px;
-  margin-bottom: 100px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-`;
+const MyCommunity = () => {
+  return (
+    <StUserInfoContainer>
+      <StContentBox>
+        <h2>내가 쓴 글</h2>
+      </StContentBox>
+    </StUserInfoContainer>
+  );
+};
 
-export const StUserInfoContainer = styled.form`
+export default MyCommunity;
+
+const StUserInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 1100px;
+  height: 1000px;
   margin-left: 20px;
 `;
 
-export const StUserinfoBox = styled.div`
+const StContentBox = styled.div`
   position: relative;
   width: 1100px;
+  height: 800px;
   border-radius: 10px;
   padding: 40px;
   display: flex;
@@ -82,53 +87,4 @@ export const StUserinfoBox = styled.div`
     color: ${(props) => props.theme.color.white};
     border: none;
   }
-`;
-
-export const StErrorMessage = styled.div`
-  color: red;
-  font-size: 13px;
-  padding: 10px;
-`;
-
-export const StNickNameCount = styled.div`
-  color: #999;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 15px;
-  margin-top: 15px;
-  position: absolute;
-  bottom: 62%;
-  right: 5%;
-`;
-
-export const StProfileCount = styled.div`
-  color: #999;
-  text-align: right;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 15px;
-  margin-top: 15px;
-  position: absolute;
-  bottom: 13%;
-  right: 5%;
-`;
-
-export const StButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-`;
-
-export const StTagWrapper = styled.div`
-  display: flex;
-  margin-top: 20px;
-  gap: 8px;
-`;
-
-export const StCancelIcon = styled.img`
-  width: 18px;
-  height: 18px;
-  color: #999999;
-  margin-left: 7px;
 `;
