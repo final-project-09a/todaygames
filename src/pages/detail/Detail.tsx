@@ -5,7 +5,6 @@ import { StContainer, StInfoBox } from './styles';
 import GameTitle from 'components/detailpage/GameTitle';
 import GameInfo from 'components/detailpage/GameInfo';
 import GameDescription from 'components/detailpage/GameDescription';
-import ScreenShotSlide from 'components/detailpage/ScreenShotSlide';
 import RelatedGames from 'components/detailpage/RelatedGames';
 import React from 'react';
 import SystemRequirements from 'components/detailpage/SystemRequirements';
@@ -36,7 +35,6 @@ const Detail = () => {
     <DataContext.Provider value={data}>
       <StContainer>
         <GameTitle />
-        <ScreenShotSlide />
         <StInfoBox>
           <GameInfo />
         </StInfoBox>

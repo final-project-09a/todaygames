@@ -1,19 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-export interface GameData {
-  release_date: { date: string };
-  app_id: number;
-  capsule_image: string;
-  genres: string[];
-  header_image: string;
-  id: number;
-  is_free: boolean;
-  name: string;
-  short_description: string;
-}
+import { GameType } from 'types/games';
 
 export interface GameState {
-  data: GameData[];
+  data: GameType[];
   isLoading: boolean;
   isError: boolean;
 }
