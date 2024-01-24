@@ -19,7 +19,6 @@ export interface Typedata {
           title: string;
           image?: string;
           content: string;
-          ㄴ;
         };
         Update: {
           id: string;

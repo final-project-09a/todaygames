@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Typedata } from '../types/post';
+import { Typedata } from '../types/supabase.type';
 
 type supabaseConfig = {
   supabaseUrl: string;

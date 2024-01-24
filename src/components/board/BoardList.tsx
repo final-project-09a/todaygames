@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
-import { Typedata } from 'types/post';
+import { Typedata } from 'types/supabase.type';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -42,7 +42,7 @@ interface Post {
 export const BoardList = ({ filteredPosts }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [isEditing, setIsEditing] = useState(false); // 수정 삭제
-  const [isdefault, setIsDefault] = useState(false); // 수정 삭제
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingText, setEditText] = useState('');
 
@@ -80,14 +80,6 @@ export const BoardList = ({ filteredPosts }: any) => {
     SetSearchText(e.target.value);
   };
 
-  const handleEditPost = () => {
-    user?.id === filteredPosts.user_id ? <p>수정하기</p> : <p>신고하기</p>;
-  };
-
-  const categoryOnclick = () => {
-    setIsDefault(isEditing);
-  };
-
   const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
     console.log('취소버튼 구현중');
   };
@@ -99,6 +91,21 @@ export const BoardList = ({ filteredPosts }: any) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
   }; // 삭제 버튼
+
+  const handleEditPost = () => {
+    setIsEditing(!isEditing);
+    if (user?.id === filteredPosts.user_id) {
+      setIsEditing(isEditing);
+    }
+  };
+  const handleEditPostClick = () => {
+    setIsEditing(isEditing); // 수정 버튼을 누를 때마다 수정 상태를 토글
+
+    if (!isEditing) {
+      // 수정 버튼을 누른 후에만 게시판 수정이 나타나도록 설정
+      // 게시판 수정 로직을 추가해야 함
+    }
+  };
   return (
     <div>
       <StSeachContainer>
@@ -117,22 +124,32 @@ export const BoardList = ({ filteredPosts }: any) => {
 
           if (userInfo) {
             return (
-              <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
-                <EditBtn onClick={categoryOnclick} />
+              <StcontentBox key={post?.id}>
+                {/* <StEditPost onClick={() => setIsEditing(!isEditing)} /> */}
+                <EditBtn onClick={() => setDropdownVisible(!dropdownVisible)} />
                 {isEditing ? (
                   <StrefetchForm>
                     <StButton onClick={onCancelBtn}>취소</StButton>
                     <StButton onClick={onEditDone}>수정완료</StButton>
                   </StrefetchForm>
                 ) : (
-                  <>
+                  dropdownVisible && (
                     <StfetchForm>
                       <StButton onClick={() => setIsEditing(true)}>수정</StButton>
                       <StButton onClick={onDeleteBtn}>삭제</StButton>
                     </StfetchForm>
-                  </>
+                  )
                 )}
-                <StProfileWrapper>
+
+                {/* <EditBtn onClick={() => setDropdownVisible(!isEditing)}></EditBtn> */}
+                {/* {dropdownVisible && (
+                  <StfetchForm>
+                    <StButton onClick={() => setIsEditing(true)}>수정</StButton>
+                    <StButton onClick={onDeleteBtn}>삭제</StButton>
+                  </StfetchForm>
+                )} */}
+
+                <StProfileWrapper onClick={() => movedetailPageOnClick(post?.id)}>
                   <section>
                     <StUserImageWrapper>
                       <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
@@ -142,7 +159,6 @@ export const BoardList = ({ filteredPosts }: any) => {
                       <p>{post.created_At}</p>
                     </StUserNameWrapper>
                   </section>
-                  <StEditPost onClick={handleEditPost}></StEditPost>
                 </StProfileWrapper>
                 <StContentWrapper>
                   <StText>
@@ -195,6 +211,7 @@ export const BoardList = ({ filteredPosts }: any) => {
       ) : (
         <StNullboard>게시물이 없습니다.</StNullboard>
       )}
+
       {initialDisplayedPosts.length < filteredPosts.length && (
         <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>
       )}
@@ -220,6 +237,7 @@ const StButton = styled.button`
   display: flex;
   position: relative;
   flex-direction: row;
+  left: 580px;
   right: 360px;
 `;
 const StfetchForm = styled.form`

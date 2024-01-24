@@ -1,5 +1,5 @@
 import { supabase } from 'shared/supabase';
-import { Typedata } from 'types/post';
+import { Typedata } from 'types/supabase.type';
 import { QUERY_KEYS } from 'query/keys';
 import { useDispatch } from 'react-redux';
 
@@ -16,8 +16,7 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
 
 export const updatePosts = async (): Promise<Typedata['public']['Tables']['posts']['Update'][]> => {
   try {
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).update('*');
-    //.order('create_At', { ascending: false }); // 날짜 컬럼
+    const { data } = await supabase.from(QUERY_KEYS.POSTS).update('content');
     return data || [];
   } catch (error) {
     console.error(error);
