@@ -17,8 +17,6 @@ const RelatedGames = ({ genres, appid }: RelatedGamesProps) => {
     queryFn: getGames
   });
 
-  console.log(appid);
-
   const [relatedGameLists, setRelatedGameLists] = useState<
     Typedata['public']['Tables']['games']['Row'][] | undefined
   >();
