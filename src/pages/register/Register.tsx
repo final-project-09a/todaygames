@@ -28,7 +28,6 @@ import {
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
-import { supabase } from 'shared/supabase';
 import { GENRE_NAME } from '../../constants/genre';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
@@ -37,11 +36,10 @@ import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
+import { postImagesToStorage } from 'api/supabaseData';
 
 const Register = () => {
-  const genres = GENRE_NAME;
   const navigate = useNavigate();
-
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
   const [gameName, setGameName] = useState('');
@@ -66,28 +64,6 @@ const Register = () => {
   };
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-
-  // 이미지를 Supabase 스토리지에 업로드하는 함수
-  const uploadImagesToSupabase = async () => {
-    const uploadedImageUrls: string[] = [];
-    try {
-      for (const file of imageFiles) {
-        // 공백 제거 및 특수 문자 대체
-        const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
-        // 파일 이름을 안전한 형태로 변환
-        const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const filePath = `${safeUserName}/${safeFileName}`;
-
-        const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
-        if (error) throw error;
-        const { data: publicURL } = supabase.storage.from('postImage').getPublicUrl(filePath);
-        uploadedImageUrls.push(publicURL.publicUrl);
-      }
-    } catch (error) {
-      console.error('Error uploading image: ', error);
-    }
-    return uploadedImageUrls;
-  };
 
   const handleImageUploading = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -148,7 +124,7 @@ const Register = () => {
         setisAlertModalOpen(true);
         return;
       }
-      const uploadedImageUrls = await uploadImagesToSupabase();
+      const uploadedImageUrls = await postImagesToStorage();
 
       mutate({
         title: title,
