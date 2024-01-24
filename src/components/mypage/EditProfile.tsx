@@ -9,7 +9,9 @@ import {
   StNickNameCount,
   StProfileCount,
   StUserInfoContainer,
-  StUserinfoBox
+  StUserinfoBox,
+  StpasswordInputGroup,
+  StPasswordButton
 } from 'pages/mypage/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -31,6 +33,7 @@ const EditProfile = () => {
   const [isValid, setIsValid] = useState<boolean>(true);
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [PasswordError, setPasswordError] = useState<string>('');
 
   const isButtonDisabled = !(
     nickname &&
@@ -61,12 +64,12 @@ const EditProfile = () => {
 
   const updatePassword = async () => {
     if (!isValidPassword(newPassword)) {
-      alert('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+      setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
       return;
     }
 
     if (!isValidConfirmPassword(newPassword, confirmPassword)) {
-      alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
       return;
     }
     const { error } = await supabase.auth.updateUser({ password: newPassword });
@@ -187,19 +190,26 @@ const EditProfile = () => {
         <h2>계정 관리</h2>
         <label htmlFor="id">계정 아이디</label>
         <input id="id" type="email" placeholder={email} readOnly />
-        {/* <label htmlFor="password">비밀번호 변경</label>
-        <input id="password" type="password" autoComplete="current-password" /> */}
-        <input type="password" value={newPassword || ''} onChange={handlePasswordChange} />
-
-        <input
-          placeholder="비밀번호 확인"
-          type="password"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-        />
-        <button type="button" onClick={updatePassword}>
-          비밀번호 변경
-        </button>
+        <label htmlFor="password">비밀번호 변경</label>
+        <StpasswordInputGroup>
+          <input
+            placeholder="변경할 비밀번호"
+            type="password"
+            value={newPassword || ''}
+            onChange={handlePasswordChange}
+          />
+          {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
+          <br></br>
+          <input
+            placeholder="변경할 비밀번호 확인"
+            type="password"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+          />
+          <StPasswordButton type="button" onClick={updatePassword}>
+            비밀번호 변경
+          </StPasswordButton>
+        </StpasswordInputGroup>
       </StUserinfoBox>
       <StUserinfoBox>
         <h2>관심 장르</h2>

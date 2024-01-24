@@ -132,3 +132,19 @@ export const StCancelIcon = styled.img`
   color: #999999;
   margin-left: 7px;
 `;
+export const StPasswordButton = styled.button`
+  align-self: flex-end;
+  border-radius: 10px;
+  background: ${(props) => props.theme.color.white};
+  width: 80px;
+  height: 48px;
+  flex-shrink: 0;
+  margin-top: 19px;
+`;
+
+export const StpasswordInputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+`;
