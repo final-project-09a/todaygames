@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import headerNextIcon from 'assets/icons/headerNextIcon.svg';
+import headerPrevIcon from 'assets/icons/headerLeftIcon.svg';
 
 const StContainer = styled.div`
   width: 100%;
@@ -16,22 +18,27 @@ const StCarouselWrapper = styled.div`
   width: 1440px;
   margin: 0 auto;
   .slick-prev:hover:before,
-  .slick-prev:focus:before,
-  .slick-next:hover:before,
-  .slick-next:focus:before {
+  .slick-next:hover:before {
     opacity: 0.6;
   }
 
-  .slick-prev:before,
+  .slick-prev:before {
+    opacity: 1;
+    content: url(${headerPrevIcon});
+    width: 100px;
+    height: 100px;
+    z-index: 20;
+  }
   .slick-next:before {
-    height: 0;
-    font-size: 50px;
-    color: white;
-    opacity: 0.3;
+    opacity: 1;
+    content: url(${headerNextIcon});
+    width: 100px;
+    height: 100px;
+    z-index: 20;
   }
 
   .slick-prev {
-    left: -70px;
+    left: -110px;
     z-index: 10;
   }
   [dir='rtl'] .slick-prev {
@@ -40,7 +47,7 @@ const StCarouselWrapper = styled.div`
   }
 
   .slick-next {
-    right: -50px;
+    right: -20;
     z-index: 10;
   }
   [dir='rtl'] .slick-next {
@@ -86,7 +93,6 @@ const StTitle = styled.h1`
 const StTagWrapper = styled.div`
   display: flex;
   gap: 7px;
-  margin-top: 15px;
 `;
 
 export { StWrapper, StCarouselWrapper, StContainer, StFigure, StTitle, StTagWrapper, StGameInfo, StInfoWrapper };

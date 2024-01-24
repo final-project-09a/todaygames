@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { getGames } from 'api/games';
-import { GenreType } from 'components/Header/Header';
 import SelectedGenreCard from 'components/homepage/SelectedGenreCard';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { GameData } from './SystemRequirements';
+import { GenreType } from 'types/games';
+import { Typedata } from 'types/supabaseTable';
 
 type RelatedGamesProps = {
-  appid: string | undefined;
+  appid: number | undefined;
   genres: GenreType[];
 };
 
@@ -19,11 +19,13 @@ const RelatedGames = ({ genres, appid }: RelatedGamesProps) => {
 
   console.log(appid);
 
-  const [relatedGameLists, setRelatedGameLists] = useState<GameData[] | undefined>();
+  const [relatedGameLists, setRelatedGameLists] = useState<
+    Typedata['public']['Tables']['games']['Row'][] | undefined
+  >();
 
   useEffect(() => {
     if (data && !isLoading && !isError) {
-      const filteredGames: GameData[] = data
+      const filteredGames: Typedata['public']['Tables']['games']['Row'][] = data
         .filter((game) => genres.some((genre: GenreType) => game.genres.includes(genre)))
         .filter((game) => game.app_id != appid)
         .slice(0, 4);

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUser } from './redux/modules/userSlice';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 
 const AuthenticationLayer = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useDispatch();

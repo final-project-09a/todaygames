@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import {
   StNavContainer,
   StNavWrapper,

@@ -7,14 +7,13 @@ import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { useDispatch } from 'react-redux';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 interface MypageProps {
   onCategoryChange: (category: string) => void;
 }
 
 const MypageNav = ({ onCategoryChange }: MypageProps) => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  const dispatch = useDispatch();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 

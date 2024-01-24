@@ -1,5 +1,5 @@
-import { supabase } from 'shared/supabase';
-import { Typedata } from 'types/post';
+import { supabase } from 'types/supabase';
+import { Typedata } from 'types/supabaseTable';
 import { QUERY_KEYS } from 'query/keys';
 
 // 댓글 && userid mix (2Table)

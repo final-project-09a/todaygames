@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
-import { Typedata } from 'types/post';
+import { Typedata } from 'types/supabaseTable';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from 'redux/config/configStore';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 import MoreViewButton from 'common/MoreViewButton';
 import Button from 'common/Button';
@@ -17,7 +16,6 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import moreInfo from 'assets/icons/moreInfo.svg';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];

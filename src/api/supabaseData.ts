@@ -1,5 +1,5 @@
 import { Post } from 'types/global.d';
-import { supabase } from '../shared/supabase';
+import { supabase } from '../types/supabase';
 import { QUERY_KEYS } from 'query/keys';
 
 const postContents = async (newPost: Post) => {
