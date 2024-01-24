@@ -1,4 +1,4 @@
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import { QUERY_KEYS } from 'query/keys';
 
 export const getGames = async () => {

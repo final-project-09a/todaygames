@@ -2,11 +2,8 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import { getGameDetails, getTopReleases } from 'api/steamApis';
 import NewGameCard from './NewGameCard';
 import styled from 'styled-components';
-import { Game } from './RecommendList';
-
-interface DataType {
-  appid: number | undefined;
-}
+import { GameType } from 'types/games';
+import NewGameCardSkeleton from 'components/skeletons/NewGameCardSkeleton';
 
 const NewGames = () => {
   // 월별 최신 출시 게임 30개
@@ -14,14 +11,11 @@ const NewGames = () => {
     queryKey: ['topReleases'],
     queryFn: getTopReleases
   });
-  const appids = data?.map((item: DataType) => item.appid).slice(0, 2) || [];
 
-  if (isLoading) {
-    <p>게임 정보를 불러오는 중입니다...</p>;
-  }
+  const appids = data?.map((item: GameType) => item.appid).slice(0, 2) || [];
 
   if (isError) {
-    <p>게임 정보를 불러오지 못했습니다.</p>;
+    return <p>게임 정보를 불러오지 못했습니다.</p>;
   }
 
   // 최신 게임 2개 상세 정보 가져오기
@@ -34,15 +28,25 @@ const NewGames = () => {
     }))
   });
 
-  const gameDetailsArray = gameDetailsQueries?.map((query) => query.data as Game);
+  const gameDetailsArray = gameDetailsQueries?.map((query) => query.data as GameType);
+  const allQueriesLoading = gameDetailsQueries.some((query) => query.isLoading);
 
   return (
     <StListContainer>
-      {gameDetailsArray
-        .filter((gameDetails) => gameDetails && gameDetails.steam_appid)
-        .map((gameDetails) => (
-          <li key={gameDetails?.steam_appid}>{gameDetails && <NewGameCard gameDetails={gameDetails} />}</li>
-        ))}
+      {allQueriesLoading ? (
+        <>
+          <NewGameCardSkeleton />
+          <NewGameCardSkeleton />
+        </>
+      ) : (
+        gameDetailsArray
+          .filter((gameDetails) => gameDetails && gameDetails.steam_appid)
+          .map((gameDetails) => (
+            <li key={gameDetails?.steam_appid}>
+              <NewGameCard gameDetails={gameDetails} />
+            </li>
+          ))
+      )}
     </StListContainer>
   );
 };
@@ -53,4 +57,5 @@ const StListContainer = styled.ul`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
+  height: 300px;
 `;

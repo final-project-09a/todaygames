@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { GameData, setGame } from '../../redux/modules/gameSlice';
 import MoreViewButton from 'common/MoreViewButton';
+import GenreListSkeleton from 'components/skeletons/GenreListSkeleton';
 
 interface SelectedGenreListProps {
   selectedTag: string | null;
@@ -24,21 +25,12 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
     enabled: true
   });
 
-  // if (data && !isLoading && !isError) {
-  //   const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
-  //   dispatch(setGame(filteredGames));
-  // }
-
   useEffect(() => {
     if (data && !isLoading && !isError) {
       const filteredGames = data.filter((game) => game.genres.includes(selectedTag));
       dispatch(setGame(filteredGames));
     }
   }, [selectedTag, isLoading, isError]);
-
-  if (isLoading) {
-    return <p>게임 정보를 로딩중입니다...</p>;
-  }
 
   if (isError) {
     return <p>게임 정보를 불러오지 못했습니다.</p>;
@@ -51,29 +43,36 @@ const SelectedGenreList = ({ selectedTag }: SelectedGenreListProps) => {
   };
 
   return (
-    <div>
+    <StContainer>
       {games ? (
-        <StContainer>
+        <StListWrapper>
           {initialDisplayedGames?.map((game: GameData) => (
-            <li key={game.app_id}>
-              <SelectedGenreCard gameInfoList={game} />
-            </li>
+            <li key={game.app_id}>{isLoading ? <GenreListSkeleton /> : <SelectedGenreCard gameInfoList={game} />}</li>
           ))}
-        </StContainer>
+        </StListWrapper>
       ) : (
         <p>해당 장르의 게임을 찾지 못했습니다.</p>
       )}
 
       {initialDisplayedGames.length < games.length && <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>}
-    </div>
+    </StContainer>
   );
 };
 
 export default SelectedGenreList;
 
-const StContainer = styled.ul`
+const StContainer = styled.div`
+  width: 1420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px 10px;
+`;
+
+const StListWrapper = styled.ul`
   display: grid;
+  height: fit-content;
   grid-template-columns: repeat(4, 1fr);
-  gap: 13px;
-  margin: 70px auto;
+  margin: 0 auto;
+  gap: 18px;
 `;

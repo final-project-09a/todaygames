@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import {
   AllContainer,
   WrappingBoardDetail,
@@ -21,7 +20,7 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import { useState } from 'react';
 import { Post } from 'types/global.d';
 
@@ -128,7 +127,7 @@ export const BoardDetail = () => {
             ))}
           </WrappingTags>
           <br />
-          <h1>댓글이 보여질 곳입니다.</h1>
+          {/* <Comment /> */}
         </WrappingBoardDetail>
       </AllContainer>
     </>

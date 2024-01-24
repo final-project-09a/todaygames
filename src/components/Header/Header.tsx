@@ -6,17 +6,11 @@ import Tag from 'common/Tag';
 import CustomCarousel from 'common/CustomCarousel';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface mostPlayedGame {
-  appid: number;
-}
+import { GameType, GenreType } from 'types/games';
+import HeaderTitleSkeleton from 'components/skeletons/HeaderTitleSkeleton';
 
 interface HeaderProps {
-  mostPlayedGames: mostPlayedGame[];
-}
-
-export interface GenreType {
-  description: string;
+  mostPlayedGames: GameType[];
 }
 
 const Header = ({ mostPlayedGames }: HeaderProps) => {
@@ -67,7 +61,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
 
   // // 가장 많이 플레이된 게임 100개 중 top 5 appid 가져오기
   const topTen = mostPlayedGames?.slice(0, 5);
-  const appids = topTen?.map((game: mostPlayedGame) => game.appid) || [];
+  const appids = topTen?.map((game: GameType) => game.appid) || [];
 
   // top 5 상세 정보 가져오기
   const gameDetailsQueries = useQueries({
@@ -80,23 +74,23 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
   });
 
   const allQueriesSuccessful = gameDetailsQueries.every((query) => query.isSuccess);
-
   const gameDetailsArray = allQueriesSuccessful ? gameDetailsQueries.map((query) => query.data) : undefined;
 
   return (
     <StContainer>
-      {/* <StWrapper> */}
       <StCarouselWrapper>
         <CustomCarousel settings={settings}>
-          {gameDetailsArray &&
-            gameDetailsArray?.map((game) => (
+          {gameDetailsArray ? (
+            gameDetailsArray.map((game) => (
               <StFigure key={game.steam_appid}>
                 <img src={game.background_raw} alt={game.name} />
               </StFigure>
-            ))}
+            ))
+          ) : (
+            <HeaderTitleSkeleton />
+          )}
         </CustomCarousel>
       </StCarouselWrapper>
-      {/* </StWrapper> */}
 
       {gameDetailsArray &&
         gameDetailsArray?.map((game, index) => (
