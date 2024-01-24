@@ -46,14 +46,6 @@ const EditProfile = () => {
   );
   const isPasswordButtonDisabled = !passwordisValidisValid;
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewPassword(e.target.value);
-  };
-
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
-  };
-
   const isValidPassword = (password: string) => {
     // 비밀번호 유효성 검사: 8~16자 영문, 숫자, 특수문자를 조합
     const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
