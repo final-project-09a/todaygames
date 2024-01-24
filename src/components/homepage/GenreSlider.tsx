@@ -84,7 +84,7 @@ const StCarouselWrapper = styled.div`
   }
 
   .slick-next {
-    right: -40px;
+    right: -70px;
     z-index: 30;
   }
 `;
