@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
-import { Typedata } from 'types/supabase.type';
+import { Typedata } from 'types/supabaseTable';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from 'redux/config/configStore';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 import MoreViewButton from 'common/MoreViewButton';
 import Button from 'common/Button';
@@ -17,7 +16,7 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import moreInfo from 'assets/icons/moreInfo.svg';
+import { supabase } from 'shared/supabase';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -45,9 +44,12 @@ export const BoardList = ({ filteredPosts }: any) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingText, setEditText] = useState('');
+  const user = useSelector((state: any) => state.userSlice.userInfo);
+  const addPost = useSelector((state: any) => state.postSlice.addPost);
+  // const [imageUrl, setImageUrl] = useState(addPost);
 
   const navigate = useNavigate();
-  const user = useSelector((state: any) => state.userSlice.userInfo);
+
   const updatePost = useSelector((state: any) => state.postSlice.updatePost);
   const deletePost = useSelector((state: any) => state.postSlice.deletePost);
   const { data: userInfoData } = useQuery({
@@ -85,27 +87,31 @@ export const BoardList = ({ filteredPosts }: any) => {
   };
 
   const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (!editingText) return alert('수정 사항이 없습니다.');
+    if (!editingText) {
+      alert('수정 사항이 없습니다.');
+      return false;
+    }
+    console.log('수정진행');
   }; //수정중 취소
   const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
   }; // 삭제 버튼
 
-  const handleEditPost = () => {
-    setIsEditing(!isEditing);
-    if (user?.id === filteredPosts.user_id) {
-      setIsEditing(isEditing);
-    }
+  const editSubmit = (event: any) => {
+    event.preventDefault();
   };
-  const handleEditPostClick = () => {
-    setIsEditing(isEditing); // 수정 버튼을 누를 때마다 수정 상태를 토글
 
-    if (!isEditing) {
-      // 수정 버튼을 누른 후에만 게시판 수정이 나타나도록 설정
-      // 게시판 수정 로직을 추가해야 함
-    }
-  };
+  // const fileReader = new FileReader();
+  // fileReader.onload = async (event) => {
+  //   if (event.target) {
+  //     const imageUrl = event.target.result as string;
+  //     setImageUrl(imageUrl);
+  //     const {data } = await supabase.from('posts').update({ image: imageUrl }).eq('id', addPost.id);
+  //     console.log("data",data);
+  //   }
+  // };
+
   return (
     <div>
       <StSeachContainer>
@@ -125,29 +131,24 @@ export const BoardList = ({ filteredPosts }: any) => {
           if (userInfo) {
             return (
               <StcontentBox key={post?.id}>
-                {/* <StEditPost onClick={() => setIsEditing(!isEditing)} /> */}
-                <EditBtn onClick={() => setDropdownVisible(!dropdownVisible)} />
-                {isEditing ? (
-                  <StrefetchForm>
-                    <StButton onClick={onCancelBtn}>취소</StButton>
-                    <StButton onClick={onEditDone}>수정완료</StButton>
-                  </StrefetchForm>
-                ) : (
-                  dropdownVisible && (
-                    <StfetchForm>
-                      <StButton onClick={() => setIsEditing(true)}>수정</StButton>
-                      <StButton onClick={onDeleteBtn}>삭제</StButton>
-                    </StfetchForm>
-                  )
-                )}
-
-                {/* <EditBtn onClick={() => setDropdownVisible(!isEditing)}></EditBtn> */}
-                {/* {dropdownVisible && (
-                  <StfetchForm>
-                    <StButton onClick={() => setIsEditing(true)}>수정</StButton>
-                    <StButton onClick={onDeleteBtn}>삭제</StButton>
-                  </StfetchForm>
-                )} */}
+                <>
+                  {/* <StEditPost onClick={() => setIsEditing(!isEditing)} /> */}
+                  <EditBtn onClick={() => setDropdownVisible(true)}>
+                    {isEditing ? (
+                      <StrefetchForm>
+                        <StButton onClick={onCancelBtn}>취소</StButton>
+                        <StButton onClick={onEditDone}>수정완료</StButton>
+                      </StrefetchForm>
+                    ) : (
+                      dropdownVisible && (
+                        <StfetchForm onSubmit={editSubmit}>
+                          <StButton onClick={() => setIsEditing(true)}>수정</StButton>
+                          <StButton onClick={onDeleteBtn}>삭제</StButton>
+                        </StfetchForm>
+                      )
+                    )}
+                  </EditBtn>
+                </>
 
                 <StProfileWrapper onClick={() => movedetailPageOnClick(post?.id)}>
                   <section>
@@ -232,29 +233,42 @@ const StTextarea = styled.textarea`
   border-radius: 5px;
   background-color: #3a3a3a;
   color: ${(props) => props.theme.color.white};
+  font-weight: 900;
 `;
 const StButton = styled.button`
-  display: flex;
-  position: relative;
-  flex-direction: row;
-  left: 580px;
-  right: 360px;
+  position: flex;
+  height: 40px;
+  width: 90px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+  transition: 0.3s ease;
+  cursor: pointer;
+  & p {
+    color: ${(props) => props.theme.color.white};
+    font-weight: 500;
+  }
+  &:hover {
+    & h4 {
+      color: ${(props) => props.theme.color.gray};
+    }
+    background-color: ${(props) => props.theme.color.gray};
+  }
 `;
 const StfetchForm = styled.form`
-  flex-direction: row;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: space-between;
   display: flex;
-
-  justify-content: center;
 `;
 const StrefetchForm = styled.form`
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: space-between;
   display: flex;
-
-  justify-content: center;
 `;
 const EditBtn = styled.button`
   display: flex;
   position: relative;
+  flex-direction: row;
   top: 10px;
   left: 1100px;
   width: 24px;
@@ -320,10 +334,6 @@ const StProfileWrapper = styled.div`
     display: flex;
     align-items: center;
   }
-`;
-
-const StEditPost = styled.div`
-  display: flex;
 `;
 
 const StUserImageWrapper = styled.figure`

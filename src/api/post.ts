@@ -1,5 +1,5 @@
 import { supabase } from 'shared/supabase';
-import { Typedata } from 'types/supabase.type';
+import { Typedata } from 'types/supabaseTable';
 import { QUERY_KEYS } from 'query/keys';
 import { useDispatch } from 'react-redux';
 
