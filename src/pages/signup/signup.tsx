@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { supabase } from 'types/supabase';
-import { Link, useNavigate } from 'react-router-dom';
-import { StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StInputGroup } from './styles';
-interface FormData {
-  email: string;
-  password: string;
-  displayName: string;
-}
+import { supabase } from '../../types/supabase';
+import { useNavigate } from 'react-router-dom';
+import {
+  StyledInputShort,
+  StyledSignup,
+  StyledForm,
+  StyledInput,
+  StyledButton,
+  StyledH1,
+  StyledLabel,
+  StInputGroup,
+  StyledButtonShort,
+  StInputBtwrap
+} from './styles';
+
+import { FormData } from 'types/global.d';
 
 const isValidPassword = (password: string) => {
   // 비밀번호 유효성 검사: 8~16자 영문, 숫자, 특수문자를 조합
@@ -27,17 +35,38 @@ const isValidEmail = (email: string) => {
 
 const isValidPasswordlength = (password: string) => {
   // 비밀번호 길이 검사
-  return password.length >= 8;
+  return password.length >= 6;
 };
 
 const isValidDisplayName = (displayName: string) => {
   // 닉네임 길이 검사
-  return displayName.length >= 2 && displayName.length <= 10;
+  return displayName.length >= 2 && displayName.length <= 6;
+};
+
+const checkNickname = async (nickname: string) => {
+  // 닉네임 중복 검사 (userinfo테이블 기준입니다 /mypage에서 닉네임 변경할때도 userinfo만 변경됩니다)
+  const { data, error } = await supabase.from('userinfo').select('nickname').eq('nickname', nickname);
+  if (error) {
+    console.log('닉네임 중복 검사 에러');
+    return;
+  }
+  return data.length > 0;
+  //닉네임 중복이 맞다면 true를 뱉어냄
+};
+
+const checkEmail = async (email: string) => {
+  // email 중복 검사 (userinfo테이블 기준입니다 )
+  const { data, error } = await supabase.from('userinfo').select('email').eq('email', email);
+  if (error) {
+    console.log('email 중복 검사 에러');
+    return;
+  }
+  return data.length > 0;
+  //email 중복이 맞다면 true를 뱉어냄
 };
 
 function Signup() {
   const navigate = useNavigate();
-  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [formData, setFormData] = useState<FormData>({
@@ -46,11 +75,33 @@ function Signup() {
     displayName: ''
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
+  const handleCheckEmail = async () => {
+    if (!isValidEmail(formData.email)) {
+      alert('유효한 이메일 형식이 아닙니다.');
+      return;
+    }
+    const isDuplicate = await checkEmail(formData.email);
+    if (isDuplicate) {
+      alert('이미 사용중인 email입니다. 다른 email을 선택해주세요.');
+    } else {
+      alert('사용 가능한 email입니다.');
+    }
   };
+
+  const handleCheckNickname = async () => {
+    if (!isValidDisplayName(formData.displayName)) {
+      alert('닉네임은 최소 2자,최대 6자로 설정해주세요');
+      return;
+    }
+    const isDuplicate = await checkNickname(formData.displayName);
+    if (isDuplicate) {
+      alert('이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
+    } else {
+      alert('사용 가능한 닉네임입니다.');
+    }
+  };
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // 비밀번호 확인 변경 핸들러
@@ -123,32 +174,41 @@ function Signup() {
     <StyledSignup>
       <StyledH1>회원 가입</StyledH1>
       <StyledForm onSubmit={handleSignup}>
-        <StInputGroup>
-          {' '}
-          <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
-          <StyledInput
-            placeholder="사용할 닉네임을 적어주세요."
-            type="text"
-            id="displayName"
-            name="displayName"
-            value={formData.displayName}
-            onChange={handleChange}
-          />
-          {errors.displayName && <p>{errors.displayName}</p>}
-        </StInputGroup>
-
-        <StInputGroup>
-          <StyledLabel htmlFor="email">이메일</StyledLabel>
-          <StyledInput
-            placeholder="이메일을 입력해 주세요."
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {errors.email && <p>{errors.email}</p>}
-        </StInputGroup>
+        <StInputBtwrap>
+          <StInputGroup>
+            {' '}
+            <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
+            <StyledInputShort
+              placeholder="사용할 닉네임을 적어주세요."
+              type="text"
+              id="displayName"
+              name="displayName"
+              value={formData.displayName}
+              onChange={handleChange}
+            />
+            {errors.displayName && <p>{errors.displayName}</p>}
+          </StInputGroup>
+          <StyledButtonShort onClick={handleCheckNickname} type="button">
+            닉네임 중복 확인
+          </StyledButtonShort>
+        </StInputBtwrap>
+        <StInputBtwrap>
+          <StInputGroup>
+            <StyledLabel htmlFor="email">이메일</StyledLabel>
+            <StyledInputShort
+              placeholder="이메일을 입력해 주세요."
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            {errors.email && <p>{errors.email}</p>}
+          </StInputGroup>
+          <StyledButtonShort onClick={handleCheckEmail} type="button">
+            email 중복 확인
+          </StyledButtonShort>
+        </StInputBtwrap>
         <StInputGroup>
           <StyledLabel htmlFor="password">비밀번호</StyledLabel>
           <StyledInput

@@ -4,7 +4,7 @@ import SelectedGenreCard from 'components/homepage/SelectedGenreCard';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { GenreType } from 'types/games';
-import { Typedata } from 'types/supabase.type';
+import { Typedata } from 'types/supabaseTable';
 
 type RelatedGamesProps = {
   appid: number | undefined;

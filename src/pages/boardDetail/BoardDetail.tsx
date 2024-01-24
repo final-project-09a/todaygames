@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import {
   AllContainer,
   WrappingBoardDetail,
@@ -21,9 +20,13 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
+import { supabase } from 'types/supabase';
+import { useState } from 'react';
+import { Post } from 'types/global.d';
 
 export const BoardDetail = () => {
   const { id } = useParams();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
@@ -40,7 +43,7 @@ export const BoardDetail = () => {
 
   const filteredUser = userInfoData?.filter((user) => user.id == id);
   const user = filteredUser ? filteredUser[0] : null;
-  console.log(filteredUser);
+  console.log(user);
 
   console.log(user?.nickname);
   const filterdPost = gameData
@@ -52,6 +55,18 @@ export const BoardDetail = () => {
       return onlyGames.id == postUserInfo;
     });
 
+  const deletePost = async (id: Post) => {
+    try {
+      const { data, error } = await supabase.from('posts').delete().eq('id', id);
+      if (error) {
+        throw error;
+      }
+      // 게시글 삭제 후, 페이지를 새로고침하거나
+      // 다른 페이지로 이동시키는 로직을 여기에 추가할 수 있습니다.
+    } catch (error) {
+      alert('에러가 발생했습니다');
+    }
+  };
   // const filteredPostCategory = postData?.filter((post) => post.category);
 
   // const postCategory = filteredPostCategory?.filter((category) => {
@@ -81,11 +96,25 @@ export const BoardDetail = () => {
               </WrappingUserInfo>
             </WrappingImgText>
             <UserInfoAndBtn />
-            <EditBtn />
+            <div>
+              <EditBtn onClick={() => setDropdownVisible(!dropdownVisible)}></EditBtn>
+              {dropdownVisible && (
+                <div>
+                  <button
+                    onClick={() => {
+                      /* 수정 기능을 구현한 함수를 호출 */
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button>삭제</button>
+                </div>
+              )}
+            </div>
           </UserInfoAndBtn>
-          {filterdPost?.map((post, index) => (
-            <DetailImage key={index} src={post.image.replace('blob:', '').replace('[', '').replace(']', '')} />
-          ))}
+          {filterdPost?.map((post, index) => {
+            return <DetailImage key={index} src={post.image} />;
+          })}
           {filterdPost?.map((post, index) => (
             <DetailTitle key={index}>{post.title}</DetailTitle>
           ))}
@@ -98,7 +127,7 @@ export const BoardDetail = () => {
             ))}
           </WrappingTags>
           <br />
-          <h1>댓글이 보여질 곳입니다.</h1>
+          {/* <Comment /> */}
         </WrappingBoardDetail>
       </AllContainer>
     </>

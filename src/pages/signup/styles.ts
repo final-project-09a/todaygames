@@ -44,6 +44,11 @@ const StyledInput = styled.input`
   color: ${(props) => props.theme.color.white};
 `;
 
+const StyledInputShort = styled(StyledInput)`
+  width: 350px;
+  /* height: 75px; */
+`;
+
 const StyledButton = styled.button`
   width: 491px;
   height: 50px;
@@ -57,6 +62,13 @@ const StyledButton = styled.button`
   &:hover {
     background-color: #1c3669;
   }
+`;
+
+const StyledButtonShort = styled(StyledButton)`
+  width: 131px;
+  margin-left: 5px;
+  height: 48px;
+  margin-bottom: -16px;
 `;
 
 const StyledH1 = styled.h1`
@@ -73,4 +85,21 @@ const StInputGroup = styled.div`
   flex-direction: column;
   margin-top: 20px;
 `;
-export { StInputGroup, StyledSignup, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel };
+
+const StInputBtwrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+export {
+  StyledButtonShort,
+  StyledInputShort,
+  StInputGroup,
+  StyledSignup,
+  StyledForm,
+  StyledInput,
+  StyledButton,
+  StyledH1,
+  StyledLabel,
+  StInputBtwrap
+};
