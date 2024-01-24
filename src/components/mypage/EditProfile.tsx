@@ -30,6 +30,7 @@ const EditProfile = () => {
   const [profileError, setProfileError] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(true);
   const [newPassword, setNewPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
 
   const isButtonDisabled = !(
     nickname &&
@@ -44,7 +45,30 @@ const EditProfile = () => {
     setNewPassword(e.target.value);
   };
 
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value);
+  };
+
+  const isValidPassword = (password: string) => {
+    // 비밀번호 유효성 검사: 8~16자 영문, 숫자, 특수문자를 조합
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
+    return regex.test(password);
+  };
+  const isValidConfirmPassword = (password: string, confirmPassword: string) => {
+    // 비밀번호 확인 검사
+    return password === confirmPassword;
+  };
+
   const updatePassword = async () => {
+    if (!isValidPassword(newPassword)) {
+      alert('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+      return;
+    }
+
+    if (!isValidConfirmPassword(newPassword, confirmPassword)) {
+      alert('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) {
       console.error('Error updating password', error);
@@ -166,6 +190,13 @@ const EditProfile = () => {
         {/* <label htmlFor="password">비밀번호 변경</label>
         <input id="password" type="password" autoComplete="current-password" /> */}
         <input type="password" value={newPassword || ''} onChange={handlePasswordChange} />
+
+        <input
+          placeholder="비밀번호 확인"
+          type="password"
+          value={confirmPassword}
+          onChange={handleConfirmPasswordChange}
+        />
         <button type="button" onClick={updatePassword}>
           비밀번호 변경
         </button>
