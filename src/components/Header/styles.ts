@@ -19,18 +19,18 @@ const StCarouselWrapper = styled.div`
   margin: 0 auto;
   .slick-prev:hover:before,
   .slick-next:hover:before {
-    opacity: 0.6;
+    opacity: 0.9;
   }
 
   .slick-prev:before {
-    opacity: 1;
+    opacity: 0.6;
     content: url(${headerPrevIcon});
     width: 100px;
     height: 100px;
     z-index: 20;
   }
   .slick-next:before {
-    opacity: 1;
+    opacity: 0.6;
     content: url(${headerNextIcon});
     width: 100px;
     height: 100px;

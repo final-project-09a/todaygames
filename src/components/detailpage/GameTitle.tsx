@@ -2,6 +2,8 @@ import CustomCarousel from 'common/CustomCarousel';
 import { DataContext } from 'pages/detail/Detail';
 import { useContext, useState } from 'react';
 import styled from 'styled-components';
+import nextIcon from 'assets/icons/nextIcon.svg';
+import prevIcon from 'assets/icons/prevIcon.svg';
 
 const settings = {
   infinite: true,
@@ -29,15 +31,17 @@ const GameTitle = () => {
       <StMainImageWrapper>
         <img src={screenShots?.[currentCenter]?.path_thumbnail} alt={data?.name} />
       </StMainImageWrapper>
-      <CustomCarousel settings={{ ...settings, afterChange: handleAfterChange }}>
-        {screenShots?.map((screenShot, index) => (
-          <div key={index}>
-            <StImageWrapper isCenter={index === currentCenter}>
-              <img src={screenShot.path_thumbnail} />
-            </StImageWrapper>
-          </div>
-        ))}
-      </CustomCarousel>
+      <StCarouselWrapper>
+        <CustomCarousel settings={{ ...settings, afterChange: handleAfterChange }}>
+          {screenShots?.map((screenShot, index) => (
+            <div key={index}>
+              <StImageWrapper isCenter={index === currentCenter}>
+                <img src={screenShot.path_thumbnail} />
+              </StImageWrapper>
+            </div>
+          ))}
+        </CustomCarousel>
+      </StCarouselWrapper>
     </div>
   );
 };
@@ -79,5 +83,43 @@ const StImageWrapper = styled.figure<{ isCenter: boolean }>`
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+`;
+
+const StCarouselWrapper = styled.div`
+  width: 1440px;
+  .slick-prev:hover:before,
+  .slick-next:hover:before {
+    opacity: 0.9;
+  }
+  .slick-arrow,
+  .slick-next:before,
+  .slick-prev:before {
+    font-size: 30px;
+  }
+
+  .slick-prev:before {
+    opacity: 0.6;
+    /* content: url(${prevIcon}); */
+    width: 30px;
+    height: 30px;
+    z-index: 20;
+  }
+  .slick-next:before {
+    opacity: 0.6;
+    /* content: url(${nextIcon}); */
+    width: 40px;
+    height: 40px;
+    z-index: 20;
+  }
+
+  .slick-prev {
+    left: -50px;
+    z-index: 30;
+  }
+
+  .slick-next {
+    right: -40px;
+    z-index: 30;
   }
 `;

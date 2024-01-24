@@ -1,6 +1,6 @@
 import GenreCard from './GenreCard';
 import { GENRE_NAME } from 'constants/genre';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import SelectedGenreList from './SelectedGenreList';
 import { GenreNameType } from 'types/games';
 import CustomCarousel from 'common/CustomCarousel';
@@ -60,18 +60,18 @@ const StCarouselWrapper = styled.div`
   width: 1440px;
   .slick-prev:hover:before,
   .slick-next:hover:before {
-    opacity: 0.6;
+    opacity: 0.9;
   }
 
   .slick-prev:before {
-    opacity: 1;
+    opacity: 0.6;
     content: url(${prevIcon});
     width: 50px;
     height: 50px;
     z-index: 20;
   }
   .slick-next:before {
-    opacity: 1;
+    opacity: 0.6;
     content: url(${nextIcon});
     width: 50px;
     height: 50px;
@@ -84,7 +84,7 @@ const StCarouselWrapper = styled.div`
   }
 
   .slick-next {
-    right: -70px;
+    right: -40px;
     z-index: 30;
   }
 `;
