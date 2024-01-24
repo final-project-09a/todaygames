@@ -1,5 +1,5 @@
 import { supabase } from 'shared/supabase';
-import { Typedata } from 'shared/supabase.type';
+import { Typedata } from 'types/post';
 
 export const UserInfo = async (): Promise<Typedata['public']['Tables']['userinfo']['Row'][]> => {
   try {
