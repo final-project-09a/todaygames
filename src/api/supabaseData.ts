@@ -17,10 +17,10 @@ const postImagesToStorage = async () => {
   const uploadedImageUrls: string[] = [];
   try {
     for (const file of imageFiles) {
-      // 공백 제거 및 특수 문자 대체
-      const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
+      // 공백 제거 및 특수 문자 대체, 한글도 포함하여 처리
+      const safeUserName = user?.nickname;
       // 파일 이름을 안전한 형태로 변환
-      const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+      const safeFileName = file.name;
       const filePath = `${safeUserName}/${safeFileName}`;
 
       const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
