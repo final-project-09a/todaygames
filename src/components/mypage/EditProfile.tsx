@@ -29,6 +29,7 @@ const EditProfile = () => {
   const [nicknameError, setNicknameError] = useState<string>('');
   const [profileError, setProfileError] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [newPassword, setNewPassword] = useState<string>('');
 
   const isButtonDisabled = !(
     nickname &&
@@ -38,6 +39,21 @@ const EditProfile = () => {
     profile.length >= 10 &&
     isValid
   );
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPassword(e.target.value);
+  };
+
+  const updatePassword = async () => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      console.error('Error updating password', error);
+      alert('비밀번호 업데이트 중 에러가 발생했습니다.');
+    } else {
+      alert('비밀번호가 성공적으로 업데이트되었습니다.');
+      setNewPassword('');
+    }
+  };
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(setUser({ ...user, profile: e.target.value } as UserData));
@@ -147,8 +163,12 @@ const EditProfile = () => {
         <h2>계정 관리</h2>
         <label htmlFor="id">계정 아이디</label>
         <input id="id" type="email" placeholder={email} readOnly />
-        <label htmlFor="password">비밀번호 변경</label>
-        <input id="password" type="password" autoComplete="current-password" />
+        {/* <label htmlFor="password">비밀번호 변경</label>
+        <input id="password" type="password" autoComplete="current-password" /> */}
+        <input type="password" value={newPassword || ''} onChange={handlePasswordChange} />
+        <button type="button" onClick={updatePassword}>
+          비밀번호 변경
+        </button>
       </StUserinfoBox>
       <StUserinfoBox>
         <h2>관심 장르</h2>
