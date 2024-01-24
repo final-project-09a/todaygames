@@ -31,6 +31,7 @@ const EditProfile = () => {
   const [nicknameError, setNicknameError] = useState<string>('');
   const [profileError, setProfileError] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [passwordisValidisValid, setpasswordisValidIsValid] = useState<boolean>(true);
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [PasswordError, setPasswordError] = useState<string>('');
@@ -43,6 +44,7 @@ const EditProfile = () => {
     profile.length >= 10 &&
     isValid
   );
+  const isPasswordButtonDisabled = !passwordisValidisValid;
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
@@ -65,13 +67,18 @@ const EditProfile = () => {
   const updatePassword = async () => {
     if (!isValidPassword(newPassword)) {
       setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+      setpasswordisValidIsValid(false);
       return;
     }
 
     if (!isValidConfirmPassword(newPassword, confirmPassword)) {
       setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      setpasswordisValidIsValid(false);
       return;
     }
+    setPasswordError(''); // 에러가 없다면 에러 메시지를 초기화합니다.
+    setpasswordisValidIsValid(true); // 모든 유효성 검사를 통과하면 isValid를 true로 설정합니다.
+
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) {
       console.error('Error updating password', error);
@@ -79,6 +86,7 @@ const EditProfile = () => {
     } else {
       alert('비밀번호가 성공적으로 업데이트되었습니다.');
       setNewPassword('');
+      setConfirmPassword('');
     }
   };
 
@@ -196,7 +204,23 @@ const EditProfile = () => {
             placeholder="변경할 비밀번호"
             type="password"
             value={newPassword || ''}
-            onChange={handlePasswordChange}
+            onChange={(e) => {
+              setNewPassword(e.target.value);
+              if (!isValidPassword(e.target.value)) {
+                setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+                setpasswordisValidIsValid(false);
+              } else {
+                setPasswordError('');
+                // 비밀번호 확인도 같이 검사합니다.
+                if (e.target.value !== confirmPassword) {
+                  setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                  setpasswordisValidIsValid(false);
+                } else {
+                  setPasswordError('');
+                  setpasswordisValidIsValid(true);
+                }
+              }
+            }}
           />
           {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
           <br></br>
@@ -204,9 +228,19 @@ const EditProfile = () => {
             placeholder="변경할 비밀번호 확인"
             type="password"
             value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              // 비밀번호 확인이 비밀번호와 일치하는지 검사합니다.
+              if (newPassword !== e.target.value) {
+                setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                setpasswordisValidIsValid(false);
+              } else {
+                setPasswordError('');
+                setpasswordisValidIsValid(true);
+              }
+            }}
           />
-          <StPasswordButton type="button" onClick={updatePassword}>
+          <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
             비밀번호 변경
           </StPasswordButton>
         </StpasswordInputGroup>
