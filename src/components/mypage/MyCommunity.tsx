@@ -1,6 +1,34 @@
 import styled from 'styled-components';
 
+import { useEffect, useState } from 'react';
+import { supabase } from 'types/supabase';
+
 const MyCommunity = () => {
+  const [posts, setPosts] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data, error } = await supabase.from('posts').select();
+
+        if (error) {
+          console.error('Error fetching posts:', error.message);
+        } else {
+          if (data && data.length > 0) {
+            setPosts(data);
+            console.log(data);
+          } else {
+            console.warn('No posts found.');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+  console.log(posts);
   return (
     <StUserInfoContainer>
       <StContentBox>
