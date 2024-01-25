@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { supabase } from 'types/supabase';
 import { RootState } from 'redux/config/configStore';
+import { Link } from 'react-router-dom';
 
 const MyCommunity = () => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -38,36 +39,59 @@ const MyCommunity = () => {
       <StContentBox>
         <h1>등록된게시물{posts.length}개</h1>
         <div>
-          {posts.map((post, index) => (
-            <PostContainer key={index}>
-              <StyledH2>{post.title}</StyledH2>
-              <StyledH3>{post.content}</StyledH3>
-              <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-                {post.category.split(',').map((category: string, idx: number) => (
-                  <StCategory key={idx}>#{category.trim()}</StCategory>
-                ))}
-              </div>
-              <div style={{ textAlign: 'left' }}>등록시간: {post.created_At.split('T')[0]}</div>
-            </PostContainer>
-          ))}
+          {posts.length > 0 ? (
+            posts.map((post, index) => (
+              <PostContainer key={index}>
+                <StyledH2>{post.title}</StyledH2>
+                <StyledH3>{post.content}</StyledH3>
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                  {post.category.split(',').map((category: string, idx: number) => (
+                    <StCategory key={idx}>#{category.trim()}</StCategory>
+                  ))}
+                </div>
+                <div style={{ textAlign: 'left' }}>등록시간: {post.created_At.split('T')[0]}</div>
+              </PostContainer>
+            ))
+          ) : (
+            <StyledDiv>
+              등록된 게시글이 없습니다.
+              <Link to="/register">
+                <StyledButton>게시물 등록하기</StyledButton>
+              </Link>
+            </StyledDiv>
+          )}
         </div>
-        {/* {posts.map((post, index) => (
-          <div key={index}>
-            <h3>카테고리: {post.category}</h3>
-            <h4>제목: {post.title}</h4>
-            {post.image && post.image.length > 0 && (
-              <img src={JSON.parse(post.image)[0]} alt="Post" /> // 이미지 URL이 있다면 이미지를 출력합니다.
-            )}
-            <p>내용: {post.content}</p>
-            <p>게임: {post.game}</p>
-          </div>
-        ))} */}
       </StContentBox>
     </StUserInfoContainer>
   );
 };
 
 export default MyCommunity;
+
+const StyledDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  margin-top: 120px;
+`;
+
+const StyledButton = styled.button`
+  margin-top: 50px;
+  border-radius: 50px;
+  background: ${(props) => props.theme.color.primary};
+  color: ${(props) => props.theme.color.white};
+  padding: 10px 20px;
+  width: 250px;
+  height: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  flex-shrink: 0;
+  &:hover {
+    background: #1a3b7a;
+  }
+`;
 
 const PostContainer = styled.div`
   width: 1020px;
