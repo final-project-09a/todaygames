@@ -26,5 +26,9 @@ const HeaderTitleSkeleton = () => {
 export default HeaderTitleSkeleton;
 
 const StWrapper = styled.div`
+  width: 100%;
+  height: 600px;
+  display: flex;
+  justify-content: center;
   margin-top: 50px;
 `;
