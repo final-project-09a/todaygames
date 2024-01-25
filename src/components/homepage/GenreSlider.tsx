@@ -1,6 +1,6 @@
 import GenreCard from './GenreCard';
 import { GENRE_NAME } from 'constants/genre';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import SelectedGenreList from './SelectedGenreList';
 import { GenreNameType } from 'types/games';
 import CustomCarousel from 'common/CustomCarousel';
@@ -10,8 +10,6 @@ import prevIcon from 'assets/icons/prevIcon.svg';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');
-  const [activeSlide, setActiveSlide] = useState<number>(0);
-  console.log(activeSlide);
 
   const settings = {
     infinite: true,
@@ -23,11 +21,9 @@ const GenreSlider = () => {
     centerMode: true,
     centerPadding: '0px',
     beforeChange: (current: number, next: number) => {
-      setActiveSlide(next);
       setSelectedTag(GENRE_NAME[next].tag);
     },
     afterChange: (current: number) => {
-      setActiveSlide(current);
       setSelectedTag(GENRE_NAME[current].tag);
     }
   };
@@ -60,18 +56,18 @@ const StCarouselWrapper = styled.div`
   width: 1440px;
   .slick-prev:hover:before,
   .slick-next:hover:before {
-    opacity: 0.6;
+    opacity: 0.9;
   }
 
   .slick-prev:before {
-    opacity: 1;
+    opacity: 0.6;
     content: url(${prevIcon});
     width: 50px;
     height: 50px;
     z-index: 20;
   }
   .slick-next:before {
-    opacity: 1;
+    opacity: 0.6;
     content: url(${nextIcon});
     width: 50px;
     height: 50px;

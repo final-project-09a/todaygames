@@ -4,6 +4,7 @@ import { useContext } from 'react';
 const GameInfo = () => {
   const data = useContext(DataContext);
   const genres = data?.genres.map((genre) => genre.description);
+  console.log(data);
 
   return (
     <>
