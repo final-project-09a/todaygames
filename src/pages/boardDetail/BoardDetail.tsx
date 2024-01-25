@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import {
   AllContainer,
   WrappingBoardDetail,
@@ -21,41 +20,36 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
-import { supabase } from 'shared/supabase';
+import { supabase } from 'types/supabase';
 import { useState } from 'react';
 import { Post } from 'types/global.d';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
+import { PostDetail } from 'types/boardDetail.d';
 
 export const BoardDetail = () => {
   const { id } = useParams();
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const { data: userInfoData } = useQuery({
-    queryKey: [QUERY_KEYS.AUTH],
-    queryFn: UserInfo
-  });
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   const { data: gameData } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
+  });
+
+  const { data: userInfoData } = useQuery({
+    queryKey: [QUERY_KEYS.USERINFO],
+    queryFn: UserInfo
   });
   // const { data: postData } = useQuery({
   //   queryKey: [QUERY_KEYS.POSTS],
   //   queryFn: getPosts
   // });
 
-  const filteredUser = userInfoData?.filter((user) => user.id == id);
-  const user = filteredUser ? filteredUser[0] : null;
-  console.log(user);
+  // const user = filteredUser ? filteredUser[0] : null;
+  const filterdPost = gameData?.find((game) => game.id === id);
 
-  console.log(user?.nickname);
-  const filterdPost = gameData
-    ?.map((games) => {
-      return games;
-    })
-    .filter((onlyGames) => {
-      const postUserInfo = id;
-      return onlyGames.id == postUserInfo;
-    });
-
+  const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
   const deletePost = async (id: Post) => {
     try {
       const { data, error } = await supabase.from('posts').delete().eq('id', id);
@@ -77,6 +71,7 @@ export const BoardDetail = () => {
   // console.log(postCategory);
   // console.log(userInfoData);
   // console.log(postData);
+  console.log(filterdPost);
   return (
     <>
       <AllContainer>
@@ -87,11 +82,11 @@ export const BoardDetail = () => {
             {/* 아바타이미지, 닉네임, 날짜, 게임이름 -------edit버튼 */}
             <WrappingImgText>
               {/* 아바타이미지 || 닉네임&날짜&게임이름 */}
-              <ProfileImage src={user?.avatar_url} />
+              <ProfileImage src={filteredUser?.avatar_url} />
               <WrappingUserInfo>
                 <NickNameAndDate>
-                  <NickNameAndTitleText>{user?.nickname}</NickNameAndTitleText>
-                  <DateText></DateText>
+                  <NickNameAndTitleText>{filteredUser?.nickname}</NickNameAndTitleText>
+                  <DateText>{}</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>{}</NickNameAndTitleText>
               </WrappingUserInfo>
@@ -113,22 +108,14 @@ export const BoardDetail = () => {
               )}
             </div>
           </UserInfoAndBtn>
-          {filterdPost?.map((post, index) => {
-            return <DetailImage key={index} src={post.image} />;
-          })}
-          {filterdPost?.map((post, index) => (
-            <DetailTitle key={index}>{post.title}</DetailTitle>
-          ))}
-          {filterdPost?.map((post, index) => (
-            <DetailContent key={index}>{post.content}</DetailContent>
-          ))}
+          <DetailImage src={filterdPost?.image} />
+          <DetailTitle>{filterdPost?.title}</DetailTitle>
+          <DetailContent>{filterdPost?.content}</DetailContent>
           <WrappingTags>
-            {filterdPost?.map((post, index) => (
-              <EachTag key={index}>{post.category}</EachTag>
-            ))}
+            <EachTag>{filterdPost?.category}</EachTag>
           </WrappingTags>
           <br />
-          <h1>댓글이 보여질 곳입니다.</h1>
+          {/* <Comment /> */}
         </WrappingBoardDetail>
       </AllContainer>
     </>

@@ -27,8 +27,8 @@ import {
 } from './styles';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
-import { GENRE_NAME } from '../../constants/genre';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from 'types/supabase';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
 import Modal from 'components/register/Modal';

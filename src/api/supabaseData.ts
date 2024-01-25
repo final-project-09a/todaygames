@@ -1,5 +1,5 @@
 import { Post } from 'types/global.d';
-import { supabase } from '../shared/supabase';
+import { supabase } from '../types/supabase';
 import { QUERY_KEYS } from 'query/keys';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,11 +9,10 @@ const postContents = async (newPost: Post) => {
   await supabase.from(QUERY_KEYS.POST).insert(newPost);
 };
 
-const user = useSelector((state: RootState) => state.userSlice.userInfo);
-
-const [imageFiles, setImageFiles] = useState<File[]>([]);
 // 이미지를 Supabase 스토리지에 업로드하는 함수
 const postImagesToStorage = async () => {
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const uploadedImageUrls: string[] = [];
   try {
     for (const file of imageFiles) {

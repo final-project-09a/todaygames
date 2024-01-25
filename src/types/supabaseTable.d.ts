@@ -1,4 +1,4 @@
-// 각 테이블 전체 타입 정한 후
+//  게시판 타입 저장
 export type Json = string | Date | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 export interface Typedata {
   public: {
@@ -7,8 +7,6 @@ export interface Typedata {
         Row: {
           id: string;
           user_id: string;
-          like_count: number;
-          comments_count: number;
           content: string;
           image: string;
           title: string;
@@ -21,8 +19,6 @@ export interface Typedata {
           title: string;
           image?: string;
           content: string;
-          like_count: number;
-          comments_count: number;
         };
         Update: {
           id: string;
@@ -31,8 +27,6 @@ export interface Typedata {
           title: string;
           image: string;
           content: string;
-          like_count: number;
-          comments_count: number;
         };
         Controll: {
           id?: string;
@@ -41,39 +35,61 @@ export interface Typedata {
           title?: string;
           image?: string;
           content?: string;
-          like_count?: number;
-          comments_count?: number;
+        };
+        Delete: {
+          title: string;
+          image: string;
+          content: string;
         };
       };
       comments: {
-        Row: {
-          id: string;
+        CommentsUrl: {
+          Select: {
+            userid: string;
+            comment_id: number;
+            comments: string;
+            created_at: Date;
+          };
+          Userinfo: {
+            avatar_url: string;
+            nickname: string;
+          };
+        };
+        Select: {
+          userid: string;
           comment_id: number;
           comments: string;
-          parent_comment: string;
           created_at: Date;
         };
         Insert: {
           id: string;
           comment_id: number;
           comments: string;
-          parent_comment: string;
+
           created_at: Date;
         };
         Update: {
           id: string;
           comment_id: number;
           comments: string;
-          parent_comment: string;
+
           created_at: Date;
         };
-        Controll: {
-          id: string;
-          comment_id: number;
-          comments: string;
-          parent_comment: string;
-          created_at: Date;
-        };
+        Controll: [
+          comment: {
+            id: string;
+            comment_id: number;
+            comments: string;
+            created_at: Date;
+          },
+          replies: {
+            user_id: string;
+            reply_id?: number;
+            reply_text?: string;
+            created_at?: string;
+            comment_id: string;
+          }
+        ];
       };
       userinfo: {
         Row: {
@@ -84,7 +100,7 @@ export interface Typedata {
       };
       games: {
         Row: {
-          add_id: number;
+          app_id: number;
           name: string;
           required_age: number;
           is_free: boolean;
@@ -93,8 +109,25 @@ export interface Typedata {
           capsule_image: string;
           website: string;
           genres: string;
-          id: string;
+          pcRequirements: {
+            DirectX: string;
+            etc: string;
+            graphics: string;
+            memory: string;
+            network: string;
+            os: string;
+            processor: string;
+            sound: string;
+            storage: string;
+          };
         };
+      };
+      replies: {
+        user_id: string;
+        reply_id: number;
+        reply_text: string;
+        created_at: string;
+        comment_id: string;
       };
     };
   };

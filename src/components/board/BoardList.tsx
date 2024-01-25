@@ -4,11 +4,10 @@ import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
-import { Typedata } from 'shared/supabase.type';
+import { Typedata } from 'types/supabaseTable';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { RootState } from 'redux/config/configStore';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 import MoreViewButton from 'common/MoreViewButton';
 import Button from 'common/Button';
@@ -16,7 +15,7 @@ import userimg from 'assets/img/userimg.png';
 import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
-import moreInfo from 'assets/icons/moreInfo.svg';
+import editBtn from '../../assets/img/editBtn.png';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -33,14 +32,22 @@ interface PostDetail {
   image: string;
   game: string;
 }
+interface Post {
+  id: string;
+  text: string;
+}
 
 export const BoardList = ({ filteredPosts }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
-  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [isEditing, setIsEditing] = useState(false); // 수정 삭제
+  const [isdefault, setIsDefault] = useState(false); // 수정 삭제
   const [searchText, SetSearchText] = useState<string>('');
+  const [editingText, setEditText] = useState('');
 
   const navigate = useNavigate();
-
+  const user = useSelector((state: any) => state.userSlice.userInfo);
+  const updatePost = useSelector((state: any) => state.postSlice.updatePost);
+  const deletePost = useSelector((state: any) => state.postSlice.deletePost);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
@@ -54,6 +61,8 @@ export const BoardList = ({ filteredPosts }: any) => {
       navigate('/login');
     }
   };
+
+  //const { data } = useQuery({ queryKey: 'updatePosts' });
 
   const movedetailPageOnClick = (item: string) => {
     navigate(`/boarddetail/${item}`);
@@ -73,6 +82,21 @@ export const BoardList = ({ filteredPosts }: any) => {
     user?.id === filteredPosts.user_id ? <p>수정하기</p> : <p>신고하기</p>;
   };
 
+  const categoryOnclick = () => {
+    setIsDefault(isEditing);
+  };
+
+  const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
+    console.log('취소버튼 구현중');
+  };
+
+  const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
+    if (!editingText) return alert('수정 사항이 없습니다.');
+  }; //수정중 취소
+  const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) return;
+  }; // 삭제 버튼
   return (
     <div>
       <StSeachContainer>
@@ -88,9 +112,24 @@ export const BoardList = ({ filteredPosts }: any) => {
       {filteredPosts.length > 0 ? (
         initialDisplayedPosts.map((post: PostDetail) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
+
           if (userInfo) {
             return (
               <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
+                <EditBtn onClick={categoryOnclick} />
+                {isEditing ? (
+                  <StrefetchForm>
+                    <StButton onClick={onCancelBtn}>취소</StButton>
+                    <StButton onClick={onEditDone}>수정완료</StButton>
+                  </StrefetchForm>
+                ) : (
+                  <>
+                    <StfetchForm>
+                      <StButton onClick={() => setIsEditing(true)}>수정</StButton>
+                      <StButton onClick={onDeleteBtn}>삭제</StButton>
+                    </StfetchForm>
+                  </>
+                )}
                 <StProfileWrapper>
                   <section>
                     <StUserImageWrapper>
@@ -101,14 +140,25 @@ export const BoardList = ({ filteredPosts }: any) => {
                       <p>{post.created_At}</p>
                     </StUserNameWrapper>
                   </section>
-                  <StEditPost onClick={handleEditPost}>
-                    <img src={moreInfo} />
-                  </StEditPost>
+                  <StEditPost onClick={handleEditPost}></StEditPost>
                 </StProfileWrapper>
                 <StContentWrapper>
                   <StText>
                     <h3>{post?.title}</h3>
-                    <p>{post?.content}</p>
+                    {isEditing ? (
+                      <>
+                        <StTextarea
+                          autoFocus
+                          defaultValue={post?.content}
+                          onChange={(event) => setEditText(event.target.value)}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <p>{post?.content}</p>
+                      </>
+                    )}
+
                     <StTagWrapper>
                       {post?.category
                         .split(',')
@@ -149,7 +199,50 @@ export const BoardList = ({ filteredPosts }: any) => {
     </div>
   );
 };
+const StTextarea = styled.textarea`
+  // 수정 textarea
+  display: flex;
+  max-width: 1180px;
+  flex-direction: column;
+  gap: 10px;
+  margin: 30px 0;
+  max-width: 900px;
+  height: 250px;
+  overflow: hidden;
+  resize: none;
+  border-radius: 5px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+`;
+const StButton = styled.button`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  right: 360px;
+`;
+const StfetchForm = styled.form`
+  flex-direction: row;
+  display: flex;
 
+  justify-content: center;
+`;
+const StrefetchForm = styled.form`
+  flex-direction: row;
+  display: flex;
+
+  justify-content: center;
+`;
+const EditBtn = styled.button`
+  display: flex;
+  position: relative;
+  top: 10px;
+  left: 1100px;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  background-image: url(${editBtn});
+  cursor: pointer;
+`;
 const StSeachContainer = styled.form`
   display: flex;
   align-items: center;
@@ -307,11 +400,4 @@ const StNullboard = styled.div`
   position: relative;
   bottom: 800px;
   left: 500px;
-`;
-
-const StCancelIcon = styled.img`
-  width: 18px;
-  height: 18px;
-  color: #999999;
-  margin-left: 7px;
 `;

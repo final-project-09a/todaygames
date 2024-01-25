@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from 'shared/supabase';
+import { supabase } from '../../types/supabase';
 import { useNavigate } from 'react-router-dom';
 import {
   StyledInputShort,

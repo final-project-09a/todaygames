@@ -1,11 +1,10 @@
 import Tag from 'common/Tag';
 import styled from 'styled-components';
-import { Game } from './RecommendList';
-import { GenreType } from 'components/Header/Header';
 import { useNavigate } from 'react-router-dom';
+import { GameType, GenreType } from 'types/games';
 
 interface NewGameCardProps {
-  gameDetails: Game;
+  gameDetails: GameType;
 }
 
 function NewGameCard({ gameDetails }: NewGameCardProps) {
