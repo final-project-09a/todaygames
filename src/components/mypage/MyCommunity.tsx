@@ -37,7 +37,32 @@ const MyCommunity = () => {
     <StUserInfoContainer>
       <StContentBox>
         <h2>내가 쓴 글</h2>
-        {posts.map((post, index) => (
+        <div>
+          {posts.map((post, index) => (
+            <div
+              key={index}
+              style={{
+                width: '1020px',
+                margin: '10px auto',
+                border: '1px solid #ccc',
+                padding: '15px',
+                borderRadius: '10px'
+              }}
+            >
+              <StyledH2>{post.title}</StyledH2>
+              <StyledH3>{post.content}</StyledH3>
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                {post.category.split(',').map((category: string, idx: number) => (
+                  <div key={idx} style={{ border: '1px solid #ccc', padding: '5px', borderRadius: '10px' }}>
+                    {category}
+                  </div>
+                ))}
+              </div>
+              <div style={{ textAlign: 'left' }}>등록시간: {post.time}</div>
+            </div>
+          ))}
+        </div>
+        {/* {posts.map((post, index) => (
           <div key={index}>
             <h3>카테고리: {post.category}</h3>
             <h4>제목: {post.title}</h4>
@@ -47,13 +72,31 @@ const MyCommunity = () => {
             <p>내용: {post.content}</p>
             <p>게임: {post.game}</p>
           </div>
-        ))}
+        ))} */}
       </StContentBox>
     </StUserInfoContainer>
   );
 };
 
 export default MyCommunity;
+
+const StyledH3 = styled.h3`
+  color: #eee;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+`;
+
+const StyledH2 = styled.h2`
+  color: #fff;
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+`;
 
 const StUserInfoContainer = styled.div`
   display: flex;
