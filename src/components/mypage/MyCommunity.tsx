@@ -36,30 +36,19 @@ const MyCommunity = () => {
   return (
     <StUserInfoContainer>
       <StContentBox>
-        <h2>내가 쓴 글</h2>
+        <h1>등록된게시물{posts.length}개</h1>
         <div>
           {posts.map((post, index) => (
-            <div
-              key={index}
-              style={{
-                width: '1020px',
-                margin: '10px auto',
-                border: '1px solid #ccc',
-                padding: '15px',
-                borderRadius: '10px'
-              }}
-            >
+            <PostContainer key={index}>
               <StyledH2>{post.title}</StyledH2>
               <StyledH3>{post.content}</StyledH3>
               <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                 {post.category.split(',').map((category: string, idx: number) => (
-                  <div key={idx} style={{ border: '1px solid #ccc', padding: '5px', borderRadius: '10px' }}>
-                    {category}
-                  </div>
+                  <StCategory key={idx}>#{category.trim()}</StCategory>
                 ))}
               </div>
-              <div style={{ textAlign: 'left' }}>등록시간: {post.time}</div>
-            </div>
+              <div style={{ textAlign: 'left' }}>등록시간: {post.created_At.split('T')[0]}</div>
+            </PostContainer>
           ))}
         </div>
         {/* {posts.map((post, index) => (
@@ -80,6 +69,20 @@ const MyCommunity = () => {
 
 export default MyCommunity;
 
+const PostContainer = styled.div`
+  width: 1020px;
+  margin: 10px auto;
+  border-bottom: 1px solid #ccc;
+  padding: 15px;
+  border-color: #333;
+`;
+const StCategory = styled.div`
+  padding: 7px 16px;
+  border-radius: 10px;
+  background-color: #363636;
+  margin-top: 10px;
+  margin-bottom: 20px;
+`;
 const StyledH3 = styled.h3`
   color: #eee;
   font-family: Pretendard;
@@ -87,6 +90,7 @@ const StyledH3 = styled.h3`
   font-style: normal;
   font-weight: 400;
   line-height: 22px;
+  margin-bottom: 10px;
 `;
 
 const StyledH2 = styled.h2`
