@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 import { Link } from 'react-router-dom';
 
-const GameSearch = () => {
-  const [searchedText, setSearchedText] = useState('');
+interface GameSearchProps {
+  searchedText: string;
+  setSearchedText: React.Dispatch<React.SetStateAction<string>>;
+}
 
+const GameSearch = ({ searchedText, setSearchedText }: GameSearchProps) => {
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedText(e.target.value);
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSearchedText('');
   };
 
   return (

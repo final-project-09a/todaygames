@@ -22,8 +22,16 @@ const NavBar: React.FC = () => {
   // 모달 상태 관리
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [searchedText, setSearchedText] = useState<string>('');
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+
+  useEffect(() => {
+    const isHomePage = window.location.pathname === '/';
+    if (isHomePage) {
+      setSearchedText('');
+    }
+  }, [navigate]);
 
   // 로그인 시 success 모달 오픈
   useEffect(() => {
@@ -73,7 +81,7 @@ const NavBar: React.FC = () => {
           <Link to={'/board'}>
             <h2>커뮤니티</h2>
           </Link>
-          <GameSearch />
+          <GameSearch searchedText={searchedText} setSearchedText={setSearchedText} />
           <StLogIn>
             {user ? (
               <>
