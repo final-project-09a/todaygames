@@ -25,6 +25,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
     slidesToScroll: 1,
     centerMode: true,
     centerPadding: '210',
+    afterChange: (index: number) => setCurrentGameIndex(index),
     adaptiveHeight: true,
     autoplay: true,
     autoplaySpeed: 3000,
