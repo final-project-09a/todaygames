@@ -25,10 +25,15 @@ const postSlice = createSlice({
     },
     updatePost: (state, action: PayloadAction<Post>) => {
       const { id } = action.payload;
-      const post = state.posts.find((post) => post.id === id);
-      if (post) {
-        Object.assign(post, action.payload);
-      }
+      return {
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.id === id) {
+            return { ...post, ...action.payload };
+          }
+          return post;
+        })
+      };
     },
     deletePost: (state, action: PayloadAction<Post>) => {
       const postIdToDelete = action.payload.id;
@@ -41,5 +46,5 @@ const postSlice = createSlice({
   }
 });
 
-export const { addPost, updatePost } = postSlice.actions;
+export const { addPost, updatePost, deletePost } = postSlice.actions;
 export default postSlice.reducer;

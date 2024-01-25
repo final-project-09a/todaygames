@@ -22,10 +22,6 @@ export interface Typedata {
         };
         Update: {
           id: string;
-          user_id: string;
-          category: string;
-          title: string;
-          image: string;
           content: string;
         };
         Controll: {

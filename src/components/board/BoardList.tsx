@@ -1,11 +1,11 @@
 // 게시판 리스트
 
 import styled from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
@@ -16,6 +16,7 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
+import { updatedataPosts } from 'api/post';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -34,28 +35,29 @@ interface PostDetail {
 }
 interface Post {
   id: string;
-  text: string;
+  content: string;
 }
 
-export const BoardList = ({ filteredPosts }: any) => {
+export const BoardList = ({ filteredPosts, setEditText, editingText, onEditDone }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [isEditing, setIsEditing] = useState(false); // 수정 삭제
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [searchText, SetSearchText] = useState<string>('');
-  const [editingText, setEditText] = useState('');
+  const [searchText, SetSearchText] = useState<string>();
+
   const user = useSelector((state: any) => state.userSlice.userInfo);
-  const addPost = useSelector((state: any) => state.postSlice.addPost);
-  // const [imageUrl, setImageUrl] = useState(addPost);
+  // const addPost = useSelector((state: any) => state.postSlice.addPost);
 
   const navigate = useNavigate();
-
-  const updatePost = useSelector((state: any) => state.postSlice.updatePost);
-  const deletePost = useSelector((state: any) => state.postSlice.deletePost);
+  const deletePost = useSelector((state: any) => state.postSlice.deletePost); // 삭제 액션객체
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
 
+  const updatePost = useSelector((state: any) => state.postSlice.updatePost);
+  console.log('updatePost', updatePost);
+
+  // const { data } = useMutation(updatePosts);
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
     if (user) {
@@ -82,16 +84,9 @@ export const BoardList = ({ filteredPosts }: any) => {
   };
 
   const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
-    console.log('취소버튼 구현중');
+    alert('취소');
   };
 
-  const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (!editingText) {
-      alert('수정 사항이 없습니다.');
-      return false;
-    }
-    console.log('수정진행');
-  }; //수정중 취소
   const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
