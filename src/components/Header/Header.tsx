@@ -8,7 +8,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GameType, GenreType } from 'types/games';
 import HeaderTitleSkeleton from 'components/skeletons/HeaderTitleSkeleton';
-import { current } from '@reduxjs/toolkit';
 
 interface HeaderProps {
   mostPlayedGames: GameType[];

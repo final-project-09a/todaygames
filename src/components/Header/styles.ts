@@ -66,14 +66,14 @@ const StCarouselWrapper = styled.div`
 
   .slick-slide:not(.slick-center) {
     transition: transform 1s opacity 1s;
-    transform: scale(0.9) translateX(16%);
+    transform: scale(0.9) translateX(15.5%);
     filter: blur(1px);
     opacity: 0.6;
   }
 
   .slick-slide.slick-center {
     transition: transform 1s;
-    transform: translateX(16%);
+    transform: translateX(15.5%);
   }
 `;
 

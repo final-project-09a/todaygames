@@ -10,8 +10,6 @@ import prevIcon from 'assets/icons/prevIcon.svg';
 
 const GenreSlider = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>('액션');
-  const [activeSlide, setActiveSlide] = useState<number>(0);
-  console.log(activeSlide);
 
   const settings = {
     infinite: true,
@@ -23,11 +21,9 @@ const GenreSlider = () => {
     centerMode: true,
     centerPadding: '0px',
     beforeChange: (current: number, next: number) => {
-      setActiveSlide(next);
       setSelectedTag(GENRE_NAME[next].tag);
     },
     afterChange: (current: number) => {
-      setActiveSlide(current);
       setSelectedTag(GENRE_NAME[current].tag);
     }
   };
