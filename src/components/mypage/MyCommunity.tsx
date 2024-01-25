@@ -5,7 +5,7 @@ import { supabase } from 'types/supabase';
 import { RootState } from 'redux/config/configStore';
 
 const MyCommunity = () => {
-  const [posts, setPosts] = useState<string[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   useEffect(() => {
     const fetchPosts = async () => {
@@ -37,6 +37,17 @@ const MyCommunity = () => {
     <StUserInfoContainer>
       <StContentBox>
         <h2>내가 쓴 글</h2>
+        {posts.map((post, index) => (
+          <div key={index}>
+            <h3>카테고리: {post.category}</h3>
+            <h4>제목: {post.title}</h4>
+            {post.image && post.image.length > 0 && (
+              <img src={JSON.parse(post.image)[0]} alt="Post" /> // 이미지 URL이 있다면 이미지를 출력합니다.
+            )}
+            <p>내용: {post.content}</p>
+            <p>게임: {post.game}</p>
+          </div>
+        ))}
       </StContentBox>
     </StUserInfoContainer>
   );
