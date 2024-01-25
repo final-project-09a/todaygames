@@ -9,7 +9,9 @@ import {
   StNickNameCount,
   StProfileCount,
   StUserInfoContainer,
-  StUserinfoBox
+  StUserinfoBox,
+  StpasswordInputGroup,
+  StPasswordButton
 } from 'pages/mypage/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -29,6 +31,10 @@ const EditProfile = () => {
   const [nicknameError, setNicknameError] = useState<string>('');
   const [profileError, setProfileError] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [passwordisValidisValid, setpasswordisValidIsValid] = useState<boolean>(true);
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [PasswordError, setPasswordError] = useState<string>('');
 
   const isButtonDisabled = !(
     nickname &&
@@ -38,6 +44,43 @@ const EditProfile = () => {
     profile.length >= 10 &&
     isValid
   );
+  const isPasswordButtonDisabled = !passwordisValidisValid;
+
+  const isValidPassword = (password: string) => {
+    // 비밀번호 유효성 검사: 8~16자 영문, 숫자, 특수문자를 조합
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,16}$/;
+    return regex.test(password);
+  };
+  const isValidConfirmPassword = (password: string, confirmPassword: string) => {
+    // 비밀번호 확인 검사
+    return password === confirmPassword;
+  };
+
+  const updatePassword = async () => {
+    if (!isValidPassword(newPassword)) {
+      setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+      setpasswordisValidIsValid(false);
+      return;
+    }
+
+    if (!isValidConfirmPassword(newPassword, confirmPassword)) {
+      setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      setpasswordisValidIsValid(false);
+      return;
+    }
+    setPasswordError(''); // 에러가 없다면 에러 메시지를 초기화합니다.
+    setpasswordisValidIsValid(true); // 모든 유효성 검사를 통과하면 isValid를 true로 설정합니다.
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      console.error('Error updating password', error);
+      alert('비밀번호 업데이트 중 에러가 발생했습니다.');
+    } else {
+      alert('비밀번호가 성공적으로 업데이트되었습니다.');
+      setNewPassword('');
+      setConfirmPassword('');
+    }
+  };
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(setUser({ ...user, profile: e.target.value } as UserData));
@@ -148,7 +191,51 @@ const EditProfile = () => {
         <label htmlFor="id">계정 아이디</label>
         <input id="id" type="email" placeholder={email} readOnly />
         <label htmlFor="password">비밀번호 변경</label>
-        <input id="password" type="password" autoComplete="current-password" />
+        <StpasswordInputGroup>
+          <input
+            placeholder="변경할 비밀번호"
+            type="password"
+            value={newPassword || ''}
+            onChange={(e) => {
+              setNewPassword(e.target.value);
+              if (!isValidPassword(e.target.value)) {
+                setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+                setpasswordisValidIsValid(false);
+              } else {
+                setPasswordError('');
+                // 비밀번호 확인도 같이 검사합니다.
+                if (e.target.value !== confirmPassword) {
+                  setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                  setpasswordisValidIsValid(false);
+                } else {
+                  setPasswordError('');
+                  setpasswordisValidIsValid(true);
+                }
+              }
+            }}
+          />
+          {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
+          <br></br>
+          <input
+            placeholder="변경할 비밀번호 확인"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              // 비밀번호 확인이 비밀번호와 일치하는지 검사합니다.
+              if (newPassword !== e.target.value) {
+                setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                setpasswordisValidIsValid(false);
+              } else {
+                setPasswordError('');
+                setpasswordisValidIsValid(true);
+              }
+            }}
+          />
+          <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
+            비밀번호 변경
+          </StPasswordButton>
+        </StpasswordInputGroup>
       </StUserinfoBox>
       <StUserinfoBox>
         <h2>관심 장르</h2>
