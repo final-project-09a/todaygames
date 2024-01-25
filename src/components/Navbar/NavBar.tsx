@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/config/configStore';
 import GameSearch from './GameSearch';
 import SuccessModal from 'common/SuccessModal';
+import logo3 from 'assets/logo/logo3.png';
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
@@ -61,7 +62,9 @@ const NavBar: React.FC = () => {
     <StNavContainer>
       <StNavWrapper>
         <StLogoWrapper>
-          <Link to="/">Logo</Link>
+          <Link to="/">
+            <img src={logo3} alt="로고" />
+          </Link>
         </StLogoWrapper>
         <StMenuWrapper>
           <Link to={'/'}>

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import searchIcon from '../../assets/icons/searchIcon.svg';
+import { Link } from 'react-router-dom';
 
 const GameSearch = () => {
   const [searchedText, setSearchedText] = useState('');
-
-  const handelSearchButtonClick = () => {
-    setSearchedText('');
-  };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchedText(e.target.value);
@@ -20,7 +17,9 @@ const GameSearch = () => {
   return (
     <StSearchBox onSubmit={handleFormSubmit}>
       <input value={searchedText} onChange={handleOnChange} placeholder="검색" />
-      <StSearchIcon onClick={handelSearchButtonClick} />
+      <Link to={`/search/${searchedText}`}>
+        <StSearchIcon type="submit" />
+      </Link>
     </StSearchBox>
   );
 };
@@ -46,7 +45,7 @@ const StSearchBox = styled.form`
   }
 `;
 
-const StSearchIcon = styled.div`
+const StSearchIcon = styled.button`
   position: absolute;
   top: 50%;
   right: 5%;
@@ -56,14 +55,4 @@ const StSearchIcon = styled.div`
   background: url(${searchIcon}) no-repeat center center;
   background-size: contain;
   cursor: pointer;
-`;
-
-const StModalWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* display: flex;
-  justify-content: center; */
 `;
