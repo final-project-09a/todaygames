@@ -8,6 +8,7 @@ import SignUp from '../pages/signup/signup';
 import Login from '../pages/login/Login';
 import NavBar from 'components/Navbar/NavBar';
 import Mypage from '../pages/mypage/mypage';
+import Search from 'pages/search/Search';
 
 const Router = () => {
   return (
@@ -18,6 +19,7 @@ const Router = () => {
         <Route path="/board" element={<Board />} />
         <Route path="/boarddetail/:id" element={<BoardDetail />} />
         <Route path="/" element={<Home />} />
+        <Route path="/search/:searchText" element={<Search />} />
         <Route path="/detail/:appid" element={<Detail />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
