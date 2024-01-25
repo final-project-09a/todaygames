@@ -10,7 +10,7 @@ const MyCommunity = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const { data, error } = await supabase.from('posts').select();
+        const { data, error } = await supabase.from('posts').select().eq('user_id', user?.id);
 
         if (error) {
           console.error('Error fetching posts:', error.message);
