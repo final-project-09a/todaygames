@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-
+import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { supabase } from 'types/supabase';
+import { RootState } from 'redux/config/configStore';
 
 const MyCommunity = () => {
   const [posts, setPosts] = useState<string[]>([]);
-
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -25,10 +26,13 @@ const MyCommunity = () => {
         console.error('Error fetching posts:', error);
       }
     };
-
-    fetchPosts();
-  }, []);
+    if (user?.id) {
+      fetchPosts();
+    }
+  }, [user?.id]);
   console.log(posts);
+  console.log(user?.id);
+
   return (
     <StUserInfoContainer>
       <StContentBox>
