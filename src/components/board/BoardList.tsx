@@ -16,7 +16,7 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { updatedataPosts } from 'api/post';
+import { getPosts, updatedataPosts } from 'api/post';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -56,7 +56,7 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
-  const { data: EditData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: updatedataPosts });
+  const { data: EditData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts }); // <= 이거원래 updatedataPosts
   console.log(EditData);
 
   // 글쓰기 이동
@@ -89,7 +89,7 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
   };
 
   const editButtonModeChange = (index: any) => {
-    if (index.id === user.id) return setDropdownVisible(true);
+    if (index.id == updatePost.id) return setDropdownVisible(true);
   };
 
   const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -97,7 +97,7 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
       alert('수정 사항이 없습니다.');
       return editingText;
     }
-    const neweditPosts: any[] = [];
+    const neweditPosts: string[] = [];
     EditData?.map((post) => {
       if (post.id === post?.content) {
         neweditPosts.push(post?.content);
@@ -111,19 +111,10 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
     if (!answer) return;
   }; // 삭제 버튼
 
-  const editSubmit = (event: any) => {
-    event.preventDefault();
+  const editSubmit = (e: any) => {
+    e.preventDefault();
+    editingText;
   };
-
-  // const fileReader = new FileReader();
-  // fileReader.onload = async (event) => {
-  //   if (event.target) {
-  //     const imageUrl = event.target.result as string;
-  //     setImageUrl(imageUrl);
-  //     const {data } = await supabase.from('posts').update({ image: imageUrl }).eq('id', addPost.id);
-  //     console.log("data",data);
-  //   }
-  // };
 
   return (
     <div>

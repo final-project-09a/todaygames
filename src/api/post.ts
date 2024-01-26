@@ -14,10 +14,9 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
     throw error;
   }
 };
-
-export const updatedataPosts = async (): Promise<Typedata['public']['Tables']['posts']['Update'][]> => {
+export const updatedataPosts = async (postId: string): Promise<Typedata['public']['Tables']['posts']['Update'][]> => {
   try {
-    const { data, error } = await supabase.from(QUERY_KEYS.POSTS).update('content, id').eq('id', []);
+    const { data, error } = await supabase.from('posts').update('content, id').eq('id', postId).single();
 
     if (error) {
       throw new Error(`게시물 업데이트 중 오류가 발생했습니다: ${error.message}`);
