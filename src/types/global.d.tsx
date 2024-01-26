@@ -4,12 +4,12 @@ export type SteamProfile = {
 };
 
 export type Post = {
-  user_id: string;
   title: string;
   game: string;
   category: string;
   image: string[];
   content: string;
+  user_id: string;
 };
 
 export type FormData = {
