@@ -45,8 +45,6 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
   const [searchText, SetSearchText] = useState<string>('');
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
-  // const addPost = useSelector((state: any) => state.postSlice.addPost);
-  // const [imageUrl, setImageUrl] = useState(addPost);
 
   const navigate = useNavigate();
 
@@ -67,8 +65,6 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
       navigate('/login');
     }
   };
-
-  //const { data } = useQuery({ queryKey: 'updatePosts' });
 
   const movedetailPageOnClick = (item: string) => {
     navigate(`/boarddetail/${item}`);
