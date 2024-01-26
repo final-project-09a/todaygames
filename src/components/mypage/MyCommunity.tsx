@@ -1,16 +1,130 @@
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { supabase } from 'types/supabase';
+import { RootState } from 'redux/config/configStore';
+import { Link } from 'react-router-dom';
 
 const MyCommunity = () => {
+  const [posts, setPosts] = useState<any[]>([]);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data, error } = await supabase.from('posts').select().eq('user_id', user?.id);
+
+        if (error) {
+          console.error('Error fetching posts:', error.message);
+        } else {
+          if (data && data.length > 0) {
+            setPosts(data);
+            console.log(data);
+          } else {
+            console.warn('No posts found.');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+    if (user?.id) {
+      fetchPosts();
+    }
+  }, [user?.id]);
+  console.log(posts);
+  console.log(user?.id);
+
   return (
     <StUserInfoContainer>
       <StContentBox>
-        <h2>내가 쓴 글</h2>
+        <h1>등록된게시물{posts.length}개</h1>
+        <div>
+          {posts.length > 0 ? (
+            posts.map((post, index) => (
+              <PostContainer key={index}>
+                <StyledH2>{post.title}</StyledH2>
+                <StyledH3>{post.content}</StyledH3>
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                  {post.category.split(',').map((category: string, idx: number) => (
+                    <StCategory key={idx}>#{category.trim()}</StCategory>
+                  ))}
+                </div>
+                <div style={{ textAlign: 'left' }}>등록시간: {post.created_At.split('T')[0]}</div>
+              </PostContainer>
+            ))
+          ) : (
+            <StyledDiv>
+              등록된 게시글이 없습니다.
+              <Link to="/register">
+                <StyledButton>게시물 등록하기</StyledButton>
+              </Link>
+            </StyledDiv>
+          )}
+        </div>
       </StContentBox>
     </StUserInfoContainer>
   );
 };
 
 export default MyCommunity;
+
+const StyledDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  margin-top: 120px;
+`;
+
+const StyledButton = styled.button`
+  margin-top: 50px;
+  border-radius: 50px;
+  background: ${(props) => props.theme.color.primary};
+  color: ${(props) => props.theme.color.white};
+  padding: 10px 20px;
+  width: 250px;
+  height: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  flex-shrink: 0;
+  &:hover {
+    background: #1a3b7a;
+  }
+`;
+
+const PostContainer = styled.div`
+  width: 1020px;
+  margin: 10px auto;
+  border-bottom: 1px solid #ccc;
+  padding: 15px;
+  border-color: #333;
+`;
+const StCategory = styled.div`
+  padding: 7px 16px;
+  border-radius: 10px;
+  background-color: #363636;
+  margin-top: 10px;
+  margin-bottom: 20px;
+`;
+const StyledH3 = styled.h3`
+  color: #eee;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  margin-bottom: 10px;
+`;
+
+const StyledH2 = styled.h2`
+  color: #fff;
+  font-family: Pretendard;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+`;
 
 const StUserInfoContainer = styled.div`
   display: flex;

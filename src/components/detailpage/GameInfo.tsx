@@ -4,13 +4,14 @@ import { useContext } from 'react';
 const GameInfo = () => {
   const data = useContext(DataContext);
   const genres = data?.genres.map((genre) => genre.description);
-  console.log(data);
 
   return (
     <>
       <h2>게임정보</h2>
       {data && data.about_the_game !== undefined ? (
-        <p dangerouslySetInnerHTML={{ __html: data.short_description }} />
+        <div>
+          <p dangerouslySetInnerHTML={{ __html: data.short_description }} />
+        </div>
       ) : null}
       <div>
         <section>
