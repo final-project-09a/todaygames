@@ -136,7 +136,7 @@ export const StPasswordButton = styled.button`
   align-self: flex-end;
   border-radius: 10px;
   background: ${(props) => props.theme.color.white};
-  width: 80px;
+  width: 120px;
   height: 48px;
   flex-shrink: 0;
   margin-top: 19px;
