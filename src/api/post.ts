@@ -7,7 +7,6 @@ interface Post {
 }
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
-
     const { data } = await supabase.from(QUERY_KEYS.POSTS).select(`*`);
     // .order('create_At', { ascending: false }); // 날짜 컬럼
 

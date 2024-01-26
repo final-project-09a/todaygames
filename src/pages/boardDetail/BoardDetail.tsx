@@ -13,7 +13,13 @@ import {
   DetailTitle,
   DetailContent,
   WrappingTags,
-  EachTag
+  EachTag,
+  CommentAndLike,
+  CommentsNum,
+  LikeNum,
+  RowCommentAndLike,
+  WrappingComments,
+  NumText
 } from './style';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
@@ -28,6 +34,9 @@ import { RootState } from 'redux/config/configStore';
 import CustomCarousel from 'common/CustomCarousel';
 import styled from 'styled-components';
 import { getFormattedDate } from 'util/date';
+import comment from '../../assets/img/comment.png';
+import like from '../../assets/img/like.png';
+import Comment from 'components/comment/Comment';
 
 export const BoardDetail = () => {
   const { id } = useParams();
@@ -65,18 +74,6 @@ export const BoardDetail = () => {
   const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
   const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
   const correctTime = getFormattedDate(filterdPost!.created_At);
-  const deletePost = async (id: Post) => {
-    try {
-      const { data, error } = await supabase.from('posts').delete().eq('id', id);
-      if (error) {
-        throw error;
-      }
-      // 게시글 삭제 후, 페이지를 새로고침하거나
-      // 다른 페이지로 이동시키는 로직을 여기에 추가할 수 있습니다.
-    } catch (error) {
-      alert('에러가 발생했습니다');
-    }
-  };
   console.log(correctImageArray);
   console.log(correctTime);
   return (
@@ -92,28 +89,15 @@ export const BoardDetail = () => {
               <ProfileImage src={filteredUser?.avatar_url} />
               <WrappingUserInfo>
                 <NickNameAndDate>
-                  <NickNameAndTitleText>{filteredUser?.nickname}</NickNameAndTitleText>
+                  <NickNameAndTitleText>
+                    {filteredUser?.nickname ? filteredUser?.nickname : 'KAKAO'}
+                  </NickNameAndTitleText>
                   <DateText>{correctTime}</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>{filterdPost?.game}</NickNameAndTitleText>
               </WrappingUserInfo>
             </WrappingImgText>
             <UserInfoAndBtn />
-            <div>
-              <EditBtn onClick={() => setDropdownVisible(!dropdownVisible)}></EditBtn>
-              {dropdownVisible && (
-                <div>
-                  <button
-                    onClick={() => {
-                      /* 수정 기능을 구현한 함수를 호출 */
-                    }}
-                  >
-                    수정
-                  </button>
-                  <button>삭제</button>
-                </div>
-              )}
-            </div>
           </UserInfoAndBtn>
           <StCarouselWrapper>
             <CustomCarousel settings={settings}>
@@ -130,7 +114,19 @@ export const BoardDetail = () => {
           <WrappingTags>
             <EachTag>{filterdPost?.category}</EachTag>
           </WrappingTags>
-          <br />
+          <RowCommentAndLike>
+            <CommentAndLike>
+              <img src={comment} />
+              <NumText>5</NumText>
+            </CommentAndLike>
+            <CommentAndLike>
+              <img src={like} />
+              <NumText>5</NumText>
+            </CommentAndLike>
+          </RowCommentAndLike>
+          <WrappingComments>
+            <Comment />
+          </WrappingComments>
           {/* <Comment /> */}
         </WrappingBoardDetail>
       </AllContainer>

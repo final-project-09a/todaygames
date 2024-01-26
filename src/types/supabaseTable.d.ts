@@ -16,10 +16,6 @@ export interface Typedata {
           image: string;
           created_At: string;
           user_id: string;
-
-          game: string;
-          created_At: ReactNode;
-
         };
         Insert: {
           id: string;
