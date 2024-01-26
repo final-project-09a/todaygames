@@ -1,10 +1,44 @@
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
+import { supabase } from 'types/supabase';
 import styled from 'styled-components';
 
 const MyBookMark = () => {
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+
+  useEffect(() => {
+    const fetchBookmarks = async () => {
+      try {
+        const { data, error } = await supabase.from('user_bookmarks').select('app_id').eq('user_id', user?.id);
+
+        if (error) {
+          console.error('Error fetching bookmarks:', error.message);
+        } else {
+          if (data && data.length > 0) {
+            setBookmarks(data);
+            console.log(data);
+            console.log(bookmarks[0].app_id);
+          } else {
+            console.warn('No bookmarks found.');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching bookmarks:', error);
+      }
+    };
+    if (user?.id) {
+      fetchBookmarks();
+    }
+  }, [user?.id]);
   return (
     <StUserInfoContainer>
       <StContentBox>
         <h2>찜 목록</h2>
+        {bookmarks.map((bookmark: any, index: number) => (
+          <h3 key={index}>Bookmark ID: {bookmark.app_id}</h3>
+        ))}
       </StContentBox>
     </StUserInfoContainer>
   );
