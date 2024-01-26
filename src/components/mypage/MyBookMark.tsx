@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 const MyBookMark = () => {
   const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [games, setGames] = useState<any[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   useEffect(() => {
@@ -32,12 +33,42 @@ const MyBookMark = () => {
       fetchBookmarks();
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    const fetchGameDetails = async () => {
+      try {
+        const appIds = bookmarks.map((bookmark) => bookmark.app_id);
+        const { data, error } = await supabase.from('games').select('*').in('app_id', appIds);
+
+        if (error) {
+          console.error('Error fetching game details:', error);
+        } else {
+          if (data) {
+            setGames(data);
+            console.log(games);
+          } else {
+            console.warn('No game details found.');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching game details:', error);
+      }
+    };
+    if (bookmarks.length > 0) {
+      fetchGameDetails();
+    }
+  }, [bookmarks]);
   return (
     <StUserInfoContainer>
       <StContentBox>
         <h2>찜 목록</h2>
-        {bookmarks.map((bookmark: any, index: number) => (
-          <h3 key={index}>Bookmark ID: {bookmark.app_id}</h3>
+
+        {games.map((game: any, index: number) => (
+          <>
+            {' '}
+            <h3 key={index}>Game: {game.name} </h3>
+            <img src={game.header_image}></img>
+          </>
         ))}
       </StContentBox>
     </StUserInfoContainer>
