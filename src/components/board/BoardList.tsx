@@ -45,13 +45,13 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
   const [searchText, SetSearchText] = useState<string>('');
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
-  const addPost = useSelector((state: any) => state.postSlice.addPost);
+  // const addPost = useSelector((state: any) => state.postSlice.addPost);
   // const [imageUrl, setImageUrl] = useState(addPost);
 
   const navigate = useNavigate();
 
   const updatePost = useSelector((state: any) => state.postSlice.updatePost);
-  const deletePost = useSelector((state: any) => state.postSlice.deletePost);
+  // const deletePost = useSelector((state: any) => state.postSlice.deletePost);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
@@ -88,16 +88,22 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
     console.log('취소버튼 구현중');
   };
 
+  const editButtonModeChange = (index: any) => {
+    if (index.id === user.id) return setDropdownVisible(true);
+  };
+
   const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
     if (!editingText) {
       alert('수정 사항이 없습니다.');
       return editingText;
     }
-    const neweditPosts: any = EditData?.map((post, index) => {
+    const neweditPosts: any[] = [];
+    EditData?.map((post) => {
       if (post.id === post?.content) {
-        setEditText(neweditPosts.split([post?.content])); // 수정 중  여기 부터 시작
+        neweditPosts.push(post?.content);
       }
     });
+    setEditText(neweditPosts.join(' '));
     console.log('수정진행');
   }; //수정중 취소
   const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
@@ -140,7 +146,7 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
               <StcontentBox key={post?.id}>
                 <>
                   {/* <StEditPost onClick={() => setIsEditing(!isEditing)} /> */}
-                  <EditBtn onClick={() => setDropdownVisible(true)}>
+                  <EditBtn onClick={editButtonModeChange}>
                     {isEditing ? (
                       <StrefetchForm key={post.id}>
                         <StButton onClick={onCancelBtn}>취소</StButton>
