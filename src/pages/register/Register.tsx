@@ -50,6 +50,7 @@ const Register = () => {
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const currentTimestamp = new Date().getTime();
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -129,12 +130,14 @@ const Register = () => {
         if (regex.test(safeFileName)) {
           throw new Error('파일 이름에는 한글을 사용할 수 없습니다.');
         }
-        const filePath = `${safeUserName}/${safeFileName}`;
+        const filePath = `${safeUserName}/${safeFileName}/${currentTimestamp}`;
 
         const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
         if (error) throw error;
         const { data: publicURL } = await supabase.storage.from('postImage').getPublicUrl(filePath);
         uploadedImageUrls.push(publicURL.publicUrl);
+        console.log(uploadedImageUrls);
+        console.log(imageFiles);
       }
     } catch (error) {
       console.error('Error uploading image: ', error);
@@ -149,10 +152,10 @@ const Register = () => {
         setisAlertModalOpen(true);
         return;
       }
-      let uploadedImageUrls = await postImagesToStorage();
+      const uploadedImageUrls = await postImagesToStorage();
       console.log(uploadedImageUrls);
       if (!Array.isArray(uploadedImageUrls)) {
-        uploadedImageUrls = [uploadedImageUrls];
+        return uploadedImageUrls;
       }
 
       mutate({

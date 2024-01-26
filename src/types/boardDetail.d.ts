@@ -8,3 +8,8 @@ export interface PostDetail {
   created_At: string;
   user_id: string;
 }
+
+export interface DetailImages {
+  index: number;
+  img: string;
+}

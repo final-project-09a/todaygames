@@ -21,18 +21,15 @@ import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
 import { supabase } from 'types/supabase';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { Post } from 'types/global.d';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { PostDetail } from 'types/boardDetail.d';
 import CustomCarousel from 'common/CustomCarousel';
-import editBtn from '../../assets/img/editBtn.png';
-import frontEnd from '../../assets/img/front-end.png';
-import tower from '../../assets/img/tower-pc.png';
+import styled from 'styled-components';
+import { getFormattedDate } from 'util/date';
 
 export const BoardDetail = () => {
-  const customImages = [editBtn, frontEnd, tower];
   const { id } = useParams();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
@@ -49,10 +46,25 @@ export const BoardDetail = () => {
     queryFn: UserInfo
   });
 
-  const filterdPost = gameData?.find((game) => game.id === id);
-  const displayedImages = filterdPost?.image;
+  const settings = {
+    // row: 1,
+    infinite: false,
+    dots: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    draggable: true,
+    focusOnSelect: true,
+    arrow: true
+    // centerMode: true,
+    // centerPadding: '0px'
+  };
 
+  const filterdPost = gameData?.find((game) => game.id === id);
   const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
+  const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
+  const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
+  const correctTime = getFormattedDate(filterdPost!.created_At);
   const deletePost = async (id: Post) => {
     try {
       const { data, error } = await supabase.from('posts').delete().eq('id', id);
@@ -65,52 +77,8 @@ export const BoardDetail = () => {
       alert('에러가 발생했습니다');
     }
   };
-  const settings = {
-    infinite: false,
-    speed: 500,
-    slidesToShow: 6,
-    slidesToScroll: 1,
-    draggable: false,
-    beforeChange: (currentSlide: number, nextSlide: number) => {
-      console.log('현재 인덱스', currentSlide);
-      console.log('다음 인덱스', nextSlide);
-      console.log('슬라이더인덱스', sliderIndex);
-      if (currentSlide !== sliderIndex) {
-        currentSlide = sliderIndex;
-      }
-
-      console.log(currentSlide);
-      // if (currentSlide === 0 || sliderIndex === 0) {
-      //   setSelectedTag(GENRE_NAME[nextSlide]?.tag);
-      // }
-
-      // if (currentSlide === 6 || sliderIndex >= 6) {
-      //   setSelectedTag(GENRE_NAME[sliderIndex + 1]?.tag);
-      //   nextSlide = 7;
-      // }
-
-      // If the current slide is the clicked index, adjust the currentSlide
-      // if (currentSlide === sliderIndex) {
-      //   if (sliderIndex === 0) {
-      //     currentSlide = 5;
-      //   } else if (sliderIndex === 5) {
-      //     currentSlide = 0;
-      //   }
-      // }
-    },
-    afterChange: (currentSlide: number) => {
-      console.log('after 현재 인덱스', currentSlide);
-      // If the current slide is 0 or 5, update the selected tag accordingly
-      if (currentSlide === 0) {
-        setSelectedImage(displayedImages ? displayedImages[currentSlide + 1] : null);
-      }
-      if (currentSlide === 6) {
-        setSelectedImage(displayedImages ? displayedImages[currentSlide + 1] : null);
-      }
-    }
-  };
-
-  console.log(displayedImages);
+  console.log(correctImageArray);
+  console.log(correctTime);
   return (
     <>
       <AllContainer>
@@ -125,7 +93,7 @@ export const BoardDetail = () => {
               <WrappingUserInfo>
                 <NickNameAndDate>
                   <NickNameAndTitleText>{filteredUser?.nickname}</NickNameAndTitleText>
-                  <DateText>{filterdPost?.created_At}</DateText>
+                  <DateText>{correctTime}</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>{filterdPost?.game}</NickNameAndTitleText>
               </WrappingUserInfo>
@@ -147,7 +115,15 @@ export const BoardDetail = () => {
               )}
             </div>
           </UserInfoAndBtn>
-          <DetailImage />
+          <StCarouselWrapper>
+            <CustomCarousel settings={settings}>
+              {correctImageArray?.map((images, index) => (
+                <StImageWrapper key={index}>
+                  <img src={images} />
+                </StImageWrapper>
+              ))}
+            </CustomCarousel>
+          </StCarouselWrapper>
 
           <DetailTitle>{filterdPost?.title}</DetailTitle>
           <DetailContent>{filterdPost?.content}</DetailContent>
@@ -161,3 +137,23 @@ export const BoardDetail = () => {
     </>
   );
 };
+
+const StCarouselWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StImageWrapper = styled.figure`
+  align-items: center;
+  justify-content: center;
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  & img {
+    padding: 0px 20px 0px 20px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+`;
