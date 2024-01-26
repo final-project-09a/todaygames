@@ -17,14 +17,14 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
 
 export const updatedataPosts = async (): Promise<Typedata['public']['Tables']['posts']['Update'][]> => {
   try {
-    const { data, error } = await supabase.from(QUERY_KEYS.POSTS).update('content').eq('id', 'content');
+    const { data, error } = await supabase.from(QUERY_KEYS.POSTS).update('content, id').eq('id', []);
 
     if (error) {
       throw new Error(`게시물 업데이트 중 오류가 발생했습니다: ${error.message}`);
     }
     console.log(data); // 수정된 게시물 데이터 출력
-
     // 수정된 게시물 데이터 반환
+
     return data || [];
   } catch (error) {
     console.error(error);

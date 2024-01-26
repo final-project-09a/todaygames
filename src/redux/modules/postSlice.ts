@@ -9,10 +9,14 @@ interface Post {
 }
 
 interface PostState {
+  updatePost: any;
+  deletePost: any;
   posts: Post[];
 }
 
 const initialState: PostState = {
+  updatePost: [],
+  deletePost: [],
   posts: []
 };
 
