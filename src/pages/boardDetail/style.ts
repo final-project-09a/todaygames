@@ -69,6 +69,8 @@ const NickNameAndDate = styled.div`
 `;
 
 const NickNameAndTitleText = styled.div`
+  display: flex;
+  align-items: center;
   width: fit-content;
   height: 22.5px;
   color: #fff;
@@ -81,6 +83,7 @@ const NickNameAndTitleText = styled.div`
 `;
 
 const DateText = styled.div`
+  align-items: center;
   display: flex;
   width: fit-content;
   height: 22.5px;

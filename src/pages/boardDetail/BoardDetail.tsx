@@ -21,40 +21,50 @@ import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
 import { supabase } from 'types/supabase';
-import { useState } from 'react';
+import { SetStateAction, useState } from 'react';
 import { Post } from 'types/global.d';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
+import CustomCarousel from 'common/CustomCarousel';
+import styled from 'styled-components';
+import { getFormattedDate } from 'util/date';
 
 export const BoardDetail = () => {
   const { id } = useParams();
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const { data: userInfoData } = useQuery({
-    queryKey: [QUERY_KEYS.AUTH],
-    queryFn: UserInfo
-  });
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [selectedImage, setSelectedImage] = useState<string | null>('');
+  const [sliderIndex, setSliderIndex] = useState(0);
 
   const { data: gameData } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
-  // const { data: postData } = useQuery({
-  //   queryKey: [QUERY_KEYS.POSTS],
-  //   queryFn: getPosts
-  // });
 
-  const filteredUser = userInfoData?.filter((user) => user.id == id);
-  const user = filteredUser ? filteredUser[0] : null;
-  console.log(user);
+  const { data: userInfoData } = useQuery({
+    queryKey: [QUERY_KEYS.USERINFO],
+    queryFn: UserInfo
+  });
 
-  console.log(user?.nickname);
-  const filterdPost = gameData
-    ?.map((games) => {
-      return games;
-    })
-    .filter((onlyGames) => {
-      const postUserInfo = id;
-      return onlyGames.id == postUserInfo;
-    });
+  const settings = {
+    // row: 1,
+    infinite: false,
+    dots: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    draggable: true,
+    focusOnSelect: true,
+    arrow: true
+    // centerMode: true,
+    // centerPadding: '0px'
+  };
 
+  const filterdPost = gameData?.find((game) => game.id === id);
+  const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
+  const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
+  const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
+  const correctTime = getFormattedDate(filterdPost!.created_At);
   const deletePost = async (id: Post) => {
     try {
       const { data, error } = await supabase.from('posts').delete().eq('id', id);
@@ -67,15 +77,8 @@ export const BoardDetail = () => {
       alert('에러가 발생했습니다');
     }
   };
-  // const filteredPostCategory = postData?.filter((post) => post.category);
-
-  // const postCategory = filteredPostCategory?.filter((category) => {
-  //   return category.id == id;
-  // });
-  // console.log(filteredPostCategory);
-  // console.log(postCategory);
-  // console.log(userInfoData);
-  // console.log(postData);
+  console.log(correctImageArray);
+  console.log(correctTime);
   return (
     <>
       <AllContainer>
@@ -86,13 +89,13 @@ export const BoardDetail = () => {
             {/* 아바타이미지, 닉네임, 날짜, 게임이름 -------edit버튼 */}
             <WrappingImgText>
               {/* 아바타이미지 || 닉네임&날짜&게임이름 */}
-              <ProfileImage src={user?.avatar_url} />
+              <ProfileImage src={filteredUser?.avatar_url} />
               <WrappingUserInfo>
                 <NickNameAndDate>
-                  <NickNameAndTitleText>{user?.nickname}</NickNameAndTitleText>
-                  <DateText></DateText>
+                  <NickNameAndTitleText>{filteredUser?.nickname}</NickNameAndTitleText>
+                  <DateText>{correctTime}</DateText>
                 </NickNameAndDate>
-                <NickNameAndTitleText>{}</NickNameAndTitleText>
+                <NickNameAndTitleText>{filterdPost?.game}</NickNameAndTitleText>
               </WrappingUserInfo>
             </WrappingImgText>
             <UserInfoAndBtn />
@@ -112,19 +115,20 @@ export const BoardDetail = () => {
               )}
             </div>
           </UserInfoAndBtn>
-          {filterdPost?.map((post, index) => {
-            return <DetailImage key={index} src={post.image} />;
-          })}
-          {filterdPost?.map((post, index) => (
-            <DetailTitle key={index}>{post.title}</DetailTitle>
-          ))}
-          {filterdPost?.map((post, index) => (
-            <DetailContent key={index}>{post.content}</DetailContent>
-          ))}
+          <StCarouselWrapper>
+            <CustomCarousel settings={settings}>
+              {correctImageArray?.map((images, index) => (
+                <StImageWrapper key={index}>
+                  <img src={images} />
+                </StImageWrapper>
+              ))}
+            </CustomCarousel>
+          </StCarouselWrapper>
+
+          <DetailTitle>{filterdPost?.title}</DetailTitle>
+          <DetailContent>{filterdPost?.content}</DetailContent>
           <WrappingTags>
-            {filterdPost?.map((post, index) => (
-              <EachTag key={index}>{post.category}</EachTag>
-            ))}
+            <EachTag>{filterdPost?.category}</EachTag>
           </WrappingTags>
           <br />
           {/* <Comment /> */}
@@ -133,3 +137,23 @@ export const BoardDetail = () => {
     </>
   );
 };
+
+const StCarouselWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StImageWrapper = styled.figure`
+  align-items: center;
+  justify-content: center;
+  width: 800px;
+  height: 600px;
+  overflow: hidden;
+  & img {
+    padding: 0px 20px 0px 20px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+  }
+`;

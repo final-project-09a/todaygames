@@ -39,18 +39,18 @@ import AlertModal from 'components/register/AlertModal';
 
 const Register = () => {
   const navigate = useNavigate();
-
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
   const [gameName, setGameName] = useState('');
   const [tagText, setTagText] = useState('');
   const [searchedGame, setSearchedGame] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const currentTimestamp = new Date().getTime();
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -64,28 +64,6 @@ const Register = () => {
   };
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-
-  // 이미지를 Supabase 스토리지에 업로드하는 함수
-  const uploadImagesToSupabase = async () => {
-    const uploadedImageUrls: string[] = [];
-    try {
-      for (const file of imageFiles) {
-        // 공백 제거 및 특수 문자 대체
-        const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
-        // 파일 이름을 안전한 형태로 변환
-        const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const filePath = `${safeUserName}/${safeFileName}`;
-
-        const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
-        if (error) throw error;
-        const { data: publicURL } = supabase.storage.from('postImage').getPublicUrl(filePath);
-        uploadedImageUrls.push(publicURL.publicUrl);
-      }
-    } catch (error) {
-      console.error('Error uploading image: ', error);
-    }
-    return uploadedImageUrls;
-  };
 
   const handleImageUploading = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -139,6 +117,34 @@ const Register = () => {
     }
   });
 
+  // 이미지를 Supabase 스토리지에 업로드하는 함수
+  const postImagesToStorage = async () => {
+    const uploadedImageUrls = [];
+    try {
+      for (const file of imageFiles) {
+        // 공백 제거 및 특수 문자 대체, 한글도 포함하여 처리
+        const safeUserName = user?.nickname;
+        // 파일 이름을 안전한 형태로 변환
+        const safeFileName = file.name;
+        const regex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        if (regex.test(safeFileName)) {
+          throw new Error('파일 이름에는 한글을 사용할 수 없습니다.');
+        }
+        const filePath = `${safeUserName}/${safeFileName}/${currentTimestamp}`;
+
+        const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
+        if (error) throw error;
+        const { data: publicURL } = await supabase.storage.from('postImage').getPublicUrl(filePath);
+        uploadedImageUrls.push(publicURL.publicUrl);
+        console.log(uploadedImageUrls);
+        console.log(imageFiles);
+      }
+    } catch (error) {
+      console.error('Error uploading image: ', error);
+    }
+    return uploadedImageUrls;
+  };
+
   const registerPost = async () => {
     if (user?.id) {
       if (!title || !gameName || !tagText || !contentText) {
@@ -146,7 +152,11 @@ const Register = () => {
         setisAlertModalOpen(true);
         return;
       }
-      const uploadedImageUrls = await uploadImagesToSupabase();
+      const uploadedImageUrls = await postImagesToStorage();
+      console.log(uploadedImageUrls);
+      if (!Array.isArray(uploadedImageUrls)) {
+        return uploadedImageUrls;
+      }
 
       mutate({
         title: title,
@@ -236,7 +246,6 @@ const Register = () => {
               <RemoveImgBtn
                 onClick={() => {
                   handleImageDelete(index);
-                  console.log(imageUrls);
                 }}
               />
               <ImageBox key={index} src={url} alt={`업로드된 이미지 ${index + 1}`} />
