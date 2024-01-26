@@ -83,43 +83,28 @@ export const BoardList = ({ filteredPosts }: any) => {
   };
 
   // -----------------------------------------------------------
-  console.log(filteredPosts);
 
   const isOwner = (userId: string) => {
     return user && user.id === userId;
   };
 
-  const handleEditButtonClick = (postId: string) => {
+  const handleMoreInfoClick = (postId: string) => {
     setEditingPostId((prev) => (prev === postId ? null : postId));
     setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
-  // const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
-  //   console.log('취소버튼 구현중');
-  // };
-
-  // const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
-  //   if (!editingText) {
-  //     alert('수정 사항이 없습니다.');
-  //     return editingText;
-  //   }
-  //   const neweditPosts: string[] = [];
-  //   postsData?.map((post) => {
-  //     if (post.id === post?.content) {
-  //       neweditPosts.push(post?.content);
-  //     }
-  //   });
-  //   setEditText(neweditPosts.join(' '));
-  //   console.log('수정진행');
-  // }; //수정중 취소
+  const handleEditButtonClick = (postId: string) => {
+    const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
+  };
 
   const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
-  }; // 삭제 버튼
+  };
 
   const handleReport = () => {
-    alert('신고하기');
+    alert('신고기능 구현중...');
   };
 
   return (
@@ -143,10 +128,10 @@ export const BoardList = ({ filteredPosts }: any) => {
             const postIsOwner = isOwner(post.user_id);
             return (
               <StcontentBox key={post?.id}>
-                <EditBtn onClick={() => handleEditButtonClick(post.id)} />
+                <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {postIsOwner && editingPostId === post.id && (
                   <StfetchForm>
-                    <StButton onClick={() => console.log('수정')}>수정</StButton>
+                    <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
                     <StButton onClick={handleDeletePostButton}>삭제</StButton>
                   </StfetchForm>
                 )}
@@ -173,6 +158,9 @@ export const BoardList = ({ filteredPosts }: any) => {
                     <h3>{post?.title}</h3>
                     <p>{post?.content}</p>
                     <StTagWrapper>
+                      <Tag size="small" backgroundColor="secondary">
+                        {post.game}
+                      </Tag>
                       {post?.category
                         .split(',')
                         .map((item) => item.trim())
@@ -324,13 +312,14 @@ const StcontentBox = styled.div`
 `;
 
 const StProfileWrapper = styled.div`
-  width: 100%;
+  width: 920px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   & section {
     display: flex;
     align-items: center;
+    gap: 5px;
   }
 `;
 
@@ -355,12 +344,12 @@ const StUserNameWrapper = styled.div`
   flex-direction: column;
   gap: 5px;
   & h2 {
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 400;
   }
   & p {
     color: #999;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
   }
 `;
