@@ -153,6 +153,52 @@ const EachTag = styled.div`
   background: #363636;
 `;
 
+const WrappingComments = styled.div`
+  width: 1281px;
+  height: 470px;
+  display: flex;
+  flex-direction: column;
+  background: ${(props) => props.theme.color.gray};
+`;
+
+const RowCommentAndLike = styled.div`
+  margin: 30px 0px 20px 22px;
+  gap: 12px;
+  display: flex;
+  flex-direction: row;
+`;
+
+const CommentAndLike = styled.div`
+  width: 37px;
+  height: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`;
+
+const CommentsNum = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 37px;
+  height: 24px;
+  object-fit: cover;
+`;
+
+const NumText = styled.div`
+  display: flex;
+  margin-top: 3px;
+  width: 9px;
+  height: 14px;
+`;
+
+const LikeNum = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 43px;
+  height: 24px;
+  object-fit: cover;
+`;
+
 export {
   AllContainer,
   WrappingBoardDetail,
@@ -168,5 +214,11 @@ export {
   DetailTitle,
   DetailContent,
   WrappingTags,
-  EachTag
+  EachTag,
+  CommentAndLike,
+  CommentsNum,
+  LikeNum,
+  RowCommentAndLike,
+  WrappingComments,
+  NumText
 };
