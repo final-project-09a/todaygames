@@ -11,6 +11,8 @@ import { supabase } from 'types/supabase';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { GameType } from 'types/games';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createBookmark, deleteBookmark, matchBookmark } from 'api/bookmark';
 
 const settings = {
   infinite: true,
@@ -26,24 +28,20 @@ const GameTitle = () => {
   const screenShots = data?.screenshots;
   const [currentCenter, setCurrentCenter] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const queryClient = useQueryClient();
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
+  // app_id와 user_id와 일치하는지 확인하여 북마크 여부 확인
   useEffect(() => {
     const checkBookmarked = async () => {
       if (user?.id && data?.steam_appid) {
-        const { data: bookmark, error } = await supabase
-          .from('user_bookmarks')
-          .select('user_id, app_id')
-          .eq('user_id', user.id)
-          .eq('app_id', data.steam_appid);
-
-        if (error) {
-          console.error('Error checking bookmark:', error);
-          return;
+        try {
+          const bookmarkData = await matchBookmark(user.id, data.steam_appid);
+          setIsBookmarked(!!bookmarkData && bookmarkData.length > 0);
+        } catch (error) {
+          console.error('북마크 여부 확인 에러: ', error);
         }
-
-        setIsBookmarked(bookmark.length > 0);
       }
     };
 
@@ -60,21 +58,27 @@ const GameTitle = () => {
     }
   };
 
+  // 찜 눌렀을 때 추가, 삭제
+  const mutation = useMutation<void, Error, { userId: string; appId: number }, Error>({
+    mutationFn: async ({ userId, appId }) => {
+      if (isBookmarked) {
+        await deleteBookmark(userId, appId);
+      } else {
+        await createBookmark(userId, appId);
+      }
+    },
+    onSuccess: () => {
+      setIsBookmarked((prevValue) => !prevValue);
+    },
+    onError: (error: Error) => {
+      console.error('북마크 에러: ', error);
+    }
+  });
+
   const handleBookmarkClick = async (userId: string, appId: number) => {
     if (user) {
       try {
-        if (isBookmarked) {
-          await supabase.from('user_bookmarks').delete().eq('user_id', userId).eq('app_id', appId);
-        } else {
-          await supabase.from('user_bookmarks').upsert([
-            {
-              user_id: userId,
-              app_id: appId
-            }
-          ]);
-        }
-
-        setIsBookmarked(!isBookmarked);
+        await mutation.mutateAsync({ userId, appId });
       } catch (error) {
         console.error('Error handling bookmark:', error);
       }
