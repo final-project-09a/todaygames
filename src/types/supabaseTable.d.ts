@@ -11,7 +11,6 @@ export interface Typedata {
           title: string;
           game: string;
           category: string;
-
           content: string;
           image: string;
           created_At: string;
@@ -46,9 +45,14 @@ export interface Typedata {
           content?: string;
         };
         Delete: {
-          title: string;
-          image: string;
+          id: string;
+          user_id: string;
           content: string;
+          image: string;
+          title: string;
+          category: string;
+          game: string;
+          created_At: Date;
         };
       };
       comments: {

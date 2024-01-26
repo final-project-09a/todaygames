@@ -8,10 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { getReplies } from 'api/replies';
-import comments from 'assets/icons/comments.svg';
-import thumsUp from 'assets/icons/thumsUp.svg';
-import send from 'assets/icons/send.svg';
-import Button from 'common/Button';
+
 import { useCommentQuery } from 'query/useReplyQuery';
 type userInfotypelist = {
   userInfoData: React.ReactNode;
@@ -81,37 +78,8 @@ const Comment = () => {
   commentArrayContent[0] = commentData || [];
   commentArrayContent[1] = repliesData || [];
   console.log('commentArrayContent', commentArrayContent);
-  // 데이터 요청
-  // const commentButtoneventHandler = () => {
-  //   mappingData?.map((comm, index) => (
-  //     <div key={index}>
-  //       <div>{comm.avatar_url}</div>
-  //       <div>{comm.nickname}</div>
-  //       <form>
-  //         <p>{comm.comments}</p>
-  //         <div>
-  //           <img src={comments} />
-  //           <p>5</p>
-  //         </div>
-  //         <div>
-  //           <img src={thumsUp} />
-  //           <p>5</p>
-  //         </div>
-  //       </form>
-  //     </div>
-  //   ));
-  // };
-  // 댓글,대댓글 filter
-  const filtercommentData = mappingData?.filter((comm) => comm.userid === user?.id);
-  // const filterArrayComments = commentArrayContent.filter(); // 댓글 필터링
 
-  //댓글 테이블 저장 기능
-  // 1. 먼저 댓글 ui부터하자
-  // 2. 해당 유저가 댓글입력하면 본인 프로플이랑 내용 나오는지 테이블에 잘 들어가는지 확인
-  // 댓글 테이블
-  // 댓글 조회
-  // 조회된 댓글 시각화
-  //대댓글 기능 추가 =>댓글의 하위 항목으로
+  const filtercommentData = mappingData?.filter((comm) => comm.userid === user?.id);
 
   return (
     <>
@@ -153,8 +121,3 @@ const StcommentContainer = styled.div`
   color: ${(props) => props.theme.color.white};
   padding: 20px;
 `;
-// 댓글 구현 로직
-//1. 테이블 확인
-//.2 css 구현
-//3. 유저정보 불러오기
-// 4. 로그인 할시 댓글 가능
