@@ -7,13 +7,14 @@ import { StCommunityContainer, StboardListContainer, Sttitle } from './styles';
 
 export const Board = () => {
   const [filteredPosts, setFilteredPosts] = useState([]);
+  const [editingText, setEditText] = useState('');
 
   return (
     <StCommunityContainer>
       <Sttitle>커뮤니티</Sttitle>
       <StboardListContainer>
         <BoardCategory setFilteredPosts={setFilteredPosts} filteredPosts={filteredPosts} />
-        <BoardList filteredPosts={filteredPosts} />
+        <BoardList filteredPosts={filteredPosts} editingText={editingText} setEditText={setEditText} />
       </StboardListContainer>
     </StCommunityContainer>
   );
