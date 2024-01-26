@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { supabase } from 'types/supabase';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const MyBookMark = () => {
   const [bookmarks, setBookmarks] = useState<any[]>([]);
@@ -61,18 +62,18 @@ const MyBookMark = () => {
   return (
     <StUserInfoContainer>
       <StContentBox>
-        <StTitle>찜한 게임 {games.length}</StTitle> {/* 수정된 부분 */}
+        <StTitle>찜한 게임 {games.length}</StTitle>
         <StGameList>
           {' '}
-          {/* 추가된 부분 */}
           {games.map((game: any, index: number) => (
             <GameItem key={index}>
-              <img src={game.header_image} alt={game.name} />
-              <h3>Game: {game.name}</h3>
+              <Link to={`/detail/${game.app_id}`}>
+                <img src={game.header_image} alt={game.name} />
+                <h3>Game: {game.name}</h3>
+              </Link>
             </GameItem>
           ))}
         </StGameList>{' '}
-        {/* 추가된 부분 */}
       </StContentBox>
     </StUserInfoContainer>
   );
@@ -130,7 +131,7 @@ const StContentBox = styled.div`
   justify-content: flex-start;
   position: relative;
   width: 1100px;
-  height: 800px;
+  min-height: 800px;
   border-radius: 10px;
   padding: 40px;
   display: flex;
