@@ -35,7 +35,6 @@ interface ButtonProps {
 }
 
 const Comment = () => {
-  const [actionComment, setActionComment] = useState([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
@@ -68,23 +67,23 @@ const Comment = () => {
   console.log('commentArrayContent', commentArrayContent);
   // 데이터 요청
   const commentButtoneventHandler = () => {
-    mappingData?.map((comm, index) => (
-      <div key={index}>
-        <div>{comm.avatar_url}</div>
-        <div>{comm.nickname}</div>
-        <form>
-          <p>{comm.comments}</p>
-          <div>
-            <img src={comments} />
-            <p>5</p>
-          </div>
-          <div>
-            <img src={thumsUp} />
-            <p>5</p>
-          </div>
-        </form>
-      </div>
-    ));
+    // mappingData?.map((comm, index) => (
+    //   <div key={index}>
+    //     <div>{comm.avatar_url}</div>
+    //     <div>{comm.nickname}</div>
+    //     <form>
+    //       <p>{comm.comments}</p>
+    //       <div>
+    //         <img src={comments} />
+    //         <p>5</p>
+    //       </div>
+    //       <div>
+    //         <img src={thumsUp} />
+    //         <p>5</p>
+    //       </div>
+    //     </form>
+    //   </div>
+    // ));
   };
   // 댓글,대댓글 filter
   const filtercommentData = mappingData?.filter((comm) => comm.userid === user?.id);

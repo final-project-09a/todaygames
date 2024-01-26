@@ -23,6 +23,7 @@ import { useParams } from 'react-router-dom';
 import { supabase } from 'types/supabase';
 import { useState } from 'react';
 import { Post } from 'types/global.d';
+import Comment from 'components/comment/Comment';
 
 export const BoardDetail = () => {
   const { id } = useParams();
