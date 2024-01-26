@@ -12,6 +12,7 @@ import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import send from 'assets/icons/send.svg';
 import Button from 'common/Button';
+import { useCommentQuery } from 'query/useReplyQuery';
 type userInfotypelist = {
   userInfoData: React.ReactNode;
 };
@@ -36,18 +37,32 @@ interface ButtonProps {
 
 const Comment = () => {
   const [actionComment, setActionComment] = useState([]);
+  const [commentContent, setCommentContent] = useState('');
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
   });
   console.log('userinfoData', userInfoData);
-
   const { data: mappingData } = useQuery({
     queryKey: [QUERY_KEYS.COMMENTS],
     queryFn: mappingComments
   });
   console.log('mappingData', mappingData);
+  const addReplyMutate = useCommentQuery();
+
+  const handleCommentOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCommentContent(e.target.value);
+  };
+
+  const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    const newReply = {
+      comments: commentContent,
+      user_id: user?.id,
+      comment_id: 8
+    };
+  };
 
   // 댓글 정보 가져오기
   useEffect(() => {
@@ -67,25 +82,25 @@ const Comment = () => {
   commentArrayContent[1] = repliesData || [];
   console.log('commentArrayContent', commentArrayContent);
   // 데이터 요청
-  const commentButtoneventHandler = () => {
-    mappingData?.map((comm, index) => (
-      <div key={index}>
-        <div>{comm.avatar_url}</div>
-        <div>{comm.nickname}</div>
-        <form>
-          <p>{comm.comments}</p>
-          <div>
-            <img src={comments} />
-            <p>5</p>
-          </div>
-          <div>
-            <img src={thumsUp} />
-            <p>5</p>
-          </div>
-        </form>
-      </div>
-    ));
-  };
+  // const commentButtoneventHandler = () => {
+  //   mappingData?.map((comm, index) => (
+  //     <div key={index}>
+  //       <div>{comm.avatar_url}</div>
+  //       <div>{comm.nickname}</div>
+  //       <form>
+  //         <p>{comm.comments}</p>
+  //         <div>
+  //           <img src={comments} />
+  //           <p>5</p>
+  //         </div>
+  //         <div>
+  //           <img src={thumsUp} />
+  //           <p>5</p>
+  //         </div>
+  //       </form>
+  //     </div>
+  //   ));
+  // };
   // 댓글,대댓글 filter
   const filtercommentData = mappingData?.filter((comm) => comm.userid === user?.id);
   // const filterArrayComments = commentArrayContent.filter(); // 댓글 필터링
@@ -101,14 +116,12 @@ const Comment = () => {
   return (
     <>
       <StcommentContainer>
-        /
-        <div>
-          <input placeholder="댓글 남기기" />
-          <button onClick={commentButtoneventHandler}>
-            <img src={send} />
-          </button>{' '}
-          ?
-        </div>
+        {/* <form onClick={handleReplySubmit}>
+          <input value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기" />
+          <button>제출</button>
+        </form> */}
+        <StUpdateSoon>댓글 기능은</StUpdateSoon>
+        <StUpdateSoon>곧 업데이트 될 예정입니다</StUpdateSoon>
       </StcommentContainer>
     </>
   );
@@ -116,11 +129,23 @@ const Comment = () => {
 
 export default Comment;
 
+const StUpdateSoon = styled.div`
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 90%;
+  height: 100%;
+  font-size: 100px;
+  color: #999;
+`;
+
 const StcommentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 1180px;
-  height: max-content;
+  justify-content: center;
+  align-items: center;
+  max-width: 1281px;
+  height: 479px;
   margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
