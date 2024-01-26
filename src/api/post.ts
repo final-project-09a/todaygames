@@ -7,11 +7,8 @@ interface Post {
 }
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
-
     const { data } = await supabase.from(QUERY_KEYS.POSTS).select(`*`);
     // .order('create_At', { ascending: false }); // 날짜 컬럼
-
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*');
 
     return data || [];
   } catch (error) {
@@ -43,21 +40,15 @@ export const updatedataPosts = async (
   }
 };
 
-// export const deletePosts = async (): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
-//   try {
-//     const { data } = await supabase
-//       .from(QUERY_KEYS.POSTS)
-//       .delete('content')
-//       .eq('id', 1)
-//       .single()
-//       .then((response) => dispatch(response.data));
-//     //.order('create_At', { ascending: false }); // 날짜 컬럼
-//     return data || [];
-//   } catch (error) {
-//     console.error(error);
-//     throw error;
-//   }
-// };
+export const deletePosts = async (id: string): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
+  try {
+    const { data } = await supabase.from(QUERY_KEYS.POSTS).delete().eq('id', id);
+    return data || [];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 // getPosts()
 //   .then((data) => {
 //     console.log(data);
