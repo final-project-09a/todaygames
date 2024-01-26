@@ -61,21 +61,60 @@ const MyBookMark = () => {
   return (
     <StUserInfoContainer>
       <StContentBox>
-        <h2>찜 목록</h2>
-
-        {games.map((game: any, index: number) => (
-          <>
-            {' '}
-            <h3 key={index}>Game: {game.name} </h3>
-            <img src={game.header_image}></img>
-          </>
-        ))}
+        <StTitle>찜한 게임 {games.length}</StTitle> {/* 수정된 부분 */}
+        <StGameList>
+          {' '}
+          {/* 추가된 부분 */}
+          {games.map((game: any, index: number) => (
+            <GameItem key={index}>
+              <img src={game.header_image} alt={game.name} />
+              <h3>Game: {game.name}</h3>
+            </GameItem>
+          ))}
+        </StGameList>{' '}
+        {/* 추가된 부분 */}
       </StContentBox>
     </StUserInfoContainer>
   );
 };
 
 export default MyBookMark;
+
+const StTitle = styled.h1`
+  margin-bottom: 20px;
+`;
+
+const StGameList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  flex-direction: row;
+`;
+
+const GameItem = styled.div`
+  width: calc((100% - 3 * 2%) / 4);
+  height: calc((100% - 3 * 2%) / 4);
+  margin-right: 2%;
+  margin-bottom: 2%;
+  margin-top: 5%;
+
+  &:nth-child(4n) {
+    margin-right: 0;
+  }
+
+  & h3 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  & img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+`;
 
 const StUserInfoContainer = styled.div`
   display: flex;
@@ -86,6 +125,9 @@ const StUserInfoContainer = styled.div`
 `;
 
 const StContentBox = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   position: relative;
   width: 1100px;
   height: 800px;
@@ -95,6 +137,8 @@ const StContentBox = styled.div`
   flex-direction: column;
   background-color: ${(props) => props.theme.color.gray};
   margin-bottom: 30px;
+  align-content: flex-start;
+  flex-direction: row;
   & h2 {
     font-size: 18px;
     font-weight: 700;
