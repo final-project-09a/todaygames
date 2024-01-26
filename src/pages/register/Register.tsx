@@ -27,7 +27,7 @@ import {
 } from './styles';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from 'types/supabase';
 import { getGames } from 'api/games';
 import { QUERY_KEYS } from 'query/keys';
@@ -39,6 +39,12 @@ import AlertModal from 'components/register/AlertModal';
 
 const Register = () => {
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const { post } = location.state || {};
+
+
+
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
   const [gameName, setGameName] = useState('');
@@ -51,6 +57,15 @@ const Register = () => {
   const [modalContent, setModalContent] = useState('');
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const currentTimestamp = new Date().getTime();
+
+  useEffect(() => {
+    setTitle(post?.title || '');
+    setContentText(post?.content || '');
+    setGameName(post?.game || '');
+    setTagText(post?.category || '');
+  });
+
+  const isEditing = !!post;
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -117,6 +132,9 @@ const Register = () => {
     }
   });
 
+
+  const handelRegisterButton = async () => {
+
   // 이미지를 Supabase 스토리지에 업로드하는 함수
   const postImagesToStorage = async () => {
     const uploadedImageUrls = [];
@@ -146,6 +164,7 @@ const Register = () => {
   };
 
   const registerPost = async () => {
+
     if (user?.id) {
       if (!title || !gameName || !tagText || !contentText) {
         setModalContent('제목, 게임 이름, 내용은 필수 입력사항입니다!');
@@ -176,6 +195,10 @@ const Register = () => {
     }
   };
 
+  const handleEditButton = () => {
+    alert('수정기능 구현중...');
+  };
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setisAlertModalOpen(false);
@@ -195,10 +218,12 @@ const Register = () => {
     <MainBackground>
       <WrappingBtnAndInput>
         <WrappingTitleAndBtn>
-          <TitleText>게시글 작성</TitleText>
+          <TitleText>{isEditing ? '게시글 수정' : '게시글 작성'}</TitleText>
           <WrappingBtns>
             <CancelBtn onClick={cancelBtnHandler}>취소</CancelBtn>
-            <RegisterBtn onClick={registerPost}>등록</RegisterBtn>
+            <RegisterBtn onClick={isEditing ? handleEditButton : handelRegisterButton}>
+              {isEditing ? '수정' : '등록'}
+            </RegisterBtn>
           </WrappingBtns>
         </WrappingTitleAndBtn>
         <WrappingAllComponents>
