@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from 'types/supabase';
 import { RootState } from 'redux/config/configStore';
 import { Link } from 'react-router-dom';
+import { Typedata } from 'types/supabaseTable';
+import Button from 'common/Button';
 
 const MyCommunity = () => {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
+  const [loading, setLoading] = useState(true);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   useEffect(() => {
     const fetchPosts = async () => {
@@ -25,14 +28,18 @@ const MyCommunity = () => {
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
+      } finally {
+        setLoading(false);
       }
     };
     if (user?.id) {
       fetchPosts();
     }
   }, [user?.id]);
-  console.log(posts);
-  console.log(user?.id);
+
+  if (loading) {
+    return <p>로딩중...</p>;
+  }
 
   return (
     <StUserInfoContainer>
@@ -54,7 +61,7 @@ const MyCommunity = () => {
             ))
           ) : (
             <StyledDiv>
-              등록된 게시글이 없습니다.
+              <h3>등록된 게시글이 없습니다.</h3>
               <Link to="/register">
                 <StyledButton>게시물 등록하기</StyledButton>
               </Link>
@@ -74,22 +81,24 @@ const StyledDiv = styled.div`
   align-items: center;
   height: 100%;
   flex-direction: column;
-  margin-top: 120px;
+  gap: 40px;
+  margin-top: 40px;
 `;
 
 const StyledButton = styled.button`
-  margin-top: 50px;
   border-radius: 50px;
   background: ${(props) => props.theme.color.primary};
   color: ${(props) => props.theme.color.white};
-  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
   width: 250px;
   height: 50px;
   cursor: pointer;
   transition: 0.3s;
   flex-shrink: 0;
   &:hover {
-    background: #1a3b7a;
+    color: ${(props) => props.theme.color.gray};
+    background: ${(props) => props.theme.color.white};
   }
 `;
 
@@ -130,14 +139,13 @@ const StUserInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 1100px;
-  height: 1000px;
   margin-left: 20px;
 `;
 
 const StContentBox = styled.div`
   position: relative;
   width: 1100px;
-  height: 800px;
+  min-height: 350px;
   border-radius: 10px;
   padding: 40px;
   display: flex;

@@ -11,6 +11,7 @@ export interface Typedata {
           title: string;
           game: string;
           category: string;
+
           content: string;
           image: string;
           created_At: string;

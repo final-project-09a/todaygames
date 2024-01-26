@@ -38,24 +38,26 @@ interface Post {
   text: string;
 }
 
-export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
+export const BoardList = ({ filteredPosts }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
-  const [isEditing, setIsEditing] = useState(false); // 수정 삭제
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchText, SetSearchText] = useState<string>('');
+
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
 
   const navigate = useNavigate();
 
-  const updatePost = useSelector((state: any) => state.postSlice.updatePost);
+  // const updatePost = useSelector((state: any) => state.postSlice.updatePost);
   // const deletePost = useSelector((state: any) => state.postSlice.deletePost);
+
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
-  const { data: EditData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts }); // <= 이거원래 updatedataPosts
-  console.log(EditData);
+
+  // const { data: postsData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts }); // <= 이거원래 updatedataPosts
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -80,36 +82,29 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
     SetSearchText(e.target.value);
   };
 
-  const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
-    console.log('취소버튼 구현중');
+  // -----------------------------------------------------------
+
+  const isOwner = (userId: string) => {
+    return user && user.id === userId;
   };
 
-  const editButtonModeChange = (index: any) => {
-    if (index.id == updatePost.id) return setDropdownVisible(true);
+  const handleMoreInfoClick = (postId: string) => {
+    setEditingPostId((prev) => (prev === postId ? null : postId));
+    setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
-  const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (!editingText) {
-      alert('수정 사항이 없습니다.');
-      return editingText;
-    }
-    const neweditPosts: string[] = [];
-    EditData?.map((post) => {
-      if (post.id === post?.content) {
-        neweditPosts.push(post?.content);
-      }
-    });
-    setEditText(neweditPosts.join(' '));
-    console.log('수정진행');
-  }; //수정중 취소
-  const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const handleEditButtonClick = (postId: string) => {
+    const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
+  };
+
+  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
-  }; // 삭제 버튼
+  };
 
-  const editSubmit = (e: any) => {
-    e.preventDefault();
-    editingText;
+  const handleReport = () => {
+    alert('신고기능 구현중...');
   };
 
   return (
@@ -124,31 +119,28 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
           </Button>
         </StsearchBox>
       </StSeachContainer>
+
       {filteredPosts.length > 0 ? (
         initialDisplayedPosts.map((post: PostDetail) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
           if (userInfo) {
+            const postIsOwner = isOwner(post.user_id);
             return (
               <StcontentBox key={post?.id}>
-                <>
-                  {/* <StEditPost onClick={() => setIsEditing(!isEditing)} /> */}
-                  <EditBtn onClick={editButtonModeChange}>
-                    {isEditing ? (
-                      <StrefetchForm key={post.id}>
-                        <StButton onClick={onCancelBtn}>취소</StButton>
-                        <StButton onClick={onEditDone}>수정완료</StButton>
-                      </StrefetchForm>
-                    ) : (
-                      dropdownVisible && (
-                        <StfetchForm onSubmit={editSubmit}>
-                          <StButton onClick={() => setIsEditing(true)}>수정</StButton>
-                          <StButton onClick={onDeleteBtn}>삭제</StButton>
-                        </StfetchForm>
-                      )
-                    )}
-                  </EditBtn>
-                </>
+                <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
+                {postIsOwner && editingPostId === post.id && (
+                  <StfetchForm>
+                    <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
+                    <StButton onClick={handleDeletePostButton}>삭제</StButton>
+                  </StfetchForm>
+                )}
+
+                {!postIsOwner && editingPostId === post.id && (
+                  <StfetchForm>
+                    <StButton onClick={handleReport}>신고하기</StButton>
+                  </StfetchForm>
+                )}
 
                 <StProfileWrapper onClick={() => movedetailPageOnClick(post?.id)}>
                   <section>
@@ -164,22 +156,11 @@ export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
                 <StContentWrapper>
                   <StText>
                     <h3>{post?.title}</h3>
-                    {isEditing ? (
-                      <>
-                        <StTextarea
-                          key={post.id}
-                          autoFocus
-                          defaultValue={post?.content}
-                          onChange={(event) => setEditText(event.target.value)}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <p>{post?.content}</p>
-                      </>
-                    )}
-
+                    <p>{post?.content}</p>
                     <StTagWrapper>
+                      <Tag size="small" backgroundColor="secondary">
+                        {post.game}
+                      </Tag>
                       {post?.category
                         .split(',')
                         .map((item) => item.trim())
@@ -227,7 +208,6 @@ const StTextarea = styled.textarea`
   flex-direction: column;
   gap: 10px;
   margin: 30px 0;
-  max-width: 900px;
   height: 250px;
   overflow: hidden;
   resize: none;
@@ -255,11 +235,15 @@ const StButton = styled.button`
     background-color: ${(props) => props.theme.color.gray};
   }
 `;
-const StfetchForm = styled.form`
+const StfetchForm = styled.div`
   flex-direction: column;
   padding: 10px;
-  justify-content: space-between;
+  justify-content: flex-end;
   display: flex;
+  position: absolute;
+  z-index: 20;
+  right: 2%;
+  top: 16%;
 `;
 const StrefetchForm = styled.form`
   flex-direction: column;
@@ -314,6 +298,7 @@ const StSearchIcon = styled.div`
 `;
 
 const StcontentBox = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   max-width: 1180px;
@@ -327,13 +312,14 @@ const StcontentBox = styled.div`
 `;
 
 const StProfileWrapper = styled.div`
-  width: 100%;
+  width: 920px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   & section {
     display: flex;
     align-items: center;
+    gap: 5px;
   }
 `;
 
@@ -358,12 +344,12 @@ const StUserNameWrapper = styled.div`
   flex-direction: column;
   gap: 5px;
   & h2 {
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 400;
   }
   & p {
     color: #999;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
   }
 `;
