@@ -6,11 +6,13 @@ export interface Typedata {
       posts: {
         Row: {
           id: string;
-          user_id: string;
+          title: string;
+          game: string;
+          category: string;
           content: string;
           image: string;
-          title: string;
-          category: string;
+          created_At: string;
+          user_id: string;
         };
         Insert: {
           id: string;

@@ -36,7 +36,6 @@ import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
-import { postImagesToStorage } from 'api/supabaseData';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -46,11 +45,11 @@ const Register = () => {
   const [tagText, setTagText] = useState('');
   const [searchedGame, setSearchedGame] = useState('');
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -117,6 +116,32 @@ const Register = () => {
     }
   });
 
+  // 이미지를 Supabase 스토리지에 업로드하는 함수
+  const postImagesToStorage = async () => {
+    const uploadedImageUrls = [];
+    try {
+      for (const file of imageFiles) {
+        // 공백 제거 및 특수 문자 대체, 한글도 포함하여 처리
+        const safeUserName = user?.nickname;
+        // 파일 이름을 안전한 형태로 변환
+        const safeFileName = file.name;
+        const regex = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        if (regex.test(safeFileName)) {
+          throw new Error('파일 이름에는 한글을 사용할 수 없습니다.');
+        }
+        const filePath = `${safeUserName}/${safeFileName}`;
+
+        const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
+        if (error) throw error;
+        const { data: publicURL } = await supabase.storage.from('postImage').getPublicUrl(filePath);
+        uploadedImageUrls.push(publicURL.publicUrl);
+      }
+    } catch (error) {
+      console.error('Error uploading image: ', error);
+    }
+    return uploadedImageUrls;
+  };
+
   const registerPost = async () => {
     if (user?.id) {
       if (!title || !gameName || !tagText || !contentText) {
@@ -124,7 +149,11 @@ const Register = () => {
         setisAlertModalOpen(true);
         return;
       }
-      const uploadedImageUrls = await postImagesToStorage();
+      let uploadedImageUrls = await postImagesToStorage();
+      console.log(uploadedImageUrls);
+      if (!Array.isArray(uploadedImageUrls)) {
+        uploadedImageUrls = [uploadedImageUrls];
+      }
 
       mutate({
         title: title,
@@ -214,7 +243,6 @@ const Register = () => {
               <RemoveImgBtn
                 onClick={() => {
                   handleImageDelete(index);
-                  console.log(imageUrls);
                 }}
               />
               <ImageBox key={index} src={url} alt={`업로드된 이미지 ${index + 1}`} />
