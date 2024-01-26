@@ -16,6 +16,7 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
+import { getPosts, updatedataPosts } from 'api/post';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -37,21 +38,24 @@ interface Post {
   text: string;
 }
 
-export const BoardList = ({ filteredPosts }: any) => {
+export const BoardList = ({ filteredPosts, setEditText, editingText }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [isEditing, setIsEditing] = useState(false); // 수정 삭제
-  const [isdefault, setIsDefault] = useState(false); // 수정 삭제
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const [searchText, SetSearchText] = useState<string>('');
-  const [editingText, setEditText] = useState('');
+
+  const user = useSelector((state: any) => state.userSlice.userInfo);
 
   const navigate = useNavigate();
-  const user = useSelector((state: any) => state.userSlice.userInfo);
+
   const updatePost = useSelector((state: any) => state.postSlice.updatePost);
-  const deletePost = useSelector((state: any) => state.postSlice.deletePost);
+  // const deletePost = useSelector((state: any) => state.postSlice.deletePost);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
+  const { data: EditData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts }); // <= 이거원래 updatedataPosts
+  console.log(EditData);
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -61,8 +65,6 @@ export const BoardList = ({ filteredPosts }: any) => {
       navigate('/login');
     }
   };
-
-  //const { data } = useQuery({ queryKey: 'updatePosts' });
 
   const movedetailPageOnClick = (item: string) => {
     navigate(`/boarddetail/${item}`);
@@ -78,25 +80,38 @@ export const BoardList = ({ filteredPosts }: any) => {
     SetSearchText(e.target.value);
   };
 
-  const handleEditPost = () => {
-    user?.id === filteredPosts.user_id ? <p>수정하기</p> : <p>신고하기</p>;
-  };
-
-  const categoryOnclick = () => {
-    setIsDefault(isEditing);
-  };
-
   const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
     console.log('취소버튼 구현중');
   };
 
+  const editButtonModeChange = (index: any) => {
+    if (index.id == updatePost.id) return setDropdownVisible(true);
+  };
+
   const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
-    if (!editingText) return alert('수정 사항이 없습니다.');
+    if (!editingText) {
+      alert('수정 사항이 없습니다.');
+      return editingText;
+    }
+    const neweditPosts: string[] = [];
+    EditData?.map((post) => {
+      if (post.id === post?.content) {
+        neweditPosts.push(post?.content);
+      }
+    });
+    setEditText(neweditPosts.join(' '));
+    console.log('수정진행');
   }; //수정중 취소
   const onDeleteBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
   }; // 삭제 버튼
+
+  const editSubmit = (e: any) => {
+    e.preventDefault();
+    editingText;
+  };
+
   return (
     <div>
       <StSeachContainer>
@@ -115,22 +130,27 @@ export const BoardList = ({ filteredPosts }: any) => {
 
           if (userInfo) {
             return (
-              <StcontentBox key={post?.id} onClick={() => movedetailPageOnClick(post?.id)}>
-                <EditBtn onClick={categoryOnclick} />
-                {isEditing ? (
-                  <StrefetchForm>
-                    <StButton onClick={onCancelBtn}>취소</StButton>
-                    <StButton onClick={onEditDone}>수정완료</StButton>
-                  </StrefetchForm>
-                ) : (
-                  <>
-                    <StfetchForm>
-                      <StButton onClick={() => setIsEditing(true)}>수정</StButton>
-                      <StButton onClick={onDeleteBtn}>삭제</StButton>
-                    </StfetchForm>
-                  </>
-                )}
-                <StProfileWrapper>
+              <StcontentBox key={post?.id}>
+                <>
+                  {/* <StEditPost onClick={() => setIsEditing(!isEditing)} /> */}
+                  <EditBtn onClick={editButtonModeChange}>
+                    {isEditing ? (
+                      <StrefetchForm key={post.id}>
+                        <StButton onClick={onCancelBtn}>취소</StButton>
+                        <StButton onClick={onEditDone}>수정완료</StButton>
+                      </StrefetchForm>
+                    ) : (
+                      dropdownVisible && (
+                        <StfetchForm onSubmit={editSubmit}>
+                          <StButton onClick={() => setIsEditing(true)}>수정</StButton>
+                          <StButton onClick={onDeleteBtn}>삭제</StButton>
+                        </StfetchForm>
+                      )
+                    )}
+                  </EditBtn>
+                </>
+
+                <StProfileWrapper onClick={() => movedetailPageOnClick(post?.id)}>
                   <section>
                     <StUserImageWrapper>
                       <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
@@ -140,7 +160,6 @@ export const BoardList = ({ filteredPosts }: any) => {
                       <p>{post.created_At}</p>
                     </StUserNameWrapper>
                   </section>
-                  <StEditPost onClick={handleEditPost}></StEditPost>
                 </StProfileWrapper>
                 <StContentWrapper>
                   <StText>
@@ -148,6 +167,7 @@ export const BoardList = ({ filteredPosts }: any) => {
                     {isEditing ? (
                       <>
                         <StTextarea
+                          key={post.id}
                           autoFocus
                           defaultValue={post?.content}
                           onChange={(event) => setEditText(event.target.value)}
@@ -193,6 +213,7 @@ export const BoardList = ({ filteredPosts }: any) => {
       ) : (
         <StNullboard>게시물이 없습니다.</StNullboard>
       )}
+
       {initialDisplayedPosts.length < filteredPosts.length && (
         <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>
       )}
@@ -213,28 +234,42 @@ const StTextarea = styled.textarea`
   border-radius: 5px;
   background-color: #3a3a3a;
   color: ${(props) => props.theme.color.white};
+  font-weight: 900;
 `;
 const StButton = styled.button`
-  display: flex;
-  position: relative;
-  flex-direction: row;
-  right: 360px;
+  position: flex;
+  height: 40px;
+  width: 90px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+  transition: 0.3s ease;
+  cursor: pointer;
+  & p {
+    color: ${(props) => props.theme.color.white};
+    font-weight: 500;
+  }
+  &:hover {
+    & h4 {
+      color: ${(props) => props.theme.color.gray};
+    }
+    background-color: ${(props) => props.theme.color.gray};
+  }
 `;
 const StfetchForm = styled.form`
-  flex-direction: row;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: space-between;
   display: flex;
-
-  justify-content: center;
 `;
 const StrefetchForm = styled.form`
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: space-between;
   display: flex;
-
-  justify-content: center;
 `;
 const EditBtn = styled.button`
   display: flex;
   position: relative;
+  flex-direction: row;
   top: 10px;
   left: 1100px;
   width: 24px;
@@ -300,10 +335,6 @@ const StProfileWrapper = styled.div`
     display: flex;
     align-items: center;
   }
-`;
-
-const StEditPost = styled.div`
-  display: flex;
 `;
 
 const StUserImageWrapper = styled.figure`

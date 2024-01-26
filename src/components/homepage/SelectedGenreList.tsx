@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { GameData, setGame } from '../../redux/modules/gameSlice';
+import { setGame } from '../../redux/modules/gameSlice';
 import MoreViewButton from 'common/MoreViewButton';
 import GenreListSkeleton from 'components/skeletons/GenreListSkeleton';
 import { Typedata } from 'types/supabaseTable';

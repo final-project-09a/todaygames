@@ -8,5 +8,6 @@ export const QUERY_KEYS = {
   DETAIL: 'detail',
   MEMOS: 'memos',
   AUTH: 'auth',
-  USERINFO: 'userinfo'
+  USERINFO: 'userinfo',
+  BOOKMARK: 'user_bookmarks'
 };

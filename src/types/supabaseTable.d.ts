@@ -1,3 +1,5 @@
+import React from 'react';
+
 //  게시판 타입 저장
 export type Json = string | Date | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 export interface Typedata {
@@ -9,26 +11,35 @@ export interface Typedata {
           title: string;
           game: string;
           category: string;
+
           content: string;
           image: string;
           created_At: string;
           user_id: string;
+
+          game: string;
+          created_At: ReactNode;
+
         };
         Insert: {
           id: string;
-          user_id?: string;
-          category: string;
-          title: string;
-          image?: string;
+          user_id: string;
           content: string;
+          image: string;
+          title: string;
+          category: string;
+          game: string;
+          created_At: Date;
         };
         Update: {
           id: string;
           user_id: string;
-          category: string;
-          title: string;
-          image: string;
           content: string;
+          image: string;
+          title: string;
+          category: string;
+          game: string;
+          created_At: Date;
         };
         Controll: {
           id?: string;

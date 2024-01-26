@@ -18,6 +18,7 @@ export interface GameType {
   header_image: string;
   steam_appid: number;
   short_description: string;
+  website: string;
   release_date: {
     date: string;
   };
