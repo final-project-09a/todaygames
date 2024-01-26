@@ -17,25 +17,20 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
   const navigate = useNavigate();
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
 
-  const handleCarouselSlideChange = (index: number) => {
-    setCurrentGameIndex(index);
-  };
-
   const settings = {
     infinite: true,
-    speed: 500,
+    speed: 800,
     slidesToShow: 1,
     slidesToScroll: 1,
-    afterChange: handleCarouselSlideChange,
-    // centerMode: true,
-    // centerPadding: '50',
+    centerMode: true,
+    centerPadding: '210',
+    afterChange: (index: number) => setCurrentGameIndex(index),
+    adaptiveHeight: true,
     autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
     draggable: false
-    // fade: true
-    // prevArrow: $('#prevArrow'),
-    // nextArrow: $('#nextArrow')
+
     // 반응형 설정
     //   responsive: [
     //     {
@@ -78,19 +73,19 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
 
   return (
     <StContainer>
-      <StCarouselWrapper>
-        <CustomCarousel settings={settings}>
-          {gameDetailsArray ? (
-            gameDetailsArray.map((game) => (
+      {gameDetailsArray ? (
+        <StCarouselWrapper>
+          <CustomCarousel settings={settings}>
+            {gameDetailsArray.map((game) => (
               <StFigure key={game.steam_appid}>
                 <img src={game.background_raw} alt={game.name} />
               </StFigure>
-            ))
-          ) : (
-            <HeaderTitleSkeleton />
-          )}
-        </CustomCarousel>
-      </StCarouselWrapper>
+            ))}
+          </CustomCarousel>
+        </StCarouselWrapper>
+      ) : (
+        <HeaderTitleSkeleton />
+      )}
 
       {gameDetailsArray &&
         gameDetailsArray?.map((game, index) => (

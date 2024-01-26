@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/config/configStore';
 import GameSearch from './GameSearch';
 import SuccessModal from 'common/SuccessModal';
+import logo3 from 'assets/logo/logo3.png';
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
@@ -21,8 +22,16 @@ const NavBar: React.FC = () => {
   // 모달 상태 관리
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [searchedText, setSearchedText] = useState<string>('');
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+
+  useEffect(() => {
+    const isHomePage = window.location.pathname === '/';
+    if (isHomePage) {
+      setSearchedText('');
+    }
+  }, [navigate]);
 
   // 로그인 시 success 모달 오픈
   useEffect(() => {
@@ -61,7 +70,9 @@ const NavBar: React.FC = () => {
     <StNavContainer>
       <StNavWrapper>
         <StLogoWrapper>
-          <Link to="/">Logo</Link>
+          <Link to="/">
+            <img src={logo3} alt="로고" />
+          </Link>
         </StLogoWrapper>
         <StMenuWrapper>
           <Link to={'/'}>
@@ -70,7 +81,7 @@ const NavBar: React.FC = () => {
           <Link to={'/board'}>
             <h2>커뮤니티</h2>
           </Link>
-          <GameSearch />
+          <GameSearch searchedText={searchedText} setSearchedText={setSearchedText} />
           <StLogIn>
             {user ? (
               <>

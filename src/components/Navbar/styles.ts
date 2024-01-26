@@ -3,9 +3,11 @@ import accountIcon from '../../assets/icons/accountIcon.svg';
 
 const StNavContainer = styled.div`
   width: 100%;
+  margin-top: 10px;
   height: 70px;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 const StNavWrapper = styled.div`
@@ -16,7 +18,7 @@ const StNavWrapper = styled.div`
 `;
 
 const StLogoWrapper = styled.div`
-  font-size: 30px;
+  height: 100%;
 `;
 
 const StLogo = styled.img`
