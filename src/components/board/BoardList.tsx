@@ -92,33 +92,6 @@ export const BoardList = ({ filteredPosts }: any) => {
     setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
-<<<<<<< HEAD
-  const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
-    console.log('취소버튼 구현중');
-  };
-
-  // const onEditDone: React.MouseEventHandler<HTMLButtonElement> = () => {
-  //   if (!editingText) {
-  //     alert('수정 사항이 없습니다.');
-  //     return editingText;
-  //   }
-  //   const neweditPosts: string[] = [];
-  //   postsData?.map((post) => {
-  //     if (post.id === post?.content) {
-  //       neweditPosts.push(post?.content);
-  //     }
-  //   });
-  //   setEditText(neweditPosts.join(' '));
-  //   console.log('수정진행');
-  // }; //수정중 취소
-
-  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
-    const answer = window.confirm('정말로 삭제하시겠습니까?');
-    if (!answer) {
-      return;
-    }
-  }; // 삭제 버튼
-=======
   const handleEditButtonClick = (postId: string) => {
     const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
@@ -128,7 +101,6 @@ export const BoardList = ({ filteredPosts }: any) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
   };
->>>>>>> 34a5fbf3e77ca2547509a029e669ef92c00e03f4
 
   const handleReport = () => {
     alert('신고기능 구현중...');
