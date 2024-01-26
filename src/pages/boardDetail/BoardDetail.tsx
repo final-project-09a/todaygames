@@ -27,6 +27,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import CustomCarousel from 'common/CustomCarousel';
 import styled from 'styled-components';
+import { getFormattedDate } from 'util/date';
 
 export const BoardDetail = () => {
   const { id } = useParams();
@@ -52,7 +53,7 @@ export const BoardDetail = () => {
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
-    draggable: false,
+    draggable: true,
     focusOnSelect: true,
     arrow: true
     // centerMode: true,
@@ -63,6 +64,7 @@ export const BoardDetail = () => {
   const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
   const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
   const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
+  const correctTime = getFormattedDate(filterdPost!.created_At);
   const deletePost = async (id: Post) => {
     try {
       const { data, error } = await supabase.from('posts').delete().eq('id', id);
@@ -76,7 +78,7 @@ export const BoardDetail = () => {
     }
   };
   console.log(correctImageArray);
-  console.log(filterdPost?.image);
+  console.log(correctTime);
   return (
     <>
       <AllContainer>
@@ -91,7 +93,7 @@ export const BoardDetail = () => {
               <WrappingUserInfo>
                 <NickNameAndDate>
                   <NickNameAndTitleText>{filteredUser?.nickname}</NickNameAndTitleText>
-                  <DateText>{filterdPost?.created_At}</DateText>
+                  <DateText>{correctTime}</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>{filterdPost?.game}</NickNameAndTitleText>
               </WrappingUserInfo>
@@ -142,12 +144,16 @@ const StCarouselWrapper = styled.div`
 `;
 
 const StImageWrapper = styled.figure`
+  align-items: center;
+  justify-content: center;
   width: 800px;
-  height: 500px;
+  height: 600px;
   overflow: hidden;
   & img {
+    padding: 0px 20px 0px 20px;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    border-radius: 10px;
   }
 `;
