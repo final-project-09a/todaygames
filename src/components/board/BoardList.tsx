@@ -82,17 +82,17 @@ export const BoardList = ({ filteredPosts }: any) => {
   };
 
   // -----------------------------------------------------------
-  console.log(filteredPosts);
 
   const isOwner = (userId: string) => {
     return user && user.id === userId;
   };
 
-  const handleEditButtonClick = (postId: string) => {
+  const handleMoreInfoClick = (postId: string) => {
     setEditingPostId((prev) => (prev === postId ? null : postId));
     setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
+<<<<<<< HEAD
   const onCancelBtn: React.MouseEventHandler<HTMLButtonElement> = () => {
     console.log('취소버튼 구현중');
   };
@@ -118,9 +118,20 @@ export const BoardList = ({ filteredPosts }: any) => {
       return;
     }
   }; // 삭제 버튼
+=======
+  const handleEditButtonClick = (postId: string) => {
+    const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
+  };
+
+  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) return;
+  };
+>>>>>>> 34a5fbf3e77ca2547509a029e669ef92c00e03f4
 
   const handleReport = () => {
-    alert('신고하기');
+    alert('신고기능 구현중...');
   };
 
   return (
@@ -144,10 +155,10 @@ export const BoardList = ({ filteredPosts }: any) => {
             const postIsOwner = isOwner(post.user_id);
             return (
               <StcontentBox key={post?.id}>
-                <EditBtn onClick={() => handleEditButtonClick(post.id)} />
+                <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {postIsOwner && editingPostId === post.id && (
                   <StfetchForm>
-                    <StButton onClick={() => console.log('수정')}>수정</StButton>
+                    <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
                     <StButton onClick={handleDeletePostButton}>삭제</StButton>
                   </StfetchForm>
                 )}
@@ -174,6 +185,9 @@ export const BoardList = ({ filteredPosts }: any) => {
                     <h3>{post?.title}</h3>
                     <p>{post?.content}</p>
                     <StTagWrapper>
+                      <Tag size="small" backgroundColor="secondary">
+                        {post.game}
+                      </Tag>
                       {post?.category
                         .split(',')
                         .map((item) => item.trim())
@@ -325,13 +339,14 @@ const StcontentBox = styled.div`
 `;
 
 const StProfileWrapper = styled.div`
-  width: 100%;
+  width: 920px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   & section {
     display: flex;
     align-items: center;
+    gap: 5px;
   }
 `;
 
@@ -356,12 +371,12 @@ const StUserNameWrapper = styled.div`
   flex-direction: column;
   gap: 5px;
   & h2 {
-    font-size: 14px;
+    font-size: 17px;
     font-weight: 400;
   }
   & p {
     color: #999;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
   }
 `;
