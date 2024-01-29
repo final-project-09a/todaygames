@@ -175,9 +175,8 @@ function Signup() {
       <StyledH1>회원 가입</StyledH1>
       <StyledForm onSubmit={handleSignup}>
         <StInputBtwrap>
+          <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
           <StInputGroup>
-            {' '}
-            <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
             <StyledInputShort
               placeholder="사용할 닉네임을 적어주세요."
               type="text"
@@ -186,15 +185,16 @@ function Signup() {
               value={formData.displayName}
               onChange={handleChange}
             />
-            {errors.displayName && <p>{errors.displayName}</p>}
+            <StyledButtonShort onClick={handleCheckNickname} type="button">
+              닉네임 중복 확인
+            </StyledButtonShort>
           </StInputGroup>
-          <StyledButtonShort onClick={handleCheckNickname} type="button">
-            닉네임 중복 확인
-          </StyledButtonShort>
+          <p>{errors.displayName && <p>{errors.displayName}</p>}</p>
         </StInputBtwrap>
         <StInputBtwrap>
+          <StyledLabel htmlFor="email">이메일</StyledLabel>
+
           <StInputGroup>
-            <StyledLabel htmlFor="email">이메일</StyledLabel>
             <StyledInputShort
               placeholder="이메일을 입력해 주세요."
               type="email"
@@ -203,13 +203,13 @@ function Signup() {
               value={formData.email}
               onChange={handleChange}
             />
-            {errors.email && <p>{errors.email}</p>}
+            <StyledButtonShort onClick={handleCheckEmail} type="button">
+              email 중복 확인
+            </StyledButtonShort>
           </StInputGroup>
-          <StyledButtonShort onClick={handleCheckEmail} type="button">
-            email 중복 확인
-          </StyledButtonShort>
+          <p>{errors.email && <p>{errors.email}</p>}</p>
         </StInputBtwrap>
-        <StInputGroup>
+        <StInputBtwrap>
           <StyledLabel htmlFor="password">비밀번호</StyledLabel>
           <StyledInput
             placeholder="비밀번호를 입력해 주세요."
@@ -220,10 +220,9 @@ function Signup() {
             onChange={handleChange}
           />
           {errors.password && <p>{errors.password}</p>}
-          <StyledLabel htmlFor="password">8~16자 영문, 숫자, 특수문자를 조합해 주세요.</StyledLabel>
-        </StInputGroup>
-        <StInputGroup>
-          <StyledLabel htmlFor="confirmPassword">비밀번호 확인</StyledLabel>
+          <p>8~16자 영문, 숫자, 특수문자를 조합해 주세요.</p>
+        </StInputBtwrap>
+        <StInputBtwrap>
           <StyledInput
             placeholder="비밀번호 확인"
             type="password"
@@ -234,9 +233,8 @@ function Signup() {
           />
 
           {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-          <StyledLabel htmlFor="password">비밀번호를 한번 더 입력해 주세요.</StyledLabel>
-        </StInputGroup>
-
+          <p>비밀번호를 한번 더 입력해 주세요.</p>
+        </StInputBtwrap>
         <StyledButton type="submit">회원가입</StyledButton>
       </StyledForm>
     </StyledSignup>

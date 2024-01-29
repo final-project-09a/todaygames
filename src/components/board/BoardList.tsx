@@ -266,6 +266,7 @@ const StsearchBox = styled.div`
 const StseachInput = styled.input`
   height: 48px;
   width: 400px;
+  color: ${(props) => props.theme.color.white};
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   border: none;
