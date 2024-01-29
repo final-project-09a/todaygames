@@ -39,6 +39,11 @@ const StMenu = styled.h2<{ $isSelected: boolean }>`
   color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
 `;
 
+const StLogMenu = styled.h2<{ $isSelected: boolean }>`
+  font-size: 16px;
+  font-weight: 700;
+  color: ${(props) => (props.$isSelected ? '#2D4FA6' : '#2D4FA6')};
+`;
 const StLogIn = styled.div`
   display: flex;
   align-items: center;
@@ -71,6 +76,7 @@ const StAccountIcon = styled(PiUserCircleLight)<{ $isSelected: boolean }>`
 
 export {
   StMenu,
+  StLogMenu,
   StMyPageLink,
   StAccountIcon,
   StNavContainer,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from 'types/supabase';
 import {
   StMenu,
@@ -9,7 +9,8 @@ import {
   StMenuWrapper,
   StLogIn,
   StMyPageLink,
-  StAccountIcon
+  StAccountIcon,
+  StLogMenu
 } from './styles';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/config/configStore';
@@ -31,6 +32,18 @@ const NavBar: React.FC = () => {
   const [selectedMenu, setSelectedMenu] = useState('홈');
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const location = useLocation();
+
+  useEffect(() => {
+    const isHomePage = location.pathname === '/';
+    if (isHomePage) {
+      setSelectedMenu('홈');
+    } else if (location.pathname === '/board') {
+      setSelectedMenu('커뮤니티');
+    } else if (location.pathname === '/mypage') {
+      setSelectedMenu('마이페이지');
+    }
+  }, [location]);
 
   useEffect(() => {
     const isHomePage = window.location.pathname === '/';
@@ -63,6 +76,7 @@ const NavBar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
+      setSelectedMenu('로그아웃');
       setModalContent('로그아웃 되었습니다.');
       setModalOpen(true);
       navigate('/');
@@ -98,11 +112,13 @@ const NavBar: React.FC = () => {
                     <StMenu $isSelected={selectedMenu === '마이페이지'}>마이페이지</StMenu>
                   </StMyPageLink>
                 </Link>
-                <h3 onClick={handleLogout}>로그아웃</h3>
+                <StLogMenu onClick={handleLogout} $isSelected={selectedMenu === '로그아웃'}>
+                  로그아웃
+                </StLogMenu>
               </>
             ) : (
-              <Link to="/login">
-                <h3>로그인</h3>
+              <Link to="/login" onClick={() => setSelectedMenu('로그인')}>
+                <StLogMenu $isSelected={selectedMenu === '로그아웃'}>로그인</StLogMenu>
               </Link>
             )}
             {isModalOpen && (
