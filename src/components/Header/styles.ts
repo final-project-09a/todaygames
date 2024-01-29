@@ -33,12 +33,21 @@ const StCarouselWrapper = styled.div`
   }
 
   .slick-prev {
-    left: 130px;
+    left: 145px;
     z-index: 20;
   }
   [dir='rtl'] .slick-prev {
     right: -25px;
     left: auto;
+  }
+
+  .slick-track {
+    height: 600px;
+  }
+
+  .slick-list .slick-track {
+    width: 100%;
+    height: 600px;
   }
 
   .slick-next {
@@ -52,6 +61,7 @@ const StCarouselWrapper = styled.div`
   }
 
   .slick-slider {
+    width: 100%;
     transition: transform 1s, opacity 1s;
     will-change: transform, opacity;
   }
@@ -62,18 +72,19 @@ const StCarouselWrapper = styled.div`
     border-radius: 20px;
     object-fit: cover;
     transition: transform 1s;
+    margin: 0 auto;
   }
 
   .slick-slide:not(.slick-center) {
     transition: transform 1s opacity 1s;
-    transform: scale(0.9) translateX(15.5%);
+    transform: scale(0.9);
     filter: blur(1px);
     opacity: 0.6;
   }
 
   .slick-slide.slick-center {
+    width: 100%;
     transition: transform 1s;
-    transform: translateX(15.5%);
   }
 `;
 
@@ -82,13 +93,7 @@ const StFigure = styled.figure`
   max-height: 600px;
   border-radius: 20px;
   overflow: hidden;
-  /* margin-left: 300px;
-  */
-  & img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  cursor: pointer;
 `;
 
 const StInfoWrapper = styled.div`
