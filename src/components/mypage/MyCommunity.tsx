@@ -55,23 +55,6 @@ const MyCommunity = () => {
           {posts.length > 0 ? (
             posts.map((post, index) => (
               <PostContainer key={index}>
-                <StUserImageWrapper>
-                  {' '}
-                  <img src={user?.avatar_url} alt="프로필이미지" />
-                </StUserImageWrapper>
-
-                <StImageWrapper>
-                  <img src={post?.image} alt={post.game} />
-                </StImageWrapper>
-
-                <StyledH2>{post.title}</StyledH2>
-                <StyledH3>{post.content}</StyledH3>
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-                  {post.category.split(',').map((category: string, idx: number) => (
-                    <StCategory key={idx}>#{category.trim()}</StCategory>
-                  ))}
-                </div>
-                <div style={{ textAlign: 'left' }}>등록시간: {post.created_At.split('T')[0]}</div>
                 <EditBtn onClick={() => post.id} />
                 {user?.id === post.id && (
                   <StfetchForm>
@@ -79,6 +62,29 @@ const MyCommunity = () => {
                     <StButton onClick={handleDeletePostButton}>삭제</StButton>
                   </StfetchForm>
                 )}
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <StUserImageWrapper>
+                        <img src={user?.avatar_url} alt="프로필이미지" />
+                      </StUserImageWrapper>
+                      <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '10px' }}>
+                        <div>{user?.nickname}</div>
+                        <div>{post.created_At.split('T')[0]}</div>
+                      </div>
+                    </div>
+                    <StyledH2>{post.title}</StyledH2>
+                    <StyledH3>{post.content}</StyledH3>
+                    <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                      {post.category.split(',').map((category: string, idx: number) => (
+                        <StCategory key={idx}>#{category.trim()}</StCategory>
+                      ))}
+                    </div>
+                  </div>
+                  <StImageWrapper>
+                    <img src={post?.image} alt={post.game} />
+                  </StImageWrapper>
+                </div>
               </PostContainer>
             ))
           ) : (
@@ -146,9 +152,10 @@ const EditBtn = styled.button`
   position: relative;
   flex-direction: row;
   top: 10px;
-  left: 1100px;
+  left: 970px;
   width: 24px;
   height: 24px;
+  margin-bottom: 20px;
   background-color: transparent;
   background-image: url(${editBtn});
   cursor: pointer;
