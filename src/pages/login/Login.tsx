@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { supabase } from 'types/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../redux/modules/userSlice';
 interface FormData {
   email: string;
   password: string;
@@ -9,6 +11,7 @@ interface FormData {
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -26,17 +29,19 @@ function Login() {
 
   const handlelogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(supabase.auth);
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
       });
+      console.log(data);
 
       if (error) {
         console.error(error);
         alert('ID와 password를 확인해주세요');
       } else {
+        dispatch(setUser(data.user));
         navigate('/');
       }
     } catch (error) {
