@@ -60,6 +60,10 @@ const MyCommunity = () => {
                   <img src={user?.avatar_url} alt="프로필이미지" />
                 </StUserImageWrapper>
 
+                <StImageWrapper>
+                  <img src={post?.image} alt={post.game} />
+                </StImageWrapper>
+
                 <StyledH2>{post.title}</StyledH2>
                 <StyledH3>{post.content}</StyledH3>
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
@@ -92,6 +96,19 @@ const MyCommunity = () => {
 };
 
 export default MyCommunity;
+
+const StImageWrapper = styled.figure`
+  width: 200px;
+  height: 168px;
+  border-radius: 10px;
+  background: #646466;
+  overflow: hidden;
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 
 const StButton = styled.button`
   position: flex;
