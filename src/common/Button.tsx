@@ -51,6 +51,8 @@ const StButton = styled.button<{ size: string }>`
   color: ${(props) => props.theme.color.white};
   text-align: center;
   font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
   ${(props) => getSizeStyles(props.size || 'medium')}
   &:hover {
     background: ${(props) => props.theme.color.white};

@@ -50,6 +50,7 @@ const StyledButton = styled.button`
   margin-top: 10px;
   border-radius: 10px;
   cursor: pointer;
+  transition: 0.3s ease;
   &:hover {
     color: ${(props) => props.theme.color.black};
     background-color: ${(props) => props.theme.color.white};
@@ -65,6 +66,7 @@ const StkakaoButton = styled.button`
   margin-top: 20px;
   border-radius: 10px;
   cursor: pointer;
+  transition: 0.3s ease;
   &:hover {
     color: ${(props) => props.theme.color.black};
     background-color: #ccbe04;
