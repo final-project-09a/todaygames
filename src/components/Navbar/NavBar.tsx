@@ -15,14 +15,18 @@ import { RootState } from '../../redux/config/configStore';
 import GameSearch from './GameSearch';
 import SuccessModal from 'common/SuccessModal';
 import logo3 from 'assets/logo/logo3.png';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../redux/modules/userSlice';
 
 const NavBar: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // 모달 상태 관리
   const [isModalOpen, setModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
   const [searchedText, setSearchedText] = useState<string>('');
+  const [showLoginSuccessModal, setShowLoginSuccessModal] = useState(false);
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
@@ -35,11 +39,12 @@ const NavBar: React.FC = () => {
 
   // 로그인 시 success 모달 오픈
   useEffect(() => {
-    if (user) {
+    if (user && showLoginSuccessModal) {
       setModalContent('로그인에 성공하였습니다.');
       setModalOpen(true);
+      setShowLoginSuccessModal(false);
     }
-  }, [user]);
+  }, [user, showLoginSuccessModal]);
 
   // success 모달 3초 뒤 사라지게
   useEffect(() => {
@@ -59,6 +64,8 @@ const NavBar: React.FC = () => {
       setModalContent('로그아웃 되었습니다.');
       setModalOpen(true);
       navigate('/');
+      dispatch(setUser(null));
+      setShowLoginSuccessModal(true);
     } catch (error) {
       console.error(error);
       setModalContent('로그아웃에 실패하였습니다.');
