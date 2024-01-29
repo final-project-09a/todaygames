@@ -10,6 +10,7 @@ import Button from 'common/Button';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
+
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,6 +50,11 @@ const MyCommunity = () => {
           {posts.length > 0 ? (
             posts.map((post, index) => (
               <PostContainer key={index}>
+                <StUserImageWrapper>
+                  {' '}
+                  <img src={user?.avatar_url} alt="프로필이미지" />
+                </StUserImageWrapper>
+
                 <StyledH2>{post.title}</StyledH2>
                 <StyledH3>{post.content}</StyledH3>
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
@@ -75,6 +81,21 @@ const MyCommunity = () => {
 
 export default MyCommunity;
 
+const StUserImageWrapper = styled.figure`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  margin-right: 5px;
+  overflow: hidden;
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
 const StyledDiv = styled.div`
   display: flex;
   justify-content: center;
