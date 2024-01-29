@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
 import { supabase } from 'types/supabase';
 import { Link, useNavigate } from 'react-router-dom';
-import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
+import {
+  StyledLogin,
+  StyledInput,
+  StyledButton,
+  StyledH1,
+  StyledLabel,
+  StkakaoButton,
+  StFormWrapper,
+  StOtherLoginWrapper,
+  StSignInfo
+} from './styles';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../redux/modules/userSlice';
+
 interface FormData {
   email: string;
   password: string;
@@ -9,11 +22,13 @@ interface FormData {
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
   });
+
   // const { user, session } = supabase.auth.session()
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -26,7 +41,7 @@ function Login() {
 
   const handlelogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(supabase.auth);
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
@@ -37,6 +52,7 @@ function Login() {
         console.error(error);
         alert('ID와 password를 확인해주세요');
       } else {
+        dispatch(setUser(data.user));
         navigate('/');
       }
     } catch (error) {
@@ -82,36 +98,56 @@ function Login() {
   return (
     <StyledLogin>
       <StyledH1>로그인</StyledH1>
-      <StyledForm onSubmit={handlelogin}>
-        <StyledLabel htmlFor="email">이메일</StyledLabel>
-        <StyledInput
-          placeholder="아이디를 입력하세요"
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        {errors.email && <p>{errors.email}</p>}
+      <form onSubmit={handlelogin}>
+        <StFormWrapper>
+          <StyledLabel htmlFor="email">이메일</StyledLabel>
+          <StyledInput
+            placeholder="이메일을 입력해 주세요."
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          {errors.email && <p>{errors.email}</p>}
+        </StFormWrapper>
+        <StFormWrapper>
+          <StyledLabel htmlFor="password">비밀번호</StyledLabel>
+          <StyledInput
+            placeholder="비밀번호를 입력해 주세요."
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          {errors.password && <p>{errors.password}</p>}
+        </StFormWrapper>
+        <StyledButton type="submit">로그인</StyledButton>
+      </form>
+      <StOtherLoginWrapper>
+        <StkakaoButton type="button" onClick={kakaologin}>
+          카카오 로그인
+        </StkakaoButton>
+        <StkakaoButton type="button" onClick={kakaologin}>
+          카카오 로그인
+        </StkakaoButton>
+      </StOtherLoginWrapper>
 
-        <StyledLabel htmlFor="password">비밀번호</StyledLabel>
-        <StyledInput
-          placeholder="비밀번호"
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        {errors.password && <p>{errors.password}</p>}
-
-        <StyledButton type="submit">로그인하기</StyledButton>
-      </StyledForm>
-      <StkakaoButton onClick={kakaologin}>카카오로그인</StkakaoButton>
       {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
-      <Link to="/signup">
-        <StyledButton>회원 가입</StyledButton>
-      </Link>
+      <StSignInfo>
+        <Link to="/search/userinfo">
+          <p>아이디 찾기</p>
+        </Link>
+        <p>|</p>
+        <Link to="/search/userinfo">
+          <p>비밀번호 변경</p>
+        </Link>
+        <p>|</p>
+        <Link to="/signup">
+          <p>회원가입</p>
+        </Link>
+      </StSignInfo>
     </StyledLogin>
   );
 }

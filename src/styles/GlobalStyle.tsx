@@ -46,6 +46,10 @@ body {
    line-height: 1;
    font-family:'Pretendard-Regular';
    background: #191919;
+   -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 ol, ul {
  list-style: none;

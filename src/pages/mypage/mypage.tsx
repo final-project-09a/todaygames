@@ -23,7 +23,7 @@ const MyPage = () => {
     <>
       {user && (
         <StMypageContainer>
-          <MypageNav onCategoryChange={handleCategoryChange} />
+          <MypageNav selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
           {selectedCategory === 'profile' && <EditProfile />}
           {selectedCategory === 'community' && <MyCommunity />}
           {selectedCategory === 'bookmark' && <MyBookMark />}
