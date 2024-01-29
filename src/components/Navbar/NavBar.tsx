@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from 'types/supabase';
 import {
+  StMenu,
   StNavContainer,
   StNavWrapper,
   StLogoWrapper,
@@ -27,6 +28,7 @@ const NavBar: React.FC = () => {
   const [modalContent, setModalContent] = useState('');
   const [searchedText, setSearchedText] = useState<string>('');
   const [showLoginSuccessModal, setShowLoginSuccessModal] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState('홈');
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
@@ -77,31 +79,31 @@ const NavBar: React.FC = () => {
     <StNavContainer>
       <StNavWrapper>
         <StLogoWrapper>
-          <Link to="/">
-            <img src={logo3} alt="로고" />
-          </Link>
+          <img src={logo3} alt="로고" />
         </StLogoWrapper>
         <StMenuWrapper>
-          <Link to={'/'}>
-            <h2>홈</h2>
+          <Link to="/" onClick={() => setSelectedMenu('홈')}>
+            <StMenu $isSelected={selectedMenu === '홈'}>홈</StMenu>
           </Link>
-          <Link to={'/board'}>
-            <h2>커뮤니티</h2>
+          <Link to="/board" onClick={() => setSelectedMenu('커뮤니티')}>
+            <StMenu $isSelected={selectedMenu === '커뮤니티'}>커뮤니티</StMenu>
           </Link>
           <GameSearch searchedText={searchedText} setSearchedText={setSearchedText} />
           <StLogIn>
             {user ? (
               <>
-                <Link to={'/mypage'}>
+                <Link to="/mypage" onClick={() => setSelectedMenu('마이페이지')}>
                   <StMyPageLink>
-                    <StAccountIcon />
-                    <h2>마이페이지</h2>
+                    <StAccountIcon $isSelected={selectedMenu === '마이페이지'} />
+                    <StMenu $isSelected={selectedMenu === '마이페이지'}>마이페이지</StMenu>
                   </StMyPageLink>
                 </Link>
-                <h2 onClick={handleLogout}>로그아웃</h2>
+                <h3 onClick={handleLogout}>로그아웃</h3>
               </>
             ) : (
-              <Link to="/login">로그인</Link>
+              <Link to="/login">
+                <h3>로그인</h3>
+              </Link>
             )}
             {isModalOpen && (
               <SuccessModal isOpen={isModalOpen}>

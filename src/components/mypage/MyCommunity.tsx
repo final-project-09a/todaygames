@@ -135,7 +135,6 @@ const StUserInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 1100px;
-  height: 1000px;
   margin-left: 20px;
 `;
 

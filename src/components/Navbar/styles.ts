@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import accountIcon from '../../assets/icons/accountIcon.svg';
+import { PiUserCircleLight } from 'react-icons/pi';
 
 const StNavContainer = styled.div`
   width: 100%;
@@ -30,10 +31,12 @@ const StMenuWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 24px;
-  & h2 {
-    font-size: 16px;
-    font-weight: 400;
-  }
+`;
+
+const StMenu = styled.h2<{ $isSelected: boolean }>`
+  font-size: 16px;
+  font-weight: 400;
+  color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
 `;
 
 const StLogIn = styled.div`
@@ -41,22 +44,39 @@ const StLogIn = styled.div`
   align-items: center;
   gap: 24px;
   cursor: pointer;
+  & h3 {
+    font-weight: 800;
+    color: ${(props) => props.theme.color.primary};
+  }
 `;
 
 const StMyPageLink = styled.div`
   position: relative;
 `;
 
-const StAccountIcon = styled.div`
+const StAccountIcon = styled(PiUserCircleLight)<{ $isSelected: boolean }>`
+  font-size: 15px;
   position: absolute;
   top: 50%;
   left: -50%;
   width: 32px;
   height: 32px;
   transform: translateY(-50%);
-  background: url(${accountIcon}) no-repeat center center;
-  background-size: contain;
+  color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
+
+  /* background: url(${accountIcon}) no-repeat center center;
+  background-size: contain; */
   cursor: pointer;
 `;
 
-export { StMyPageLink, StAccountIcon, StNavContainer, StLogo, StMenuWrapper, StLogIn, StNavWrapper, StLogoWrapper };
+export {
+  StMenu,
+  StMyPageLink,
+  StAccountIcon,
+  StNavContainer,
+  StLogo,
+  StMenuWrapper,
+  StLogIn,
+  StNavWrapper,
+  StLogoWrapper
+};
