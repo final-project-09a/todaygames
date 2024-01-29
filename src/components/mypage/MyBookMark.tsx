@@ -59,142 +59,62 @@ const MyBookMark = () => {
       fetchGameDetails();
     }
   }, [bookmarks]);
+
   return (
-    <StUserInfoContainer>
-      <StContentBox>
-        <StTitle>찜한 게임 {games.length}</StTitle>
-        <StGameList>
-          {' '}
-          {games.map((game: any, index: number) => (
-            <GameItem key={index}>
+    <StContentBox>
+      <h2>찜한 게임 {games.length}개</h2>
+      <StGameList>
+        {games.map((game: any, index: number) => (
+          <div key={index}>
+            <GameItem>
               <Link to={`/detail/${game.app_id}`}>
                 <img src={game.header_image} alt={game.name} />
-                <h3>Game: {game.name}</h3>
               </Link>
             </GameItem>
-          ))}
-        </StGameList>{' '}
-      </StContentBox>
-    </StUserInfoContainer>
+            <p>{game.name}</p>
+          </div>
+        ))}
+      </StGameList>
+    </StContentBox>
   );
 };
 
 export default MyBookMark;
 
-const StTitle = styled.h1`
-  margin-bottom: 20px;
+const StContentBox = styled.div`
+  margin-left: 20px;
+  width: 1100px;
+  min-height: 600px;
+  border-radius: 10px;
+  padding: 40px;
+  background-color: ${(props) => props.theme.color.gray};
+  & h2 {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  & p {
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 8px;
+    margin-bottom: 15px;
+  }
 `;
 
 const StGameList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  align-content: flex-start;
-  flex-direction: row;
+  gap: 20px;
+  margin-top: 30px;
 `;
 
 const GameItem = styled.div`
-  width: calc((100% - 3 * 2%) / 4);
-  height: calc((100% - 3 * 2%) / 4);
-  margin-right: 2%;
-  margin-bottom: 2%;
-  margin-top: 5%;
-
-  &:nth-child(4n) {
-    margin-right: 0;
-  }
-
-  & h3 {
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
-
+  width: 200px;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
   & img {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
-  }
-`;
-
-const StUserInfoContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 1100px;
-  height: 1000px;
-  margin-left: 20px;
-`;
-
-const StContentBox = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  position: relative;
-  width: 1100px;
-  min-height: 800px;
-  border-radius: 10px;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  background-color: ${(props) => props.theme.color.gray};
-  margin-bottom: 30px;
-  align-content: flex-start;
-  flex-direction: row;
-  & h2 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 10px;
-    user-select: none;
-  }
-  & label {
-    font-size: 14px;
-    font-weight: 400;
-    margin-top: 30px;
-    margin-bottom: 10px;
-    user-select: none;
-  }
-  & input {
-    position: relative;
-    width: 100%;
-    padding: 18px;
-    border-radius: 10px;
-    height: 48px;
-    background: ${(props) => props.theme.color.inputcolor};
-    color: ${(props) => props.theme.color.white};
-    border: none;
-    &:focus {
-      outline: none;
-    }
-  }
-  & textarea {
-    width: 100%;
-    height: 144px;
-    border-radius: 10px;
-    background: ${(props) => props.theme.color.inputcolor};
-    color: ${(props) => props.theme.color.white};
-    border: none;
-    padding: 18px;
-    resize: none;
-    line-height: 1.5;
-  }
-  & p {
-    color: #999;
-    text-align: right;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 15px;
-    margin-top: 15px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-  }
-  & select {
-    width: 355px;
-    padding: 18px;
-    border-radius: 10px;
-    height: 53px;
-    background: ${(props) => props.theme.color.inputcolor};
-    color: ${(props) => props.theme.color.white};
-    border: none;
+    height: 100%;
+    object-fit: cover;
   }
 `;

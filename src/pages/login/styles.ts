@@ -13,7 +13,7 @@ const StyledLogin = styled.div`
   }
 `;
 
-const StFormWrapper = styled.form`
+const StFormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;

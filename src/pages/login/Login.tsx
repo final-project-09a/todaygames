@@ -14,7 +14,6 @@ import {
 } from './styles';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/modules/userSlice';
-import kakao_login_medium_narrow from 'assets/img/kakao_login_medium_wide.png';
 
 interface FormData {
   email: string;
@@ -29,6 +28,7 @@ function Login() {
     email: '',
     password: ''
   });
+
   // const { user, session } = supabase.auth.session()
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -47,7 +47,6 @@ function Login() {
         email: formData.email,
         password: formData.password
       });
-      console.log(data);
 
       if (error) {
         console.error(error);
@@ -124,7 +123,6 @@ function Login() {
           />
           {errors.password && <p>{errors.password}</p>}
         </StFormWrapper>
-
         <StyledButton type="submit">로그인</StyledButton>
       </form>
       <StOtherLoginWrapper>
@@ -138,14 +136,14 @@ function Login() {
 
       {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
       <StSignInfo>
-        {/* <Link to="/search/userinfo">
+        <Link to="/search/userinfo">
           <p>아이디 찾기</p>
         </Link>
         <p>|</p>
         <Link to="/search/userinfo">
-          <p>비밀번호 찾기</p>
+          <p>비밀번호 변경</p>
         </Link>
-        <p>|</p> */}
+        <p>|</p>
         <Link to="/signup">
           <p>회원가입</p>
         </Link>
