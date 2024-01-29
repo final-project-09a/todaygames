@@ -59,7 +59,7 @@ const Register = () => {
     setContentText(post?.content || '');
     setGameName(post?.game || '');
     setTagText(post?.category || '');
-  });
+  }, []);
 
   const isEditing = !!post;
 
