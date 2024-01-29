@@ -61,6 +61,7 @@ const StImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  cursor: pointer;
   transition: transform 0.3s ease;
   opacity: 0.7;
   ${StCardWrapper}:hover & {

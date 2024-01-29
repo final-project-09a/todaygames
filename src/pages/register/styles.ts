@@ -43,7 +43,6 @@ const WrappingTitleAndBtn = styled.div`
 const TitleText = styled.div`
   display: flex;
   font-size: 24px;
-  font-style: normal;
   font-weight: 700;
   line-height: 24px;
 `;
@@ -60,8 +59,8 @@ const CancelBtn = styled.button`
   border-radius: 10px;
   background: ${(props) => props.theme.color.white};
   border: 0px;
+  font-family: 'Pretendard-Regular';
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 15px;
   text-align: center;
@@ -74,9 +73,10 @@ const RegisterBtn = styled.button`
   border-radius: 10px;
   background: ${(props) => props.theme.color.primary};
   border: 0px;
+  font-family: 'Pretendard-Regular';
+
   color: white;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 15px;
   text-align: center;
@@ -240,6 +240,7 @@ const ContentInput = styled.textarea`
   background: ${(props) => props.theme.color.inputcolor};
   color: white;
   text-indent: 8px;
+  font-family: 'Pretendard-Regular';
   resize: none;
   padding-top: 10px;
   font-size: 16px;

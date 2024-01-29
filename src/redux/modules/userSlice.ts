@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface UserData {
   id: string;
-  email: string;
+  email?: string;
   avatar_url?: string;
   nickname?: string | null;
   profile?: string | null;

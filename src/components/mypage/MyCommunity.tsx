@@ -11,20 +11,16 @@ const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const { data, error } = await supabase.from('posts').select().eq('user_id', user?.id);
-
-        if (error) {
-          console.error('Error fetching posts:', error.message);
+        if (data && data.length > 0) {
+          setPosts(data);
+          console.log(data);
         } else {
-          if (data && data.length > 0) {
-            setPosts(data);
-            console.log(data);
-          } else {
-            console.warn('No posts found.');
-          }
+          console.warn('No posts found.');
         }
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -38,7 +34,7 @@ const MyCommunity = () => {
   }, [user?.id]);
 
   if (loading) {
-    return <p>로딩중...</p>;
+    return <StUserInfoContainer />;
   }
 
   return (
@@ -143,15 +139,20 @@ const StUserInfoContainer = styled.div`
 `;
 
 const StContentBox = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   position: relative;
   width: 1100px;
-  min-height: 350px;
+  min-height: 800px;
   border-radius: 10px;
   padding: 40px;
   display: flex;
   flex-direction: column;
   background-color: ${(props) => props.theme.color.gray};
   margin-bottom: 30px;
+  align-content: flex-start;
+  flex-direction: row;
   & h2 {
     font-size: 18px;
     font-weight: 700;

@@ -21,13 +21,14 @@ import { UserData, setUser } from '../../redux/modules/userSlice';
 import { supabase } from 'types/supabase';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 import { GenreNameType } from 'types/games';
+import dropdown from 'assets/icons/drpodown.svg';
 
 const EditProfile = () => {
   const dispatch = useDispatch();
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { id, email, nickname, profile, genres } = user || {};
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(genres || []);
   const [nicknameError, setNicknameError] = useState<string>('');
   const [profileError, setProfileError] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(true);
@@ -35,6 +36,7 @@ const EditProfile = () => {
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [PasswordError, setPasswordError] = useState<string>('');
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
 
   const isButtonDisabled = !(
     nickname &&
@@ -42,7 +44,8 @@ const EditProfile = () => {
     nickname.length <= 6 &&
     profile &&
     profile.length >= 10 &&
-    isValid
+    isValid &&
+    hasChanges
   );
   const isPasswordButtonDisabled = !passwordisValidisValid;
 
@@ -85,6 +88,7 @@ const EditProfile = () => {
   const handleProfileChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(setUser({ ...user, profile: e.target.value } as UserData));
     setProfileError(e.target.value.length < 10 ? '프로필은 최소 10글자 이상이어야 합니다.' : '');
+    setHasChanges(true);
   };
 
   const checkNickname = async (nickname: string) => {
@@ -118,12 +122,14 @@ const EditProfile = () => {
 
     setNicknameError(''); // 에러가 없다면 에러 메시지를 초기화합니다.
     setIsValid(true); // 모든 유효성 검사를 통과하면 isValid를 true로 설정합니다.
+    setHasChanges(true);
   };
 
   const handleGenresChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value;
     if (selectedOption && !selectedGenres.includes(selectedOption)) {
       setSelectedGenres((prev) => [...prev, selectedOption]);
+      setHasChanges(true);
     }
   };
 
@@ -134,8 +140,9 @@ const EditProfile = () => {
   // 수정버튼 클릭 핸들러 -> supabase에 user정보 업데이트
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!nickname || nickname.length < 2 || nickname.length > 6 || !profile || profile.length < 10) {
-      alert('닉네임과 프로필 소개(10~200자) 글자수를 확인해주세요.');
+    if (!hasChanges) {
+      alert('변경된 내용이 없습니다.');
+      return;
     }
 
     supabase
@@ -153,6 +160,8 @@ const EditProfile = () => {
         }
       });
   };
+
+  console.log(genres);
 
   if (!user) {
     return <div>Loading...</div>;

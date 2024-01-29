@@ -1,18 +1,23 @@
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
-import boomarkIcon from 'assets/icons/boomarkIcon.svg';
-import communityIcon from 'assets/icons/communityIcon.svg';
-import editProfileIcon from 'assets/icons/editProfileIcon.svg';
 import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { useDispatch } from 'react-redux';
 import { supabase } from 'types/supabase';
+import { TbMessageCircle2Filled } from 'react-icons/tb';
+import { FaHeart } from 'react-icons/fa';
+import { IoPersonSharp } from 'react-icons/io5';
+
 interface MypageProps {
   onCategoryChange: (category: string) => void;
+  selectedCategory: string;
 }
 
-const MypageNav = ({ onCategoryChange }: MypageProps) => {
+interface StCategoryProps {
+  $isSelected: boolean;
+}
+
+const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -82,15 +87,15 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
         />
       </StUserProfileWrapper>
       <StCategoryWrapper>
-        <StCategory onClick={() => onCategoryChange('profile')}>
+        <StCategory onClick={() => onCategoryChange('profile')} $isSelected={selectedCategory === 'profile'}>
           <StEditProfileIcon />
           <p>프로필 편집</p>
         </StCategory>
-        <StCategory onClick={() => onCategoryChange('community')}>
+        <StCategory onClick={() => onCategoryChange('community')} $isSelected={selectedCategory === 'community'}>
           <StCommunityIcon />
           <p>내가 쓴 글</p>
         </StCategory>
-        <StCategory onClick={() => onCategoryChange('bookmark')}>
+        <StCategory onClick={() => onCategoryChange('bookmark')} $isSelected={selectedCategory === 'bookmark'}>
           <StBookMarkIcon />
           <p>찜 목록</p>
         </StCategory>
@@ -123,6 +128,7 @@ const StUserProfileWrapper = styled.div`
     font-weight: 300;
     margin-top: 15px;
     color: gray;
+    cursor: pointer;
   }
   & p {
     font-size: 14px;
@@ -165,24 +171,26 @@ const StProfileImageWrapper = styled.figure`
   }
 `;
 
-const StEditProfileIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  background: url(${editProfileIcon}) no-repeat center center;
+const StEditProfileIcon = styled(IoPersonSharp)`
+  font-size: 20px;
 `;
 
-const StCommunityIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  background: url(${communityIcon}) no-repeat center center;
+const StCommunityIcon = styled(TbMessageCircle2Filled)`
+  font-size: 20px;
 `;
 
-const StBookMarkIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  background: url(${boomarkIcon}) no-repeat center center;
+const StBookMarkIcon = styled(FaHeart)`
+  font-size: 20px;
 `;
 
-const StCategory = styled.div`
+const StCategory = styled.div<StCategoryProps>`
   cursor: pointer;
+  & svg {
+    color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
+  }
+  & p {
+    font-size: 16px;
+    font-weight: 500;
+    color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
+  }
 `;
