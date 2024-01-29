@@ -6,7 +6,7 @@ import { RootState } from 'redux/config/configStore';
 import { Link } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
 import Button from 'common/Button';
-
+import editBtn from '../../assets/img/editBtn.png';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +42,11 @@ const MyCommunity = () => {
     return <p>로딩중...</p>;
   }
 
+  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) return;
+  };
+
   return (
     <StUserInfoContainer>
       <StContentBox>
@@ -63,6 +68,13 @@ const MyCommunity = () => {
                   ))}
                 </div>
                 <div style={{ textAlign: 'left' }}>등록시간: {post.created_At.split('T')[0]}</div>
+                <EditBtn onClick={() => post.id} />
+                {user?.id === post.id && (
+                  <StfetchForm>
+                    <StButton onClick={() => post.id}>수정</StButton>
+                    <StButton onClick={handleDeletePostButton}>삭제</StButton>
+                  </StfetchForm>
+                )}
               </PostContainer>
             ))
           ) : (
@@ -81,6 +93,49 @@ const MyCommunity = () => {
 
 export default MyCommunity;
 
+const StButton = styled.button`
+  position: flex;
+  height: 40px;
+  width: 90px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+  transition: 0.3s ease;
+  cursor: pointer;
+  & p {
+    color: ${(props) => props.theme.color.white};
+    font-weight: 500;
+  }
+  &:hover {
+    & h4 {
+      color: ${(props) => props.theme.color.gray};
+    }
+    background-color: ${(props) => props.theme.color.gray};
+  }
+`;
+
+const StfetchForm = styled.div`
+  flex-direction: column;
+  padding: 10px;
+  justify-content: flex-end;
+  display: flex;
+  position: absolute;
+  z-index: 20;
+  right: 2%;
+  top: 16%;
+`;
+
+const EditBtn = styled.button`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  top: 10px;
+  left: 1100px;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  background-image: url(${editBtn});
+  cursor: pointer;
+`;
 const StUserImageWrapper = styled.figure`
   display: flex;
   justify-content: center;
