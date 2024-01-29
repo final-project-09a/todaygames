@@ -1,7 +1,7 @@
 // 게시판 리스트
 
 import styled from 'styled-components';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Mutation, useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
@@ -16,7 +16,11 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { getPosts, updatedataPosts } from 'api/post';
+import { deletedata } from 'api/post';
+import { useDispatch } from 'react-redux';
+import { deletePost } from 'redux/modules/postSlice';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { Post } from 'types/global.d';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -33,9 +37,18 @@ interface PostDetail {
   image: string;
   game: string;
 }
-interface Post {
-  id: string;
-  text: string;
+interface Data {
+  id: number;
+  user_id: string;
+  content: string;
+  image: string;
+  title: string;
+  category: string;
+  game: string;
+  created_At: Date;
+}
+interface MypostApi {
+  deletedata: (id: string) => Promise<Data>;
 }
 
 export const BoardList = ({ filteredPosts }: any) => {
@@ -43,20 +56,16 @@ export const BoardList = ({ filteredPosts }: any) => {
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
+  const [deletefetching, setDeletefetching] = useState({ deletedata });
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
 
   const navigate = useNavigate();
 
-  // const updatePost = useSelector((state: any) => state.postSlice.updatePost);
-  // const deletePost = useSelector((state: any) => state.postSlice.deletePost);
-
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
-
-  // const { data: postsData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts }); // <= 이거원래 updatedataPosts
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -97,9 +106,14 @@ export const BoardList = ({ filteredPosts }: any) => {
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
-  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const { data } = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('id', 'user_id') });
+  console.log(data);
+  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
-    if (!answer) return;
+    if (!answer) {
+      return;
+    }
+    await deletedata('id', 'user_id');
   };
 
   const handleReport = () => {

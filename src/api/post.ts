@@ -40,19 +40,15 @@ export const updatedataPosts = async (
   }
 };
 
-export const deletePosts = async (id: string): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
+export const deletedata = async (
+  id: string,
+  user_id: string
+): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
   try {
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).delete().eq('id', id);
+    const { data } = await supabase.from('posts').delete().eq(id, id).eq(user_id, user_id);
     return data || [];
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-// getPosts()
-//   .then((data) => {
-//     console.log(data);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
