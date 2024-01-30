@@ -1,7 +1,7 @@
 import React from 'react';
 
 //  게시판 타입 저장
-export type Json = string | Date | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json = string | Date | number | boolean | null | { [key: string]: Json } | Json[];
 export interface Typedata {
   public: {
     Tables: {
@@ -69,9 +69,10 @@ export interface Typedata {
         };
         Select: {
           userid: string;
+          comment_nickname: string;
           comment_id: number;
           comments: string;
-          created_at: Date;
+          created_at: string;
         };
         Insert: {
           id: string;
