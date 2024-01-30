@@ -108,14 +108,15 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
     setSearchedText('');
   };
   // 데이터 추출
-  const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
-  console.log(delData);
-  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = async () => {
+  // const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
+  // console.log(delData);
+  const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) {
       return;
     }
-    await deletedata('id', 'user_id');
+    await deletedata(id, user_id);
+    // TODO: react-query 추천
   };
 
   const handleReport = () => {
@@ -149,7 +150,7 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
                 {postIsOwner && editingPostId === post.id && (
                   <StfetchForm>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
-                    <StButton onClick={handleDeletePostButton}>삭제</StButton>
+                    <StButton onClick={() => handleDeletePostButton(post.id, post.user_id)}>삭제</StButton>
                   </StfetchForm>
                 )}
 
