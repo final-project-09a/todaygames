@@ -10,8 +10,11 @@ import editBtn from '../../assets/img/editBtn.png';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [isButtonsVisible, setIsButtonsVisible] = useState(false);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -43,18 +46,32 @@ const MyCommunity = () => {
     if (!answer) return;
   };
 
+  const handleEditButtonClick = (postId: any) => {
+    // 이미 선택된 게시물일 경우 null을 설정하여 버튼을 숨김
+    setEditingPostId(editingPostId === postId ? null : postId);
+  };
+  console.log(editingPostId);
+  const handleThreeDotsClick = (postId: any) => {
+    setSelectedPostId(selectedPostId === postId ? null : postId);
+  };
+
+  const handleMoreInfoClick = (postId: string) => {
+    setEditingPostId((prev) => (prev === postId ? null : postId));
+    setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
+  };
+
   return (
     <StUserInfoContainer>
       <StContentBox>
-        <h1>등록된게시물{posts.length}개</h1>
+        <h1>등록된 게시물{posts.length}개</h1>
         <div>
           {posts.length > 0 ? (
             posts.map((post, index) => (
               <PostContainer key={index}>
-                <EditBtn onClick={() => post.id} />
-                {user?.id === post.id && (
+                <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
+                {editingPostId === post.id && (
                   <StfetchForm>
-                    <StButton onClick={() => post.id}>수정</StButton>
+                    <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
                     <StButton onClick={handleDeletePostButton}>삭제</StButton>
                   </StfetchForm>
                 )}
