@@ -221,6 +221,7 @@ const PostContainer = styled.div`
   border-bottom: 1px solid #ccc;
   padding: 15px;
   border-color: #333;
+  position: relative;
 `;
 const StCategory = styled.div`
   padding: 7px 16px;
