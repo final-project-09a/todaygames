@@ -83,17 +83,17 @@ function Login() {
     });
   };
 
-  // const googlelogin = async function signInWithgoogle() {
-  //   const { data, error } = await supabase.auth.signInWithOAuth({
-  //     provider: 'google',
-  //     options: {
-  //       queryParams: {
-  //         access_type: 'offline',
-  //         prompt: 'consent'
-  //       }
-  //     }
-  //   });
-  // }; 앱 배포 후에 구글로그인 도입가능
+  const googlelogin = async function signInWithgoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
+      }
+    });
+  };
 
   return (
     <StyledLogin>
@@ -126,15 +126,15 @@ function Login() {
         <StyledButton type="submit">로그인</StyledButton>
       </form>
       <StOtherLoginWrapper>
-        <StkakaoButton type="button" onClick={kakaologin}>
-          카카오 로그인
+        <StkakaoButton type="button" onClick={googlelogin}>
+          구글 로그인만드는중
         </StkakaoButton>
         <StkakaoButton type="button" onClick={kakaologin}>
           카카오 로그인
         </StkakaoButton>
       </StOtherLoginWrapper>
 
-      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
+      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료 */}
       <StSignInfo>
         <Link to="/search/userinfo">
           <p>아이디 찾기</p>
