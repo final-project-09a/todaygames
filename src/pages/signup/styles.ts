@@ -91,7 +91,13 @@ const StyledButtonShort = styled(StyledButton)`
     background-color: ${(props) => props.theme.color.primary};
   }
 `;
+const successMessages = ['사용 가능한 닉네임입니다.', '사용 가능한 이메일입니다.', '사용가능한 비밀번호입니다.'];
 
+const StErrorMessage = styled.div`
+  font-size: 13px;
+  padding: 10px;
+  color: ${(props) => (successMessages.includes(String(props.children)) ? 'green' : 'red')};
+`;
 export {
   StyledButtonShort,
   StyledInputShort,
@@ -102,5 +108,6 @@ export {
   StyledButton,
   StyledH1,
   StyledLabel,
-  StInputBtwrap
+  StInputBtwrap,
+  StErrorMessage
 };
