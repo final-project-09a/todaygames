@@ -1,12 +1,12 @@
 // 게시판 리스트
 
 import styled from 'styled-components';
-import { Mutation, useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 import MoreViewButton from 'common/MoreViewButton';
@@ -17,10 +17,6 @@ import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
 import { deletedata } from 'api/post';
-import { useDispatch } from 'react-redux';
-import { deletePost } from 'redux/modules/postSlice';
-import { PayloadAction } from '@reduxjs/toolkit';
-import { Post } from 'types/global.d';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -50,16 +46,18 @@ interface Data {
 interface MypostApi {
   deletedata: (id: string) => Promise<Data>;
 }
+interface GameSearchProps {
+  searchedText: string;
+  setSearchedText: React.Dispatch<React.SetStateAction<string>>;
+}
 
-export const BoardList = ({ filteredPosts }: any) => {
+export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedText }: GameSearchProps) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
-  const [deletefetching, setDeletefetching] = useState({ deletedata });
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
-
   const navigate = useNavigate();
 
   const { data: userInfoData } = useQuery({
@@ -105,9 +103,13 @@ export const BoardList = ({ filteredPosts }: any) => {
     const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
-
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('id', 'user_id') });
-  console.log(data);
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchedText('');
+  };
+  // 데이터 추출
+  const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
+  console.log(delData);
   const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = async () => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) {
@@ -122,11 +124,13 @@ export const BoardList = ({ filteredPosts }: any) => {
 
   return (
     <div>
-      <StSeachContainer>
+      <StSeachContainer onSubmit={handleFormSubmit}>
         <p>{filteredPosts.length}개의 일치하는 게시물</p>
         <StsearchBox>
-          <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <StSearchIcon />
+          <StseachInput value={searchedText} onChange={handleOnChange} placeholder="게시글 검색" />
+          <Link to={`/search/${searchedText}`}>
+            <StSearchIcon type="submit" />
+          </Link>
           <Button size="small" onClick={moveregisterPageOnClick}>
             글쓰기
           </Button>
@@ -140,7 +144,7 @@ export const BoardList = ({ filteredPosts }: any) => {
           if (userInfo) {
             const postIsOwner = isOwner(post.user_id);
             return (
-              <StcontentBox key={post?.id}>
+              <StcontentBox key={post?.id} defaultValue={post.id}>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {postIsOwner && editingPostId === post.id && (
                   <StfetchForm>
@@ -288,7 +292,7 @@ const StseachInput = styled.input`
   position: relative;
 `;
 
-const StSearchIcon = styled.div`
+const StSearchIcon = styled.button`
   display: flex;
   position: absolute;
   top: 50%;
