@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import goglelogo from '../../assets/img/web_light_rd_SU@1x.png';
+import kakaologo from '../../assets/img/kakaologo.png';
 
 const StyledLogin = styled.div`
   display: flex;
@@ -58,21 +60,43 @@ const StyledButton = styled.button`
 `;
 const StkakaoButton = styled.button`
   font-family: 'Pretendard-Regular';
-  width: 170px;
+  width: 180px;
   height: 50px;
   background-color: #f7e600;
   color: ${(props) => props.theme.color.black};
   border: none;
   margin-top: 20px;
   border-radius: 10px;
+  background-image: url(${kakaologo});
+  background-size: cover;
   cursor: pointer;
   transition: 0.3s ease;
+
   &:hover {
     color: ${(props) => props.theme.color.black};
     background-color: #ccbe04;
   }
 `;
 
+const StgoogleButton = styled.button`
+  font-family: 'Pretendard-Regular';
+  width: 250px;
+  height: 50px;
+  background-color: #f7e600;
+  color: ${(props) => props.theme.color.black};
+  border: none;
+  margin-top: 20px;
+  border-radius: 10px;
+  background-image: url(${goglelogo});
+  background-size: cover;
+  cursor: pointer;
+  transition: 0.3s ease;
+
+  &:hover {
+    color: ${(props) => props.theme.color.black};
+    background-color: #ccbe04;
+  }
+`;
 const StOtherLoginWrapper = styled.div`
   display: flex;
   gap: 10px;
@@ -99,5 +123,6 @@ export {
   StyledH1,
   StyledLabel,
   StkakaoButton,
-  StSignInfo
+  StSignInfo,
+  StgoogleButton
 };
