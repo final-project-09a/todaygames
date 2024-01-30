@@ -36,15 +36,8 @@ export const getComments = async (): Promise<Typedata['public']['Tables']['comme
   }
 };
 //댓글데이터 삽입
-export const createComments = async (): Promise<Typedata['public']['Tables']['comments']['CommentsUrl'][]> => {
-  try {
-    const { data } = await supabase.from(QUERY_KEYS.COMMENTS).insert('*');
-    console.log(data);
-    return data || [];
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+export const createComments = async (newComment: Typedata['public']['Tables']['comments']['CommentsUrl']['Select']) => {
+  await supabase.from(QUERY_KEYS.COMMENTS).insert(newComment);
 };
 // 댓글데이터 수정
 export const updateComments = async (): Promise<Typedata['public']['Tables']['comments']['CommentsUrl'][]> => {

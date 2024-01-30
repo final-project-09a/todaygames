@@ -108,7 +108,6 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
   };
   // 데이터 추출
   const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
-  console.log(delData);
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');

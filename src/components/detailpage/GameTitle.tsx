@@ -7,11 +7,10 @@ import prevIcon from 'assets/icons/prevIcon.svg';
 import Button from 'common/Button';
 import heartIcon from 'assets/icons/heartIcon.svg';
 import redHeartIcon from 'assets/icons/redHeartIcon.svg';
-import { supabase } from 'types/supabase';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { GameType } from 'types/games';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { createBookmark, deleteBookmark, matchBookmark } from 'api/bookmark';
 
 const settings = {
@@ -20,7 +19,9 @@ const settings = {
   slidesToShow: 5,
   slidesToScroll: 1,
   centerMode: true,
-  centerPadding: '100px'
+  centerPadding: '100px',
+  draggable: false,
+  focusOnSelect: true
 };
 
 const GameTitle = () => {
@@ -28,7 +29,6 @@ const GameTitle = () => {
   const screenShots = data?.screenshots;
   const [currentCenter, setCurrentCenter] = useState(0);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const queryClient = useQueryClient();
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
@@ -177,6 +177,7 @@ const StImageWrapper = styled.figure<{ $isCenter: boolean }>`
   display: flex;
   margin-left: 14px;
   overflow: hidden;
+  cursor: pointer;
   border: ${(props) => (props.$isCenter ? '3px solid white' : 'none')};
   & img {
     width: 100%;

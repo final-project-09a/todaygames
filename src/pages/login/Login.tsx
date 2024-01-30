@@ -10,11 +10,13 @@ import {
   StkakaoButton,
   StFormWrapper,
   StOtherLoginWrapper,
-  StSignInfo
+  StSignInfo,
+  StgoogleButton
 } from './styles';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/modules/userSlice';
-
+import goglelogo from '../../assets/img/web_light_rd_SU@1x.png';
+import kakaologo from '../../assets/img/kakaologo.png';
 interface FormData {
   email: string;
   password: string;
@@ -83,17 +85,17 @@ function Login() {
     });
   };
 
-  // const googlelogin = async function signInWithgoogle() {
-  //   const { data, error } = await supabase.auth.signInWithOAuth({
-  //     provider: 'google',
-  //     options: {
-  //       queryParams: {
-  //         access_type: 'offline',
-  //         prompt: 'consent'
-  //       }
-  //     }
-  //   });
-  // }; 앱 배포 후에 구글로그인 도입가능
+  const googlelogin = async function signInWithgoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
+      }
+    });
+  };
 
   return (
     <StyledLogin>
@@ -126,15 +128,13 @@ function Login() {
         <StyledButton type="submit">로그인</StyledButton>
       </form>
       <StOtherLoginWrapper>
-        <StkakaoButton type="button" onClick={kakaologin}>
-          카카오 로그인
-        </StkakaoButton>
-        <StkakaoButton type="button" onClick={kakaologin}>
-          카카오 로그인
-        </StkakaoButton>
+        <StgoogleButton type="button" onClick={googlelogin}></StgoogleButton>
+        {/* <img src={goglelogo} alt="기본이미지" onClick={googlelogin} />
+        <img src={kakaologo} alt="기본이미지" onClick={googlelogin} /> */}
+        <StkakaoButton type="button" onClick={kakaologin}></StkakaoButton>
       </StOtherLoginWrapper>
 
-      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
+      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료 */}
       <StSignInfo>
         <Link to="/search/userinfo">
           <p>아이디 찾기</p>

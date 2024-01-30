@@ -60,7 +60,7 @@ const ProfileImage = styled.img`
 `;
 
 const NickNameAndDate = styled.div`
-  width: 150px;
+  width: 250px;
   height: 22.5px;
   gap: 10px;
   display: flex;
