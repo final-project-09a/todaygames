@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { UserInfo } from 'api/user';
-import { mappingComments } from 'api/comments';
+import { createComments, mappingComments } from 'api/comments';
 import { getComments } from 'api/comments';
 import { QUERY_KEYS } from 'query/keys';
 import { useQuery } from '@tanstack/react-query';
@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { getReplies } from 'api/replies';
 
-import { useCommentQuery } from 'query/useReplyQuery';
 type userInfotypelist = {
   userInfoData: React.ReactNode;
 };
@@ -46,19 +45,16 @@ const Comment = () => {
     queryFn: mappingComments
   });
   console.log('mappingData', mappingData);
-  const addReplyMutate = useCommentQuery();
+  const handleCommentCreate = createComments();
 
   const handleCommentOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentContent(e.target.value);
   };
 
-  const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const newReply = {
-      comments: commentContent,
-      user_id: user?.id,
-      comment_id: 8
-    };
+    await handleCommentCreate;
+    alert('제출되었습니다');
   };
 
   // 댓글 정보 가져오기
@@ -84,10 +80,10 @@ const Comment = () => {
   return (
     <>
       <StcommentContainer>
-        {/* <form onClick={handleReplySubmit}>
+        <form onClick={handleReplySubmit}>
           <input value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기" />
           <button>제출</button>
-        </form> */}
+        </form>
         <StUpdateSoon>댓글 기능은</StUpdateSoon>
         <StUpdateSoon>곧 업데이트 될 예정입니다</StUpdateSoon>
       </StcommentContainer>
