@@ -17,6 +17,7 @@ import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
 import { deletedata } from 'api/post';
+import { getFormattedDate } from 'util/date';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -164,7 +165,7 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
                       </StUserImageWrapper>
                       <StUserNameWrapper>
                         <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
-                        <p>{post.created_At}</p>
+                        <p>{getFormattedDate(post.created_At)}</p>
                       </StUserNameWrapper>
                     </section>
                   </StProfileWrapper>

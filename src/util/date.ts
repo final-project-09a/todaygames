@@ -2,7 +2,10 @@ export const getFormattedDate = (date: string) => {
   return new Date(date).toLocaleDateString('ko', {
     year: 'numeric',
     month: '2-digit',
-    day: '2-digit'
+    day: '2-digit',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
   });
 };
 
