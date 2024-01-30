@@ -38,6 +38,7 @@ import comment from '../../assets/img/comment.png';
 import like from '../../assets/img/like.png';
 import Comment from 'components/comment/Comment';
 import { createLike, deleteLike, fetchLike, matchLikes } from 'api/likes';
+import { BiLike, BiSolidLike } from 'react-icons/bi';
 
 export const BoardDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
@@ -173,7 +174,7 @@ export const BoardDetail = () => {
             </CommentAndLike>
             <CommentAndLike>
               <LikeIcon onClick={() => user?.id && handleLikeClick(user?.id, id!)} $isLiked={isLiked}>
-                <img src={like} />
+                {isLiked ? <StLike /> : <StUnLike />}
               </LikeIcon>
               <NumText>{postLikeData?.length}</NumText>
             </CommentAndLike>
@@ -218,4 +219,12 @@ const StImageWrapper = styled.figure`
     object-fit: contain;
     border-radius: 10px;
   }
+`;
+
+const StUnLike = styled(BiLike)`
+  font-size: 20px;
+`;
+
+const StLike = styled(BiSolidLike)`
+  font-size: 20px;
 `;
