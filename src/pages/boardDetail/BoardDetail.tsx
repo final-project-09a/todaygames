@@ -59,19 +59,21 @@ export const BoardDetail = () => {
     queryKey: [QUERY_KEYS.LIKE],
     queryFn: fetchLike
   });
+
   const filterdPost = gameData?.find((game) => game.id === id);
+  const filteredLike = postLikeData?.filter((like) => like.post_id === id);
   const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
   const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
   const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
-  // const correctTime = getFormattedDate(filterdPost!.created_At);
+  const correctTime = filterdPost ? getFormattedDate(filterdPost.created_At) : undefined;
 
   //본인이 누른 좋아요가 계속 눌려있는지 확인
   useEffect(() => {
     const checkLiked = async () => {
       if (user?.id && id) {
         try {
-          const bookmarkData = await matchLikes(user.id, id);
-          setIsLiked(!!bookmarkData && bookmarkData.length > 0);
+          const likeData = await matchLikes(user.id, id);
+          setIsLiked(!!likeData && likeData.length > 0);
         } catch (error) {
           console.error('북마크 여부 확인 에러: ', error);
         }
@@ -123,7 +125,8 @@ export const BoardDetail = () => {
     // centerPadding: '0px'
   };
   console.log(postLikeData);
-
+  console.log(id);
+  console.log(filteredLike);
   return (
     <>
       <AllContainer>
@@ -140,7 +143,7 @@ export const BoardDetail = () => {
                   <NickNameAndTitleText>
                     {filteredUser?.nickname ? filteredUser?.nickname : 'KAKAO'}
                   </NickNameAndTitleText>
-                  <DateText>{}</DateText>
+                  <DateText>{correctTime}</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>{filterdPost?.game}</NickNameAndTitleText>
               </WrappingUserInfo>
@@ -176,7 +179,7 @@ export const BoardDetail = () => {
               <LikeIcon onClick={() => user?.id && handleLikeClick(user?.id, id!)} $isLiked={isLiked}>
                 {isLiked ? <StLike /> : <StUnLike />}
               </LikeIcon>
-              <NumText>{postLikeData?.length}</NumText>
+              <NumText>{filteredLike?.length}</NumText>
             </CommentAndLike>
           </RowCommentAndLike>
           <WrappingComments>
