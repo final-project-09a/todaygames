@@ -44,7 +44,6 @@ export const BoardDetail = () => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [selectedImage, setSelectedImage] = useState<string | null>('');
   const [sliderIndex, setSliderIndex] = useState(0);
-
   const { data: gameData } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
@@ -54,6 +53,11 @@ export const BoardDetail = () => {
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
+  const filterdPost = gameData?.find((game) => game.id === id);
+  const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
+  const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
+  const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
+  const correctTime = getFormattedDate(filterdPost!.created_At);
 
   const settings = {
     // row: 1,
@@ -69,11 +73,6 @@ export const BoardDetail = () => {
     // centerPadding: '0px'
   };
 
-  const filterdPost = gameData?.find((game) => game.id === id);
-  const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
-  const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
-  const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
-  const correctTime = getFormattedDate(filterdPost!.created_At);
   console.log(correctImageArray);
   console.log(correctTime);
   return (
@@ -101,11 +100,16 @@ export const BoardDetail = () => {
           </UserInfoAndBtn>
           <StCarouselWrapper>
             <CustomCarousel settings={settings}>
-              {correctImageArray?.map((images, index) => (
-                <StImageWrapper key={index}>
-                  <img src={images} />
-                </StImageWrapper>
-              ))}
+              {correctImageArray?.map((images, index) =>
+                images ? (
+                  <StImageWrapper key={index}>
+                    <img src={images} />
+                  </StImageWrapper>
+                ) : (
+                  // eslint-disable-next-line react/jsx-key
+                  <div></div>
+                )
+              )}
             </CustomCarousel>
           </StCarouselWrapper>
 

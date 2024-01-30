@@ -54,10 +54,9 @@ export interface Typedata {
       comments: {
         CommentsUrl: {
           Select: {
-            userid: string;
+            user_id: string;
             comment_id: number;
             comments: string;
-            created_at: Date;
           };
           Userinfo: {
             avatar_url: string;

@@ -21,36 +21,41 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
 
   // 이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
 
+  const supabaseStorage = supabase.storage.from('profileimage');
+
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target) {
         const selectedFile = e.target.files;
         if (selectedFile && selectedFile.length > 0) {
-          const fileReader = new FileReader();
-          fileReader.onload = async (event) => {
-            if (event.target) {
-              const imageUrl = event.target.result as string;
-              setImageUrl(imageUrl);
+          const file = selectedFile[0];
+          const path = `${user?.id}/${file.name}`;
 
-              if (user) {
-                // id가 존재하는지 확인
-                // 'userinfo' 테이블의 'avatar_url' 업데이트
-                const { error } = await supabase.from('userinfo').update({ avatar_url: imageUrl }).eq('id', user.id);
-                if (error) {
-                  console.log('프로필 이미지 업데이트 중 에러가 발생했습니다:', error.message);
-                  alert('이미지 업로드 오류');
-                } else {
-                  console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
-                  alert('이미지 업로드 성공!');
-                  window.location.reload();
-                }
-              } else {
-                console.log('유저 ID가 존재하지 않습니다.');
-                alert('유저 ID가 존재하지 않습니다.');
-              }
-            }
-          };
-          fileReader.readAsDataURL(selectedFile[0]);
+          // Upload the file to Supabase Storage
+          const { error: uploadError } = await supabaseStorage.upload(path, file);
+
+          if (uploadError) {
+            console.error('Error uploading image:', uploadError.message);
+            alert('이미지 업로드 실패');
+            return;
+          }
+
+          // Get the URL of the uploaded file
+          const { data: publicUrl } = supabaseStorage.getPublicUrl(path);
+
+          // Update the user's avatar URL
+          const { error: updateError } = await supabase
+            .from('userinfo')
+            .update({ avatar_url: publicUrl })
+            .eq('id', user?.id);
+          if (updateError) {
+            console.error('Error updating profile image:', updateError.message);
+            alert('프로필 이미지 업데이트 실패');
+          } else {
+            console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
+            alert('이미지 업로드 성공');
+            setImageUrl(publicUrl.publicUrl);
+          }
         }
       }
     },

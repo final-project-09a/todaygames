@@ -36,7 +36,9 @@ export const getComments = async (): Promise<Typedata['public']['Tables']['comme
   }
 };
 //댓글데이터 삽입
-export const createComments = async (): Promise<Typedata['public']['Tables']['comments']['CommentsUrl'][]> => {
+export const createComments = async (): Promise<
+  Typedata['public']['Tables']['comments']['CommentsUrl']['Select'][]
+> => {
   try {
     const { data } = await supabase.from(QUERY_KEYS.COMMENTS).insert('*');
     console.log(data);
