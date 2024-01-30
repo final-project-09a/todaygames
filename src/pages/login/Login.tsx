@@ -10,11 +10,13 @@ import {
   StkakaoButton,
   StFormWrapper,
   StOtherLoginWrapper,
-  StSignInfo
+  StSignInfo,
+  StgoogleButton
 } from './styles';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/modules/userSlice';
-
+import goglelogo from '../../assets/img/web_light_rd_SU@1x.png';
+import kakaologo from '../../assets/img/kakaologo.png';
 interface FormData {
   email: string;
   password: string;
@@ -126,12 +128,10 @@ function Login() {
         <StyledButton type="submit">로그인</StyledButton>
       </form>
       <StOtherLoginWrapper>
-        <StkakaoButton type="button" onClick={googlelogin}>
-          구글 로그인만드는중
-        </StkakaoButton>
-        <StkakaoButton type="button" onClick={kakaologin}>
-          카카오 로그인
-        </StkakaoButton>
+        <StgoogleButton type="button" onClick={googlelogin}></StgoogleButton>
+        {/* <img src={goglelogo} alt="기본이미지" onClick={googlelogin} />
+        <img src={kakaologo} alt="기본이미지" onClick={googlelogin} /> */}
+        <StkakaoButton type="button" onClick={kakaologin}></StkakaoButton>
       </StOtherLoginWrapper>
 
       {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료 */}
