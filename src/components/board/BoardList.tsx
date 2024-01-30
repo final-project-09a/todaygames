@@ -1,7 +1,7 @@
 // 게시판 리스트
 
 import styled from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
@@ -41,7 +41,6 @@ interface Post {
 export const BoardList = ({ filteredPosts }: any) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
-
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
 
@@ -141,42 +140,43 @@ export const BoardList = ({ filteredPosts }: any) => {
                     <StButton onClick={handleReport}>신고하기</StButton>
                   </StfetchForm>
                 )}
-
-                <StProfileWrapper onClick={() => movedetailPageOnClick(post?.id)}>
-                  <section>
-                    <StUserImageWrapper>
-                      <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
-                    </StUserImageWrapper>
-                    <StUserNameWrapper>
-                      <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
-                      <p>{post.created_At}</p>
-                    </StUserNameWrapper>
-                  </section>
-                </StProfileWrapper>
-                <StContentWrapper>
-                  <StText>
-                    <h3>{post?.title}</h3>
-                    <p>{post?.content}</p>
-                    <StTagWrapper>
-                      <Tag size="small" backgroundColor="secondary">
-                        {post.game}
-                      </Tag>
-                      {post?.category
-                        .split(',')
-                        .map((item) => item.trim())
-                        .map((genre: string) => (
-                          <Tag key={genre} prefix="#" size="small" backgroundColor="lightgray">
-                            {genre}
-                          </Tag>
-                        ))}
-                    </StTagWrapper>
-                  </StText>
-                  {post?.image && (
-                    <StImageWrapper>
-                      <img src={post?.image} alt={post.game} />
-                    </StImageWrapper>
-                  )}
-                </StContentWrapper>
+                <Stdetailmoveline onClick={() => movedetailPageOnClick(post?.id)}>
+                  <StProfileWrapper>
+                    <section>
+                      <StUserImageWrapper>
+                        <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
+                      </StUserImageWrapper>
+                      <StUserNameWrapper>
+                        <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
+                        <p>{post.created_At}</p>
+                      </StUserNameWrapper>
+                    </section>
+                  </StProfileWrapper>
+                  <StContentWrapper>
+                    <StText>
+                      <h3>{post?.title}</h3>
+                      <p>{post?.content}</p>
+                      <StTagWrapper>
+                        <Tag size="small" backgroundColor="secondary">
+                          {post.game}
+                        </Tag>
+                        {post?.category
+                          .split(',')
+                          .map((item) => item.trim())
+                          .map((genre: string) => (
+                            <Tag key={genre} prefix="#" size="small" backgroundColor="lightgray">
+                              {genre}
+                            </Tag>
+                          ))}
+                      </StTagWrapper>
+                    </StText>
+                    {post?.image && (
+                      <StImageWrapper>
+                        <img src={post?.image} alt={post.game} />
+                      </StImageWrapper>
+                    )}
+                  </StContentWrapper>
+                </Stdetailmoveline>
                 <StPostInfoWrapper>
                   <div>
                     <img src={comments} />
@@ -201,20 +201,8 @@ export const BoardList = ({ filteredPosts }: any) => {
     </div>
   );
 };
-const StTextarea = styled.textarea`
-  // 수정 textarea
-  display: flex;
-  max-width: 1180px;
-  flex-direction: column;
-  gap: 10px;
-  margin: 30px 0;
-  height: 250px;
-  overflow: hidden;
-  resize: none;
-  border-radius: 5px;
-  background-color: #3a3a3a;
-  color: ${(props) => props.theme.color.white};
-  font-weight: 900;
+const Stdetailmoveline = styled.div`
+  cursor: pointer;
 `;
 const StButton = styled.button`
   position: flex;
@@ -278,6 +266,7 @@ const StsearchBox = styled.div`
 const StseachInput = styled.input`
   height: 48px;
   width: 400px;
+  color: ${(props) => props.theme.color.white};
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   border: none;

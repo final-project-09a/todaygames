@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const StMypageContainer = styled.div`
   width: 100%;
@@ -39,6 +39,10 @@ export const StUserinfoBox = styled.div`
     user-select: none;
   }
   & input {
+    font-family: 'Pretendard';
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 15px;
     position: relative;
     width: 100%;
     padding: 18px;
@@ -52,6 +56,10 @@ export const StUserinfoBox = styled.div`
     }
   }
   & textarea {
+    font-family: 'Pretendard';
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 15px;
     width: 100%;
     height: 144px;
     border-radius: 10px;
@@ -74,6 +82,10 @@ export const StUserinfoBox = styled.div`
     right: 0;
   }
   & select {
+    /* -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none; */
+    font-family: 'Pretendard';
     width: 355px;
     padding: 18px;
     border-radius: 10px;
@@ -81,7 +93,21 @@ export const StUserinfoBox = styled.div`
     background: ${(props) => props.theme.color.inputcolor};
     color: ${(props) => props.theme.color.white};
     border: none;
+    margin-bottom: 20px;
   }
+
+  /* & option {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+
+    font-size: 14px;
+    font-family: 'Pretendard';
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: ${(props) => props.theme.color.gray};
+  } */
 `;
 
 export const StErrorMessage = styled.div`
@@ -122,7 +148,6 @@ export const StButtonContainer = styled.div`
 
 export const StTagWrapper = styled.div`
   display: flex;
-  margin-top: 20px;
   gap: 8px;
 `;
 
@@ -131,8 +156,10 @@ export const StCancelIcon = styled.img`
   height: 18px;
   color: #999999;
   margin-left: 7px;
+  cursor: pointer;
 `;
 export const StPasswordButton = styled.button`
+  font-family: 'Pretendard-Regular';
   align-self: flex-end;
   border-radius: 10px;
   background: ${(props) => props.theme.color.white};
@@ -140,6 +167,15 @@ export const StPasswordButton = styled.button`
   height: 48px;
   flex-shrink: 0;
   margin-top: 19px;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+  ${(props) =>
+    !props.disabled &&
+    css`
+      &:hover {
+        color: ${(props) => props.theme.color.white};
+        background: ${(props) => props.theme.color.primary};
+      }
+    `}
 `;
 
 export const StpasswordInputGroup = styled.div`
