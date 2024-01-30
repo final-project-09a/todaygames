@@ -30,8 +30,7 @@ export const updatedataPosts = async (
     if (error) {
       throw new Error(`게시물 업데이트 중 오류가 발생했습니다: ${error.message}`);
     }
-    console.log(data); // 수정된 게시물 데이터 출력
-    // 수정된 게시물 데이터 반환
+    console.log(data);
 
     return data || [];
   } catch (error) {
@@ -40,19 +39,15 @@ export const updatedataPosts = async (
   }
 };
 
-export const deletePosts = async (id: string): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
+export const deletedata = async (
+  id: string,
+  user_id: string
+): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
   try {
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).delete().eq('id', id);
+    const { data } = await supabase.from('posts').delete().eq(id, [id]).eq(user_id, [user_id]);
     return data || [];
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
-// getPosts()
-//   .then((data) => {
-//     console.log(data);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
