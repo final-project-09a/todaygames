@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import { getReplies } from 'api/replies';
 
-import { useCommentQuery } from 'query/useReplyQuery';
 type userInfotypelist = {
   userInfoData: React.ReactNode;
 };
