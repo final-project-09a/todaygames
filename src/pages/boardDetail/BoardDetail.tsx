@@ -21,13 +21,13 @@ import {
   WrappingComments,
   NumText
 } from './style';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
 import { supabase } from 'types/supabase';
-import { SetStateAction, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import { Post } from 'types/global.d';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
@@ -37,13 +37,13 @@ import { getFormattedDate } from 'util/date';
 import comment from '../../assets/img/comment.png';
 import like from '../../assets/img/like.png';
 import Comment from 'components/comment/Comment';
+import { createLike, deleteLike, fetchLike, matchLikes } from 'api/likes';
 
 export const BoardDetail = () => {
+  const [isLiked, setIsLiked] = useState(false);
+  const [countingLike, setCountingLike] = useState(0);
   const { id } = useParams();
-  const [dropdownVisible, setDropdownVisible] = useState(false);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  const [selectedImage, setSelectedImage] = useState<string | null>('');
-  const [sliderIndex, setSliderIndex] = useState(0);
   const { data: gameData } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
@@ -53,11 +53,60 @@ export const BoardDetail = () => {
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
+
+  const { data: postLikeData } = useQuery({
+    queryKey: [QUERY_KEYS.LIKE],
+    queryFn: fetchLike
+  });
   const filterdPost = gameData?.find((game) => game.id === id);
   const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
   const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
   const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
-  const correctTime = getFormattedDate(filterdPost!.created_At);
+  // const correctTime = getFormattedDate(filterdPost!.created_At);
+
+  //본인이 누른 좋아요가 계속 눌려있는지 확인
+  useEffect(() => {
+    const checkLiked = async () => {
+      if (user?.id && id) {
+        try {
+          const bookmarkData = await matchLikes(user.id, id);
+          setIsLiked(!!bookmarkData && bookmarkData.length > 0);
+        } catch (error) {
+          console.error('북마크 여부 확인 에러: ', error);
+        }
+      }
+    };
+
+    checkLiked();
+  }, [user?.id, id]);
+
+  // 좋아요 눌렀을 때 추가, 삭제
+  const mutation = useMutation<void, Error, { userId: string; appId: string }, Error>({
+    mutationFn: async ({ userId, appId }) => {
+      if (isLiked) {
+        await deleteLike(userId, appId);
+      } else {
+        await createLike(userId, appId);
+      }
+    },
+    onSuccess: () => {
+      setIsLiked((prevValue) => !prevValue);
+    },
+    onError: (error: Error) => {
+      console.error('북마크 에러: ', error);
+    }
+  });
+
+  const handleLikeClick = async (userId: string, appId: string) => {
+    if (user) {
+      try {
+        await mutation.mutateAsync({ userId, appId });
+      } catch (error) {
+        console.error('Error handling bookmark:', error);
+      }
+    }
+    console.log('좋아요 눌렀음');
+  };
 
   const settings = {
     // row: 1,
@@ -72,9 +121,8 @@ export const BoardDetail = () => {
     // centerMode: true,
     // centerPadding: '0px'
   };
+  console.log(postLikeData);
 
-  console.log(correctImageArray);
-  console.log(correctTime);
   return (
     <>
       <AllContainer>
@@ -91,7 +139,7 @@ export const BoardDetail = () => {
                   <NickNameAndTitleText>
                     {filteredUser?.nickname ? filteredUser?.nickname : 'KAKAO'}
                   </NickNameAndTitleText>
-                  <DateText>{correctTime}</DateText>
+                  <DateText>{}</DateText>
                 </NickNameAndDate>
                 <NickNameAndTitleText>{filterdPost?.game}</NickNameAndTitleText>
               </WrappingUserInfo>
@@ -124,8 +172,10 @@ export const BoardDetail = () => {
               <NumText>5</NumText>
             </CommentAndLike>
             <CommentAndLike>
-              <img src={like} />
-              <NumText>5</NumText>
+              <LikeIcon onClick={() => user?.id && handleLikeClick(user?.id, id!)} $isLiked={isLiked}>
+                <img src={like} />
+              </LikeIcon>
+              <NumText>{postLikeData?.length}</NumText>
             </CommentAndLike>
           </RowCommentAndLike>
           <WrappingComments>
@@ -137,6 +187,18 @@ export const BoardDetail = () => {
     </>
   );
 };
+
+const LikeIcon = styled.div<{ $isLiked: boolean }>`
+  width: 37px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  & img {
+    color: ${(props) => (props.$isLiked ? props.theme.color.white : props.theme.color.primary)};
+  }
+`;
 
 const StCarouselWrapper = styled.div`
   display: flex;
