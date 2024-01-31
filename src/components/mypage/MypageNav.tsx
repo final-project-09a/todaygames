@@ -82,6 +82,7 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
         {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
+        {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
         <p>{user?.nickname ? user.nickname : ''}</p>
         <input
           type="file"
