@@ -7,15 +7,14 @@ import {
   StyledButton,
   StyledH1,
   StyledLabel,
-  StkakaoButton,
   StFormWrapper,
   StOtherLoginWrapper,
   StSignInfo,
-  StgoogleButton
+  StLoginButton
 } from './styles';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/modules/userSlice';
-import goglelogo from '../../assets/img/web_light_rd_SU@1x.png';
+import googlelogo from '../../assets/img/googlelogo.png';
 import kakaologo from '../../assets/img/kakaologo.png';
 interface FormData {
   email: string;
@@ -128,22 +127,15 @@ function Login() {
         <StyledButton type="submit">로그인</StyledButton>
       </form>
       <StOtherLoginWrapper>
-        <StgoogleButton type="button" onClick={googlelogin}></StgoogleButton>
-        {/* <img src={goglelogo} alt="기본이미지" onClick={googlelogin} />
-        <img src={kakaologo} alt="기본이미지" onClick={googlelogin} /> */}
-        <StkakaoButton type="button" onClick={kakaologin}></StkakaoButton>
+        <StLoginButton onClick={googlelogin}>
+          <img src={googlelogo} alt="기본이미지" onClick={googlelogin} />
+        </StLoginButton>
+        <StLoginButton onClick={kakaologin}>
+          <img src={kakaologo} alt="기본이미지" onClick={googlelogin} />
+        </StLoginButton>
       </StOtherLoginWrapper>
-
-      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료 */}
       <StSignInfo>
-        <Link to="/search/userinfo">
-          <p>아이디 찾기</p>
-        </Link>
-        <p>|</p>
-        <Link to="/search/userinfo">
-          <p>비밀번호 변경</p>
-        </Link>
-        <p>|</p>
+        <h4>계정이 없으신가요?</h4>
         <Link to="/signup">
           <p>회원가입</p>
         </Link>

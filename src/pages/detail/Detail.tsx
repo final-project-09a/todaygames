@@ -30,6 +30,7 @@ const Detail = () => {
   }
 
   const genres = data.genres.map((genre: { description: string }) => genre.description);
+  console.log(data);
 
   return (
     <DataContext.Provider value={data}>
