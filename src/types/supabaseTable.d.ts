@@ -58,9 +58,10 @@ export interface Typedata {
       comments: {
         CommentsUrl: {
           Select: {
-            user_id: string;
-            comment_id: number;
+            user_id: string | undefined;
             comments: string;
+            comment_nickname: string | undefined | null;
+            id: string | undefined;
           };
           Userinfo: {
             avatar_url: string;
@@ -68,11 +69,12 @@ export interface Typedata {
           };
         };
         Select: {
-          userid: string;
+          user_id: string;
           comment_nickname: string;
-          comment_id: number;
+          comment_id: string;
           comments: string;
           created_at: string;
+          id: string;
         };
         Insert: {
           id: string;

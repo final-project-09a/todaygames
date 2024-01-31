@@ -10,6 +10,7 @@ import { RootState } from 'redux/config/configStore';
 import sendImg from '../../assets/img/send.png';
 import { getReplies } from 'api/replies';
 import ReplyBox from './ReplyBox';
+import { useParams } from 'react-router-dom';
 
 type userInfotypelist = {
   userInfoData: React.ReactNode;
@@ -36,6 +37,7 @@ interface ButtonProps {
 const Comment = () => {
   const [actionComment, setActionComment] = useState([]);
   const [commentContent, setCommentContent] = useState('');
+  const { id } = useParams();
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
@@ -49,9 +51,9 @@ const Comment = () => {
   const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const newComment = {
-      user_id: user!.id,
-      comment_nickname: user!.nickname,
-      comment_id: 3,
+      id: id,
+      user_id: user?.id,
+      comment_nickname: user?.nickname,
       comments: commentContent
     };
     createComments(newComment);
@@ -59,10 +61,20 @@ const Comment = () => {
     alert('댓글입력을 완료했습니다!');
   };
 
+  const { data: commentData } = useQuery({
+    queryKey: [QUERY_KEYS.COMMENTS],
+    queryFn: getComments
+  });
+
+  const filteredComment = commentData?.filter((comment) => comment.id === id);
+  console.log(id);
+  console.log(commentData);
+  console.log(filteredComment);
+
   // 댓글 정보 가져오기
-  useEffect(() => {
-    getComments(); // 댓글 data 실행?
-  }, []);
+  // useEffect(() => {
+  //   getComments(); // 댓글 data 실행?
+  // }, []);
   // 댓글과 대댓글을 담을 이차원 배열 선언
   // const commentArrayContent: [Comment[], replies[]] = [[], []];
   // const { data: repliesData } = useQuery({ queryKey: [QUERY_KEYS.REPLIES], queryFn: getReplies });

@@ -94,6 +94,7 @@ export const BoardDetail = () => {
     },
     onSuccess: () => {
       setIsLiked((prevValue) => !prevValue);
+      setCountingLike(filteredLike!.length);
     },
     onError: (error: Error) => {
       console.error('북마크 에러: ', error);
