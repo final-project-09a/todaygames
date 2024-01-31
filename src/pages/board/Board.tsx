@@ -13,7 +13,7 @@ export const Board = () => {
       <Sttitle>커뮤니티</Sttitle>
       <StboardListContainer>
         <BoardCategory setFilteredPosts={setFilteredPosts} filteredPosts={filteredPosts} />
-        <BoardList filteredPosts={filteredPosts} />
+        <BoardList filteredPosts={filteredPosts} setFilteredPosts={setFilteredPosts} />
       </StboardListContainer>
     </StCommunityContainer>
   );

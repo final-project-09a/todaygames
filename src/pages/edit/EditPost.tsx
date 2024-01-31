@@ -1,30 +1,5 @@
 import React, { useState } from 'react';
-import { MainBackground, WrappingBtnAndInput } from './styles';
-import {
-  BottomBtn,
-  CancelBtn,
-  CardImage,
-  ContentInput,
-  GameCard,
-  GameSelect,
-  ImageBox,
-  ImageUploadBtn,
-  RegisterBtn,
-  RemoveImgBtn,
-  SearchBtn,
-  TagArea,
-  TagText,
-  TextSpace,
-  TitleInput,
-  TitleText,
-  Titles,
-  WrappingAllComponents,
-  WrappingBtns,
-  WrappingCardAndBtn,
-  WrappingImages,
-  WrappingInput,
-  WrappingTitleAndBtn
-} from 'pages/register/styles';
+
 import Modal from 'components/register/Modal';
 import AlertModal from 'components/register/AlertModal';
 import { getPosts } from 'api/post';
@@ -32,8 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 
 const EditPost = () => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
