@@ -59,8 +59,9 @@ export interface Typedata {
         CommentsUrl: {
           Select: {
             user_id: string;
-            comment_id: number;
             comments: string;
+            comment_nickname: string;
+            id: string;
           };
           Userinfo: {
             avatar_url: string;
@@ -68,11 +69,12 @@ export interface Typedata {
           };
         };
         Select: {
-          userid: string;
+          user_id: string;
           comment_nickname: string;
-          comment_id: number;
+          comment_id: string;
           comments: string;
           created_at: string;
+          id: string;
         };
         Insert: {
           id: string;
@@ -88,21 +90,20 @@ export interface Typedata {
 
           created_at: Date;
         };
-        Controll: [
+        Control: {
           comment: {
             id: string;
             comment_id: number;
             comments: string;
             created_at: Date;
-          },
+          };
           replies: {
             user_id: string;
-            reply_id?: number;
-            reply_text?: string;
-            created_at?: string;
+            reply_text: string;
+            created_at: string;
             comment_id: string;
-          }
-        ];
+          };
+        };
       };
       userinfo: {
         Row: {
