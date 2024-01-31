@@ -48,8 +48,6 @@ export const BoardDetail = () => {
   const [countingLike, setCountingLike] = useState(0);
   const { id } = useParams();
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  const [modalContent, setModalContent] = useState('');
-  const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const { data: commentData } = useQuery({
     queryKey: [QUERY_KEYS.COMMENTS],
     queryFn: getComments
