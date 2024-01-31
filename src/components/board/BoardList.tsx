@@ -16,8 +16,9 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { deletedata } from 'api/post';
+import { deletedata, getPosts } from 'api/post';
 import { getFormattedDate } from 'util/date';
+import { getGames } from 'api/games';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -52,14 +53,18 @@ interface GameSearchProps {
   setSearchedText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedText }: GameSearchProps) => {
+export const BoardList = (
+  { filteredPosts, setFilteredPosts }: any,
+  { searchedText, setSearchedText }: GameSearchProps
+) => {
+  const navigate = useNavigate();
+
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
-  const navigate = useNavigate();
-
+  const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
@@ -104,21 +109,32 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
     e.preventDefault();
     setSearchedText('');
   };
+
   // 데이터 추출
   const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
+  console.log(delData.data);
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
-    if (answer) {
-      await deletedata(id, user_id);
+    if (!answer) {
+      return;
     }
+    await deletedata(id, user_id);
+    const deletedFilterItems = newData.data?.filter((item) => item.id !== id);
+    console.log('deletedFilterItems', deletedFilterItems);
+    setFilteredPosts(deletedFilterItems);
   };
-
+  const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   const handleReport = () => {
     alert('신고기능 구현중...');
   };
 
-  console.log(initialDisplayedPosts);
+  const { data: games } = useQuery({
+    queryKey: [QUERY_KEYS.GAMES],
+    queryFn: getGames
+  });
 
   return (
     <div>
@@ -128,10 +144,10 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
         </div>
         <StsearchBox>
           <StseachInput value={searchedText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <Link to={`/search/${searchedText}`}>
+          <div onClick={() => navigate(`/search/${searchedText}`)}>
             <StSearchIcon type="submit" />
-          </Link>
-          <Button size="small" onClick={moveregisterPageOnClick}>
+          </div>
+          <Button type="button" size="small" onClick={moveregisterPageOnClick}>
             글쓰기
           </Button>
         </StsearchBox>
@@ -147,7 +163,7 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
               <StcontentBox key={post?.id} defaultValue={post.id}>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {postIsOwner && editingPostId === post.id && (
-                  <StfetchForm>
+                  <StfetchForm onSubmit={editdeleteForm}>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
                     <StButton onClick={() => handleDeletePostButton(post.id, post.user_id)}>삭제</StButton>
                   </StfetchForm>
@@ -178,9 +194,22 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
                       </StHiddenText>
                     </StText>
                     <StTagWrapper>
-                      <Tag size="small" backgroundColor="secondary">
-                        {post.game}
-                      </Tag>
+                      {games?.map((game) => {
+                        if (game.name === post.game) {
+                          const appId = game.app_id;
+                          console.log(`/detail/${appId}`);
+                          return (
+                            <Tag
+                              key={appId}
+                              onClick={() => navigate(`/detail/${appId}`)}
+                              size="small"
+                              backgroundColor="secondary"
+                            >
+                              {post.game}
+                            </Tag>
+                          );
+                        }
+                      })}
                       {post?.category
                         .split(',')
                         .map((item) => item.trim())
@@ -241,7 +270,7 @@ const StButton = styled.button`
     background-color: ${(props) => props.theme.color.gray};
   }
 `;
-const StfetchForm = styled.div`
+const StfetchForm = styled.form`
   flex-direction: column;
   padding: 10px;
   justify-content: flex-end;
@@ -308,7 +337,7 @@ const StcontentBox = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 1180px;
-  height: max-content;
+  height: fit-content;
   margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
@@ -361,6 +390,7 @@ const StUserNameWrapper = styled.div`
 `;
 
 const StContentWrapper = styled.div`
+  height: fit-content;
   display: flex;
   gap: 20px;
   width: 100%;
