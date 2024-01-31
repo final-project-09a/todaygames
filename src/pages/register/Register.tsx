@@ -36,7 +36,7 @@ import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
-import { getPosts, updatedataPosts } from 'api/post';
+import { updatedataPosts } from 'api/post';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -55,7 +55,6 @@ const Register = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
-  const [updatePosts, setUpdatePosts] = useState(false);
 
   useEffect(() => {
     setTitle(post?.title || '');

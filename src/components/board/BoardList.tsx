@@ -16,6 +16,7 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
+import AlertModal from 'components/register/AlertModal';
 import { deletedata, getPosts } from 'api/post';
 
 interface UserInfo {
@@ -46,20 +47,17 @@ interface Data {
 interface MypostApi {
   deletedata: (id: string) => Promise<Data>;
 }
-interface GameSearchProps {
+interface SearchProps {
   searchedText: string;
   setSearchedText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const BoardList = (
-  { filteredPosts, setFilteredPosts }: any,
-  { searchedText, setSearchedText }: GameSearchProps
-) => {
+export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedText, setSearchedText }: SearchProps) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
-  const [editpropsValue, setEditpropsValue] = useState([]);
+
   const user = useSelector((state: any) => state.userSlice.userInfo);
   const navigate = useNavigate();
   const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
@@ -255,11 +253,7 @@ const StfetchForm = styled.form`
   right: 2%;
   top: 16%;
 `;
-const StrefetchForm = styled.form`
-  flex-direction: column;
-  justify-content: space-between;
-  display: flex;
-`;
+
 const EditBtn = styled.button`
   display: flex;
   position: relative;
