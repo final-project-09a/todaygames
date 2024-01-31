@@ -7,7 +7,7 @@ interface Post {
 }
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*');
+    const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*').order('user_id', { ascending: true });
 
     return data || [];
   } catch (error) {

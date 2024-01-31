@@ -27,7 +27,7 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
 
   const fetchPosts = async () => {
     const data = await getPosts();
-    setFilteredPosts(data.reverse());
+    setFilteredPosts(data);
   };
 
   const genrefilterOnClick = (tag: string) => {
@@ -37,7 +37,7 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
 
     setSelectedGenres(updatedGenres);
     const newFilteredPosts = data?.filter((post: any) => updatedGenres.some((genre) => post.category.includes(genre)));
-    setFilteredPosts(newFilteredPosts?.reverse());
+    setFilteredPosts(newFilteredPosts);
   };
 
   const handleCancelIconClick = (genre: string) => {
@@ -46,7 +46,7 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
     const newFilteredPosts = data?.filter(
       (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre) => post.category.includes(genre))
     );
-    setFilteredPosts(newFilteredPosts?.reverse());
+    setFilteredPosts(newFilteredPosts);
   };
 
   return (
