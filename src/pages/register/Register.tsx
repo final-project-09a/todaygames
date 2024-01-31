@@ -37,14 +37,12 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
 import { getPosts, updatedataPosts } from 'api/post';
-import { Typedata } from 'types/supabaseTable';
 
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // Register 페이지 들어올 때 받아온 게시물 데이터
   const { post } = location.state || {};
-  console.log({ post });
 
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
@@ -57,7 +55,7 @@ const Register = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
-  const [updatePosts, setUpdatePosts] = useState([]);
+  const [updatePosts, setUpdatePosts] = useState(false);
 
   useEffect(() => {
     setTitle(post?.title || '');
@@ -182,23 +180,20 @@ const Register = () => {
     }
   };
   // 수정
-  const updatedata = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
   const handleEditButton = async (postId: string) => {
-    // const answer = window.confirm('수정한 내용이 없습니다.');
-    // if (!answer) {
-    //   return false;
-    // }
     try {
       await updatedataPosts(postId, title, gameName, tagText, contentText, imageUrls);
-      alert('수정완료');
-      navigate('/board');
+      setisAlertModalOpen(true);
+      if (!title || !gameName || !tagText || !contentText) {
+        setModalContent('수정이 완료되었습니다.');
+        setTimeout(() => {
+          navigate('/board');
+        }, 1500);
+      }
     } catch (error) {
       console.log(error);
     }
-
-    //  setUpdatePosts(data);
   };
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setisAlertModalOpen(false);
