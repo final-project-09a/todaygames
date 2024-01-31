@@ -108,14 +108,14 @@ export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedTe
   };
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) {
+      return;
+    }
     await deletedata(id, user_id);
     const deletedFilterItems = newData.data?.filter((item) => item.id !== id);
-    try {
-      setFilteredPosts(deletedFilterItems);
-      window.confirm('정말로 삭제하시겠습니까?');
-    } catch (err) {
-      console.log(err);
-    }
+    console.log('deletedFilterItems', deletedFilterItems);
+    setFilteredPosts(deletedFilterItems);
   };
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
