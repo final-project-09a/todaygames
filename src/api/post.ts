@@ -17,20 +17,23 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
 };
 export const updatedataPosts = async (
   postId: string,
-  content: string
-): Promise<Typedata['public']['Tables']['posts']['Insert']> => {
+  postTitle: string,
+  postGame: string,
+  postCategory: string,
+  postContent: string,
+  postImage: string[]
+) => {
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('posts')
-      .update({ id: postId, content: content })
-      .eq('id', postId)
-      .single();
-
-    if (error) {
-      throw new Error(`게시물 업데이트 중 오류가 발생했습니다: ${error.message}`);
-    }
-    console.log(data);
-
+      .update({
+        title: postTitle,
+        game: postGame,
+        category: postCategory,
+        content: postContent,
+        image: postImage
+      })
+      .eq('id', postId);
     return data || [];
   } catch (error) {
     console.error(error);
@@ -38,14 +41,15 @@ export const updatedataPosts = async (
   }
 };
 
-export const deletedata = async (id: string, user_id: string) => {
-  // try {
-  await supabase.from('posts').delete().eq('user_id', user_id).eq('id', id);
-
-  // const { data } = await supabase.from('posts').delete().eq('id', id).eq('user_id', user_id);
-  //   return data || [];
-  // } catch (error) {
-  //   console.error(error);
-  //   throw error;
-  // }
+export const deletedata = async (
+  id: string,
+  user_id: string
+): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
+  try {
+    const { data } = await supabase.from('posts').delete().eq('id', id).eq('user_id', user_id);
+    return data || [];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

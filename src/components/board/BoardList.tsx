@@ -16,7 +16,7 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { deletedata } from 'api/post';
+import { deletedata, getPosts } from 'api/post';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -51,15 +51,18 @@ interface GameSearchProps {
   setSearchedText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedText }: GameSearchProps) => {
+export const BoardList = (
+  { filteredPosts, setFilteredPosts }: any,
+  { searchedText, setSearchedText }: GameSearchProps
+) => {
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
-
+  const [editpropsValue, setEditpropsValue] = useState([]);
   const user = useSelector((state: any) => state.userSlice.userInfo);
   const navigate = useNavigate();
-
+  const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
@@ -105,17 +108,20 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
     e.preventDefault();
     setSearchedText('');
   };
-  // 데이터 추출
-  const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
-  console.log(delData);
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
-    if (answer) {
-      await deletedata(id, user_id);
+    if (!answer) {
+      return;
     }
+    await deletedata(id, user_id);
+    const deletedFilterItems = newData.data?.filter((item) => item.id !== id);
+    console.log('deletedFilterItems', deletedFilterItems);
+    setFilteredPosts(deletedFilterItems);
   };
-
+  const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   const handleReport = () => {
     alert('신고기능 구현중...');
   };
@@ -145,7 +151,7 @@ export const BoardList = ({ filteredPosts }: any, { searchedText, setSearchedTex
               <StcontentBox key={post?.id} defaultValue={post.id}>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {postIsOwner && editingPostId === post.id && (
-                  <StfetchForm>
+                  <StfetchForm onSubmit={editdeleteForm}>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
                     <StButton onClick={() => handleDeletePostButton(post.id, post.user_id)}>삭제</StButton>
                   </StfetchForm>
@@ -239,7 +245,7 @@ const StButton = styled.button`
     background-color: ${(props) => props.theme.color.gray};
   }
 `;
-const StfetchForm = styled.div`
+const StfetchForm = styled.form`
   flex-direction: column;
   padding: 10px;
   justify-content: flex-end;
