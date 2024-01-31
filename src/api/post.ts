@@ -7,8 +7,7 @@ interface Post {
 }
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).select(`*`);
-    // .order('create_At', { ascending: false }); // 날짜 컬럼
+    const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*');
 
     return data || [];
   } catch (error) {
@@ -18,20 +17,23 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
 };
 export const updatedataPosts = async (
   postId: string,
-  content: string
-): Promise<Typedata['public']['Tables']['posts']['Insert']> => {
+  postTitle: string,
+  postGame: string,
+  postCategory: string,
+  postContent: string,
+  postImage: string[]
+) => {
   try {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('posts')
-      .update({ id: postId, content: content })
-      .eq('id', postId)
-      .single();
-
-    if (error) {
-      throw new Error(`게시물 업데이트 중 오류가 발생했습니다: ${error.message}`);
-    }
-    console.log(data);
-
+      .update({
+        title: postTitle,
+        game: postGame,
+        category: postCategory,
+        content: postContent,
+        image: postImage
+      })
+      .eq('id', postId);
     return data || [];
   } catch (error) {
     console.error(error);

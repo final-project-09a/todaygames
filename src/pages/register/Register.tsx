@@ -36,11 +36,15 @@ import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
+import { getPosts, updatedataPosts } from 'api/post';
+import { Typedata } from 'types/supabaseTable';
 
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  // Register 페이지 들어올 때 받아온 게시물 데이터
   const { post } = location.state || {};
+  console.log({ post });
 
   const [title, setTitle] = useState('');
   const [contentText, setContentText] = useState('');
@@ -53,6 +57,7 @@ const Register = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [updatePosts, setUpdatePosts] = useState([]);
 
   useEffect(() => {
     setTitle(post?.title || '');
@@ -176,9 +181,22 @@ const Register = () => {
       return null;
     }
   };
+  // 수정
+  const updatedata = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
+  const handleEditButton = async (postId: string) => {
+    // const answer = window.confirm('수정한 내용이 없습니다.');
+    // if (!answer) {
+    //   return false;
+    // }
+    try {
+      await updatedataPosts(postId, title, gameName, tagText, contentText, imageUrls);
+      alert('수정완료');
+      navigate('/board');
+    } catch (error) {
+      console.log(error);
+    }
 
-  const handleEditButton = () => {
-    alert('수정기능 구현중...');
+    //  setUpdatePosts(data);
   };
 
   useEffect(() => {
@@ -203,7 +221,7 @@ const Register = () => {
           <TitleText>{isEditing ? '게시글 수정' : '게시글 작성'}</TitleText>
           <WrappingBtns>
             <CancelBtn onClick={cancelBtnHandler}>취소</CancelBtn>
-            <RegisterBtn onClick={isEditing ? handleEditButton : handelRegisterButton}>
+            <RegisterBtn onClick={isEditing ? () => handleEditButton(post.id) : handelRegisterButton}>
               {isEditing ? '수정' : '등록'}
             </RegisterBtn>
           </WrappingBtns>
