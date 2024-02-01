@@ -13,7 +13,6 @@ const Search = () => {
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.GAMES],
     queryFn: getGames
-    // enabled: isModalOpen
   });
 
   const filteredGames = data?.filter((game) => {

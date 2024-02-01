@@ -21,13 +21,13 @@ import {
   WrappingComments,
   NumText
 } from './style';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
 import { supabase } from 'types/supabase';
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Post } from 'types/global.d';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
@@ -39,12 +39,19 @@ import like from '../../assets/img/like.png';
 import Comment from 'components/comment/Comment';
 import { createLike, deleteLike, fetchLike, matchLikes } from 'api/likes';
 import { BiLike, BiSolidLike } from 'react-icons/bi';
+import { createComments, getComments } from 'api/comments';
+import AlertModal from 'components/register/AlertModal';
 
 export const BoardDetail = () => {
+  const queryClient = useQueryClient();
   const [isLiked, setIsLiked] = useState(false);
   const [countingLike, setCountingLike] = useState(0);
   const { id } = useParams();
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const { data: commentData } = useQuery({
+    queryKey: [QUERY_KEYS.COMMENTS],
+    queryFn: getComments
+  });
   const { data: gameData } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
@@ -59,7 +66,7 @@ export const BoardDetail = () => {
     queryKey: [QUERY_KEYS.LIKE],
     queryFn: fetchLike
   });
-
+  const filteredComment = commentData?.filter((comment) => comment.id === id);
   const filterdPost = gameData?.find((game) => game.id === id);
   const filteredLike = postLikeData?.filter((like) => like.post_id === id);
   const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
@@ -79,7 +86,6 @@ export const BoardDetail = () => {
         }
       }
     };
-
     checkLiked();
   }, [user?.id, id]);
 
@@ -88,12 +94,15 @@ export const BoardDetail = () => {
     mutationFn: async ({ userId, appId }) => {
       if (isLiked) {
         await deleteLike(userId, appId);
+        setCountingLike((prevCount) => prevCount - 1);
       } else {
         await createLike(userId, appId);
+        setCountingLike((prevCount) => prevCount + 1);
       }
     },
     onSuccess: () => {
       setIsLiked((prevValue) => !prevValue);
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.LIKE] });
     },
     onError: (error: Error) => {
       console.error('북마크 에러: ', error);
@@ -173,7 +182,7 @@ export const BoardDetail = () => {
           <RowCommentAndLike>
             <CommentAndLike>
               <img src={comment} />
-              <NumText>5</NumText>
+              <NumText>{filteredComment?.length}</NumText>
             </CommentAndLike>
             <CommentAndLike>
               <LikeIcon onClick={() => user?.id && handleLikeClick(user?.id, id!)} $isLiked={isLiked}>

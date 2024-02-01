@@ -14,7 +14,6 @@ import {
   TextSpace,
   ImageUploadBtn,
   BottomBtn,
-  GameSelect,
   ImageBox,
   WrappingImages,
   SearchBtn,
@@ -36,7 +35,7 @@ import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
-import { getPosts, updatedataPosts } from 'api/post';
+import { updatedataPosts } from 'api/post';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -55,7 +54,6 @@ const Register = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
-  const [updatePosts, setUpdatePosts] = useState(false);
 
   useEffect(() => {
     setTitle(post?.title || '');
@@ -118,6 +116,10 @@ const Register = () => {
     setGameName(e.target.value);
   };
 
+  const tagOnChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setTagText(e.target.value);
+  };
+
   const {
     isLoading,
     isError,
@@ -139,12 +141,6 @@ const Register = () => {
       setModalContent('검색어가 입력되지 않았습니다');
     }
   }, [isModalOpen, gameName]);
-
-  useEffect(() => {
-    if (gameName.length < 1) {
-      setTagText('');
-    }
-  }, [gameName]);
 
   const { mutate } = useMutation({
     mutationFn: insertPost,
@@ -209,6 +205,8 @@ const Register = () => {
     navigate(`/board`);
   };
 
+  console.log(tagText);
+
   return (
     <MainBackground>
       <WrappingBtnAndInput>
@@ -229,25 +227,23 @@ const Register = () => {
           >
             <Titles>
               <TextSpace>제목</TextSpace>
-              <TitleInput value={title} onChange={titleTextHandler} />
+              <TitleInput value={title} onChange={titleTextHandler} placeholder="제목을 입력해 주세요." />
             </Titles>
             <Titles>
               <TextSpace>게임</TextSpace>
-              <GameSelect value={gameName} onChange={searchOnClickHandler} />
+              <TitleInput
+                value={gameName}
+                onChange={searchOnClickHandler}
+                placeholder="게시하고 싶은 게임을 검색해 주세요."
+              />
               <SearchBtn onClick={onClickToggleModal} />
             </Titles>
             <Titles>
               <TextSpace>태그</TextSpace>
-              <TagArea>
-                {gameName ? (
-                  <TagText isVisible={true}>{tagText}</TagText>
-                ) : (
-                  <TagText isVisible={false}>{tagText}</TagText>
-                )}
-              </TagArea>
+              <TagArea>{gameName && <TagText isVisible={true}>{tagText}</TagText>}</TagArea>
             </Titles>
           </WrappingInput>
-          <ContentInput value={contentText} onChange={contentTextHandler} />
+          <ContentInput value={contentText} onChange={contentTextHandler} placeholder="게시글을 입력해 주세요." />
           <BottomBtn>
             <ImageUploadBtn onClick={handleImageUploadClick}>이미지 첨부하기</ImageUploadBtn>
             <input

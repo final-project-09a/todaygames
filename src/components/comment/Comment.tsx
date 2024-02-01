@@ -4,65 +4,82 @@ import { UserInfo } from 'api/user';
 import { createComments, mappingComments } from 'api/comments';
 import { getComments } from 'api/comments';
 import { QUERY_KEYS } from 'query/keys';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import sendImg from '../../assets/img/send.png';
 import { getReplies } from 'api/replies';
 import ReplyBox from './ReplyBox';
+import { useParams } from 'react-router-dom';
+import { Typedata } from 'types/supabaseTable';
+import { error } from 'console';
+import AlertModal from 'components/register/AlertModal';
 
 type userInfotypelist = {
   userInfoData: React.ReactNode;
 };
 
 interface Comment {
-  userid: string;
-  comment_id: number;
-  comments: string;
-  created_at: Date;
-}
-
-interface replies {
   user_id: string;
-  reply_id: number;
-  reply_text: string;
-  created_at: string;
-  comment_id: string;
-}
-interface ButtonProps {
-  onClick(): () => ButtonProps;
+  comment_nickname: string;
+  comments: string;
+  id: string;
 }
 
 const Comment = () => {
-  const [actionComment, setActionComment] = useState([]);
+  const queryClient = useQueryClient();
+  const [comment, setComment] = useState<Comment[]>([]);
+  const [commentCount, setCommentCount] = useState(0);
   const [commentContent, setCommentContent] = useState('');
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [modalContent, setModalContent] = useState('');
+  const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
+  const { id } = useParams();
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
+  });
+
+  const { data: commentData } = useQuery({
+    queryKey: [QUERY_KEYS.COMMENTS],
+    queryFn: getComments
   });
 
   const handleCommentOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentContent(e.target.value);
   };
 
+  const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['CommentsUrl']['Select'], Error>({
+    mutationFn: async (newComment) => {
+      await createComments(newComment);
+      setCommentCount((prevCount) => prevCount + 1);
+    },
+    onSuccess: (newComment) => {
+      setComment((prevComments) => [...prevComments, newComment] as Comment[]);
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.COMMENTS] });
+    },
+    onError: (error: Error) => {
+      console.error('댓글 추가 에러', error);
+    }
+  });
+
   const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const newComment = {
-      user_id: user!.id,
-      comment_nickname: user!.nickname,
-      comment_id: 3,
+    if (id === undefined || user === null) return; // 해당 페이지의 id(useParams)가 undefined이거나 user가 null일 경우 return 해줌으로써 예외처리
+    const newComment: Comment = {
+      id: id,
+      user_id: user.id,
+      comment_nickname: user.nickname,
       comments: commentContent
-    };
-    createComments(newComment);
+    } as Comment;
+    mutation.mutateAsync(newComment);
     setCommentContent('');
-    alert('댓글입력을 완료했습니다!');
   };
 
   // 댓글 정보 가져오기
-  useEffect(() => {
-    getComments(); // 댓글 data 실행?
-  }, []);
+  // useEffect(() => {
+  //   getComments(); // 댓글 data 실행?
+  // }, []);
   // 댓글과 대댓글을 담을 이차원 배열 선언
   // const commentArrayContent: [Comment[], replies[]] = [[], []];
   // const { data: repliesData } = useQuery({ queryKey: [QUERY_KEYS.REPLIES], queryFn: getReplies });
@@ -90,6 +107,11 @@ const Comment = () => {
           <button>제출</button>
         </form> */}
       </StcommentContainer>
+      {isAlertModalOpen && (
+        <AlertModal isOpen={isAlertModalOpen}>
+          <p>{modalContent}</p>
+        </AlertModal>
+      )}
     </>
   );
 };

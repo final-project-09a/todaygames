@@ -63,11 +63,11 @@ const MyCommunity = () => {
   return (
     <StUserInfoContainer>
       <StContentBox>
-        <h1>등록된 게시물{posts.length}개</h1>
-        <div>
-          {posts.length > 0 ? (
-            posts.map((post, index) => (
-              <PostContainer key={index}>
+        {posts.length > 0 ? (
+          posts.map((post, index) => (
+            <div key={index}>
+              <h1>등록된 게시물{posts.length}개</h1>
+              <PostContainer>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {editingPostId === post.id && (
                   <StfetchForm>
@@ -99,16 +99,16 @@ const MyCommunity = () => {
                   </StImageWrapper>
                 </div>
               </PostContainer>
-            ))
-          ) : (
-            <StyledDiv>
-              <h3>등록된 게시글이 없습니다.</h3>
-              <Link to="/register">
-                <StyledButton>게시물 등록하기</StyledButton>
-              </Link>
-            </StyledDiv>
-          )}
-        </div>
+            </div>
+          ))
+        ) : (
+          <StyledDiv>
+            <h3>등록된 게시글이 없습니다.</h3>
+            <Link to="/register">
+              <StyledButton>게시물 등록하기</StyledButton>
+            </Link>
+          </StyledDiv>
+        )}
       </StContentBox>
     </StUserInfoContainer>
   );
@@ -190,12 +190,12 @@ const StUserImageWrapper = styled.figure`
 `;
 const StyledDiv = styled.div`
   display: flex;
+  width: 100%;
   justify-content: center;
   align-items: center;
   height: 100%;
   flex-direction: column;
-  gap: 40px;
-  margin-top: 40px;
+  gap: 25px;
 `;
 
 const StyledButton = styled.button`
@@ -253,6 +253,7 @@ const StUserInfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 1100px;
+  min-height: 600px;
   margin-left: 20px;
 `;
 
@@ -262,7 +263,7 @@ const StContentBox = styled.div`
   justify-content: flex-start;
   position: relative;
   width: 1100px;
-  min-height: 800px;
+  min-height: 600px;
   border-radius: 10px;
   padding: 40px;
   display: flex;

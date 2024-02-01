@@ -1,6 +1,4 @@
 import styled from 'styled-components';
-import goglelogo from '../../assets/img/web_light_rd_SU@1x.png';
-import kakaologo from '../../assets/img/kakaologo.png';
 
 const StyledLogin = styled.div`
   display: flex;
@@ -8,7 +6,7 @@ const StyledLogin = styled.div`
   align-items: center;
   margin-top: 100px;
   & p {
-    color: #fff;
+    color: ${(props) => props.theme.color.white};
     font-size: 14px;
     font-weight: 400;
     margin-top: 40px;
@@ -24,8 +22,13 @@ const StFormWrapper = styled.div`
 
 const StSignInfo = styled.div`
   display: flex;
-  & > *:not(:last-child) {
-    margin-right: 8px;
+  flex-direction: row;
+  gap: 5px;
+  & h4 {
+    color: #ccc;
+    margin-top: 40px;
+    font-size: 14px;
+    font-weight: 100;
   }
 `;
 
@@ -58,45 +61,23 @@ const StyledButton = styled.button`
     background-color: ${(props) => props.theme.color.white};
   }
 `;
-const StkakaoButton = styled.button`
-  font-family: 'Pretendard-Regular';
-  width: 180px;
+
+const StLoginButton = styled.div`
+  width: 170px;
   height: 50px;
-  background-color: #f7e600;
-  color: ${(props) => props.theme.color.black};
   border: none;
   margin-top: 20px;
-  border-radius: 10px;
-  background-image: url(${kakaologo});
-  background-size: cover;
+  border-radius: 8px;
   cursor: pointer;
   transition: 0.3s ease;
-
-  &:hover {
-    color: ${(props) => props.theme.color.black};
-    background-color: #ccbe04;
+  overflow: hidden;
+  & img {
+    object-fit: cover;
+  }
+  & &:hover {
   }
 `;
 
-const StgoogleButton = styled.button`
-  font-family: 'Pretendard-Regular';
-  width: 250px;
-  height: 50px;
-  background-color: #f7e600;
-  color: ${(props) => props.theme.color.black};
-  border: none;
-  margin-top: 20px;
-  border-radius: 10px;
-  background-image: url(${goglelogo});
-  background-size: cover;
-  cursor: pointer;
-  transition: 0.3s ease;
-
-  &:hover {
-    color: ${(props) => props.theme.color.black};
-    background-color: #ccbe04;
-  }
-`;
 const StOtherLoginWrapper = styled.div`
   display: flex;
   gap: 10px;
@@ -122,7 +103,6 @@ export {
   StyledButton,
   StyledH1,
   StyledLabel,
-  StkakaoButton,
   StSignInfo,
-  StgoogleButton
+  StLoginButton
 };
