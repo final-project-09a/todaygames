@@ -60,26 +60,46 @@ const MyBookMark = () => {
     }
   }, [bookmarks]);
 
+  console.log(games);
+
   return (
     <StContentBox>
-      <h2>찜한 게임 {games.length}개</h2>
-      <StGameList>
-        {games.map((game: any, index: number) => (
-          <div key={index}>
-            <GameItem>
-              <Link to={`/detail/${game.app_id}`}>
-                <img src={game.header_image} alt={game.name} />
-              </Link>
-            </GameItem>
-            <p>{game.name}</p>
-          </div>
-        ))}
-      </StGameList>
+      {games.length > 0 ? (
+        <>
+          <h2>찜한 게임 {games.length}개</h2>
+          <StGameList>
+            {games.map((game: any, index: number) => (
+              <div key={index}>
+                <GameItem>
+                  <Link to={`/detail/${game.app_id}`}>
+                    <img src={game.header_image} alt={game.name} />
+                  </Link>
+                </GameItem>
+                <p>{game.name}</p>
+              </div>
+            ))}
+          </StGameList>
+        </>
+      ) : (
+        <StyledDiv>
+          <h3>찜한 게임이 없습니다.</h3>
+        </StyledDiv>
+      )}
     </StContentBox>
   );
 };
 
 export default MyBookMark;
+
+const StyledDiv = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  flex-direction: column;
+  gap: 40px;
+`;
 
 const StContentBox = styled.div`
   margin-left: 20px;

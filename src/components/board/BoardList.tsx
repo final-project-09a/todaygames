@@ -18,6 +18,8 @@ import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
 import AlertModal from 'components/register/AlertModal';
 import { deletedata, getPosts } from 'api/post';
+import { getFormattedDate } from 'util/date';
+import { getGames } from 'api/games';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -47,19 +49,22 @@ interface Data {
 interface MypostApi {
   deletedata: (id: string) => Promise<Data>;
 }
-interface SearchProps {
+interface GameSearchProps {
   searchedText: string;
   setSearchedText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedText, setSearchedText }: SearchProps) => {
+export const BoardList = (
+  { filteredPosts, setFilteredPosts }: any,
+  { searchedText, setSearchedText }: GameSearchProps
+) => {
+  const navigate = useNavigate();
+
   const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
-  const navigate = useNavigate();
   const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
@@ -95,7 +100,6 @@ export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedTe
 
   const handleMoreInfoClick = (postId: string) => {
     setEditingPostId((prev) => (prev === postId ? null : postId));
-    setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
   const handleEditButtonClick = (postId: string) => {
@@ -106,6 +110,10 @@ export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedTe
     e.preventDefault();
     setSearchedText('');
   };
+
+  // 데이터 추출
+  const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
+  console.log(delData.data);
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
@@ -124,16 +132,23 @@ export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedTe
     alert('신고기능 구현중...');
   };
 
+  const { data: games } = useQuery({
+    queryKey: [QUERY_KEYS.GAMES],
+    queryFn: getGames
+  });
+
   return (
     <div>
       <StSeachContainer onSubmit={handleFormSubmit}>
-        <p>{filteredPosts.length}개의 일치하는 게시물</p>
+        <div>
+          <p>{filteredPosts.length}개의 일치하는 게시물</p>
+        </div>
         <StsearchBox>
           <StseachInput value={searchedText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <Link to={`/search/${searchedText}`}>
+          <div onClick={() => navigate(`/search/${searchedText}`)}>
             <StSearchIcon type="submit" />
-          </Link>
-          <Button size="small" onClick={moveregisterPageOnClick}>
+          </div>
+          <Button type="button" size="small" onClick={moveregisterPageOnClick}>
             글쓰기
           </Button>
         </StsearchBox>
@@ -160,43 +175,58 @@ export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedTe
                     <StButton onClick={handleReport}>신고하기</StButton>
                   </StfetchForm>
                 )}
-                <Stdetailmoveline onClick={() => movedetailPageOnClick(post?.id)}>
-                  <StProfileWrapper>
-                    <section>
-                      <StUserImageWrapper>
-                        <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
-                      </StUserImageWrapper>
-                      <StUserNameWrapper>
-                        <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
-                        <p>{post.created_At}</p>
-                      </StUserNameWrapper>
-                    </section>
-                  </StProfileWrapper>
-                  <StContentWrapper>
-                    <StText>
+                <StProfileWrapper>
+                  <section>
+                    <StUserImageWrapper>
+                      <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
+                    </StUserImageWrapper>
+                    <StUserNameWrapper>
+                      <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
+                      <p>{getFormattedDate(post.created_At)}</p>
+                    </StUserNameWrapper>
+                  </section>
+                </StProfileWrapper>
+                <StContentWrapper>
+                  <StContent>
+                    <StText onClick={() => movedetailPageOnClick(post?.id)}>
                       <h3>{post?.title}</h3>
-                      <p>{post?.content}</p>
-                      <StTagWrapper>
-                        <Tag size="small" backgroundColor="secondary">
-                          {post.game}
-                        </Tag>
-                        {post?.category
-                          .split(',')
-                          .map((item) => item.trim())
-                          .map((genre: string) => (
-                            <Tag key={genre} prefix="#" size="small" backgroundColor="lightgray">
-                              {genre}
-                            </Tag>
-                          ))}
-                      </StTagWrapper>
+                      <StHiddenText>
+                        <p>{post?.content}</p>
+                      </StHiddenText>
                     </StText>
-                    {post?.image && (
-                      <StImageWrapper>
-                        <img src={post?.image} alt={post.game} />
-                      </StImageWrapper>
-                    )}
-                  </StContentWrapper>
-                </Stdetailmoveline>
+                    <StTagWrapper>
+                      {games?.map((game) => {
+                        if (game.name === post.game) {
+                          const appId = game.app_id;
+                          console.log(`/detail/${appId}`);
+                          return (
+                            <Tag
+                              key={appId}
+                              onClick={() => navigate(`/detail/${appId}`)}
+                              size="small"
+                              backgroundColor="secondary"
+                            >
+                              {post.game}
+                            </Tag>
+                          );
+                        }
+                      })}
+                      {post?.category
+                        .split(',')
+                        .map((item) => item.trim())
+                        .map((genre: string) => (
+                          <Tag key={genre} prefix="#" size="small" backgroundColor="lightgray">
+                            {genre}
+                          </Tag>
+                        ))}
+                    </StTagWrapper>
+                  </StContent>
+                  {post?.image && (
+                    <StImageWrapper onClick={() => movedetailPageOnClick(post?.id)}>
+                      <img src={post?.image} alt={post.game} />
+                    </StImageWrapper>
+                  )}
+                </StContentWrapper>
                 <StPostInfoWrapper>
                   <div>
                     <img src={comments} />
@@ -221,9 +251,7 @@ export const BoardList = ({ filteredPosts, setFilteredPosts }: any, { searchedTe
     </div>
   );
 };
-const Stdetailmoveline = styled.div`
-  cursor: pointer;
-`;
+
 const StButton = styled.button`
   position: flex;
   height: 40px;
@@ -267,6 +295,7 @@ const EditBtn = styled.button`
   cursor: pointer;
 `;
 const StSeachContainer = styled.form`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -275,8 +304,10 @@ const StSeachContainer = styled.form`
 
 const StsearchBox = styled.div`
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   position: relative;
-  gap: 20px;
+  gap: 10px;
 `;
 
 const StseachInput = styled.input`
@@ -294,7 +325,7 @@ const StSearchIcon = styled.button`
   display: flex;
   position: absolute;
   top: 50%;
-  right: 26%;
+  right: 24%;
   width: 24px;
   height: 24px;
   transform: translate(-50%, -50%);
@@ -307,7 +338,7 @@ const StcontentBox = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 1180px;
-  height: max-content;
+  height: fit-content;
   margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
@@ -360,11 +391,13 @@ const StUserNameWrapper = styled.div`
 `;
 
 const StContentWrapper = styled.div`
+  height: fit-content;
   display: flex;
   gap: 20px;
+  width: 100%;
 `;
 
-const StText = styled.div`
+const StContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -376,16 +409,26 @@ const StText = styled.div`
     font-weight: 700;
   }
   & p {
-    color: #eee;
     font-size: 14px;
     font-weight: 400;
-    line-height: 22px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+    /* line-height: 1.1; */
+    max-height: 66px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+`;
+
+const StHiddenText = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StText = styled.div`
+  width: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
 `;
 
 const StTagWrapper = styled.div`
@@ -400,6 +443,7 @@ const StImageWrapper = styled.figure`
   border-radius: 10px;
   background: #646466;
   overflow: hidden;
+  cursor: pointer;
   & img {
     width: 100%;
     height: 100%;
