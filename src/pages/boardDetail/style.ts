@@ -16,7 +16,7 @@ const WrappingBoardDetail = styled.div`
   flex-direction: column;
   background: ${(props) => props.theme.color.postback};
   width: 1281px;
-  height: 1000px;
+  height: fit-content;
 `;
 
 const UserInfoAndBtn = styled.div`
@@ -146,7 +146,7 @@ const EachTag = styled.div`
 
 const WrappingComments = styled.div`
   width: 1281px;
-  height: 470px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   background: ${(props) => props.theme.color.gray};

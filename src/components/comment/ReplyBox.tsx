@@ -73,6 +73,7 @@ const WrappingBox = styled.div`
   height: fit-content;
   display: flex;
   flex-direction: row;
+  margin-bottom: 15px;
 `;
 
 const ProfileImage = styled.img`

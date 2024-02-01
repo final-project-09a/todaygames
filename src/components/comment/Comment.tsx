@@ -14,6 +14,8 @@ import { useParams } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
 import { error } from 'console';
 import AlertModal from 'components/register/AlertModal';
+import noCommentIcon from '../../assets/img/comments_icon.png';
+import { TfiComments } from 'react-icons/tfi';
 
 type userInfotypelist = {
   userInfoData: React.ReactNode;
@@ -62,6 +64,7 @@ const Comment = () => {
       console.error('댓글 추가 에러', error);
     }
   });
+  const filteredComment = commentData?.filter((comment) => comment.id === id);
 
   const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -75,6 +78,7 @@ const Comment = () => {
     mutation.mutateAsync(newComment);
     setCommentContent('');
   };
+  console.log(filteredComment);
 
   // 댓글 정보 가져오기
   // useEffect(() => {
@@ -90,33 +94,59 @@ const Comment = () => {
 
   return (
     <>
-      <StcommentContainer>
-        <ReplyBox />
-        <form onSubmit={handleReplySubmit}>
-          <StProfileAndInput>
-            <ProfileImage src={user?.avatar_url} />
-            <InputAndSend>
-              <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
-              <SendBtn />
-            </InputAndSend>
-          </StProfileAndInput>
-        </form>
-
-        {/* <form onClick={handleReplySubmit}>
+      {filteredComment?.length === 0 ? (
+        <StcommentContainer>
+          <NoComment>
+            <StNoComment />
+            아직 댓글이 없습니다.
+          </NoComment>
+          <form onSubmit={handleReplySubmit}>
+            <StProfileAndInput>
+              <ProfileImage src={user?.avatar_url} />
+              <InputAndSend>
+                <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
+                <SendBtn />
+              </InputAndSend>
+            </StProfileAndInput>
+          </form>
+        </StcommentContainer>
+      ) : (
+        <StcommentContainer>
+          <ReplyBox />
+          <form onSubmit={handleReplySubmit}>
+            <StProfileAndInput>
+              <ProfileImage src={user?.avatar_url} />
+              <InputAndSend>
+                <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
+                <SendBtn />
+              </InputAndSend>
+            </StProfileAndInput>
+          </form>
+        </StcommentContainer>
+      )}
+      {/* <form onClick={handleReplySubmit}>
           <input value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기" />
           <button>제출</button>
         </form> */}
-      </StcommentContainer>
-      {isAlertModalOpen && (
-        <AlertModal isOpen={isAlertModalOpen}>
-          <p>{modalContent}</p>
-        </AlertModal>
-      )}
     </>
   );
 };
 
 export default Comment;
+
+const NoComment = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1281px;
+  height: 479px;
+  align-items: center;
+  justify-content: center;
+  font-size: 50px;
+  margin-bottom: 20px;
+  font-family: Pretendard;
+  color: #999999;
+  gap: 30px;
+`;
 
 const StProfileAndInput = styled.div`
   display: flex;
@@ -172,11 +202,15 @@ const StcommentContainer = styled.div`
   flex-direction: column;
   align-items: center;
   max-width: 1281px;
-  height: 479px;
+  height: fit-content;
   margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   white-space: nowrap;
   color: ${(props) => props.theme.color.white};
   padding: 20px;
+`;
+
+const StNoComment = styled(TfiComments)`
+  font-size: 300px;
 `;

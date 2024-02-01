@@ -173,7 +173,6 @@ export const BoardDetail = () => {
               )}
             </CustomCarousel>
           </StCarouselWrapper>
-
           <DetailTitle>{filterdPost?.title}</DetailTitle>
           <DetailContent>{filterdPost?.content}</DetailContent>
           <WrappingTags>
