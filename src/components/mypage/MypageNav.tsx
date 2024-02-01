@@ -22,45 +22,26 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [imageUrl, setImageUrl] = useState(user?.profile ? user.profile : userimg);
-
-  // 이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
-
-  const supabaseStorage = supabase.storage.from('profileimage');
-
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target) {
         const selectedFile = e.target.files;
         if (selectedFile && selectedFile.length > 0) {
           const file = selectedFile[0];
-          const path = `${user?.id}/${file.name}`;
+          // 공백 제거 및 특수 문자 대체
+          const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
+          // 파일 이름을 안전한 형태로 변환
+          const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+          const filePath = `${safeUserName}/${safeFileName}`;
 
-          // Upload the file to Supabase Storage
-          const { error: uploadError } = await supabaseStorage.upload(path, file);
-
+          const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
           if (uploadError) {
             console.error('Error uploading image:', uploadError.message);
             alert('이미지 업로드 실패');
             return;
           }
 
-          // Get the URL of the uploaded file
-          const { data: publicUrl } = supabaseStorage.getPublicUrl(path);
-
-          // Update the user's avatar URL
-          const { error: updateError } = await supabase
-            .from('userinfo')
-            .update({ avatar_url: publicUrl })
-            .eq('id', user?.id);
-          if (updateError) {
-            console.error('Error updating profile image:', updateError.message);
-            alert('프로필 이미지 업데이트 실패');
-          } else {
-            console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
-            alert('이미지 업로드 성공');
-            setImageUrl(publicUrl.publicUrl);
-          }
+          alert('이미지 업로드 성공');
         }
       }
     },
@@ -81,8 +62,6 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
           <img src={user?.avatar_url} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
-        {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
         <p>{user?.nickname ? user.nickname : ''}</p>
         <input
           type="file"

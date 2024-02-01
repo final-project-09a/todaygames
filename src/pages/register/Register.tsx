@@ -180,7 +180,7 @@ const Register = () => {
     try {
       await updatedataPosts(postId, title, gameName, tagText, contentText, imageUrls);
       setisAlertModalOpen(true);
-      if (!title || !gameName || !tagText || !contentText) {
+      if (title || gameName || tagText || contentText) {
         setModalContent('수정이 완료되었습니다.');
         setTimeout(() => {
           navigate('/board');
