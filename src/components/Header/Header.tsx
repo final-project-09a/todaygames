@@ -26,7 +26,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
     centerPadding: '230px',
     afterChange: (index: number) => setCurrentGameIndex(index),
     adaptiveHeight: true,
-    autoplay: false,
+    autoplay: true,
     autoplaySpeed: 3000,
     pauseOnHover: true,
     draggable: false
