@@ -15,6 +15,7 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
     throw error;
   }
 };
+
 export const updatedataPosts = async (
   postId: string,
   postTitle: string,
