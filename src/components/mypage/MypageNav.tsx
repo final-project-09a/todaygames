@@ -7,6 +7,7 @@ import { supabase } from 'types/supabase';
 import { TbMessageCircle2Filled } from 'react-icons/tb';
 import { FaHeart } from 'react-icons/fa';
 import { IoPersonSharp } from 'react-icons/io5';
+import { nowdate } from 'api/nowdate';
 
 interface MypageProps {
   onCategoryChange: (category: string) => void;
@@ -22,44 +23,58 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [imageUrl, setImageUrl] = useState(user?.profile ? user.profile : userimg);
-
-  // 이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
-
-  const supabaseStorage = supabase.storage.from('profileimage');
-
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!user) return;
+
       if (e.target) {
         const selectedFile = e.target.files;
         if (selectedFile && selectedFile.length > 0) {
           const file = selectedFile[0];
-          const path = `${user?.id}/${file.name}`;
+          const filePath = `${user.id}${nowdate()}`;
 
-          // Upload the file to Supabase Storage
-          const { error: uploadError } = await supabaseStorage.upload(path, file);
+          // 버킷에서 파일 목록을 가져옵니다.
+          const { data: files, error } = await supabase.storage.from('avatars').list();
 
-          if (uploadError) {
-            console.error('Error uploading image:', uploadError.message);
-            alert('이미지 업로드 실패');
+          // 에러 처리
+          if (error) {
+            console.error('Error fetching files: ', error);
             return;
           }
 
-          // Get the URL of the uploaded file
-          const { data: publicUrl } = supabaseStorage.getPublicUrl(path);
+          // 현재 사용자의 uid를 포함한 파일만 선택하여 삭제합니다.
+          const filesToDelete = files.filter((file) => file.name.includes(user.id)).map((file) => file.name);
 
-          // Update the user's avatar URL
+          // 선택된 파일들을 삭제합니다.
+          const { error: deleteError } = await supabase.storage.from('avatars').remove(filesToDelete);
+
+          // 에러 처리
+          if (deleteError) {
+            console.error('Error deleting files: ', deleteError);
+          }
+
+          // 새 파일을 업로드합니다.
+          const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+
+          if (uploadError) {
+            console.error('Error uploading image:', uploadError.message);
+            return;
+          }
+
+          const { data: publicURL } = await supabase.storage.from('avatars').getPublicUrl(filePath);
+          const uploadedImageUrls = publicURL.publicUrl;
+
           const { error: updateError } = await supabase
             .from('userinfo')
-            .update({ avatar_url: publicUrl })
-            .eq('id', user?.id);
+            .update({ avatar_url: uploadedImageUrls })
+            .eq('id', user.id);
+
           if (updateError) {
-            console.error('Error updating profile image:', updateError.message);
+            console.error('Error updating avatar_url:', updateError.message);
             alert('프로필 이미지 업데이트 실패');
           } else {
-            console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
-            alert('이미지 업로드 성공');
-            setImageUrl(publicUrl.publicUrl);
+            alert('프로필 이미지 업데이트 성공');
+            window.location.reload();
           }
         }
       }
@@ -81,7 +96,6 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
           <img src={user?.avatar_url} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
         <p>{user?.nickname ? user.nickname : ''}</p>
         <input
           type="file"
