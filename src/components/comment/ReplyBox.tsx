@@ -40,11 +40,6 @@ function ReplyBox() {
   const filteredComment = commentData?.filter((comment) => comment.id === id);
   // const filteredUser = userData?.filter((user) => user.id === )\
 
-  console.log(id);
-  console.log(commentData);
-  console.log(filteredComment);
-
-  console.log();
   return (
     <div>
       {filteredComment?.map((comment, index) => {

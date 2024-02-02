@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
@@ -16,10 +16,10 @@ import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import AlertModal from 'components/register/AlertModal';
 import { deletedata, getPosts } from 'api/post';
 import { getFormattedDate } from 'util/date';
 import { getGames } from 'api/games';
+import { matchedPostCount } from 'api/likes';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
@@ -46,9 +46,7 @@ interface Data {
   game: string;
   created_At: Date;
 }
-interface MypostApi {
-  deletedata: (id: string) => Promise<Data>;
-}
+
 interface GameSearchProps {
   searchedText: string;
   setSearchedText: React.Dispatch<React.SetStateAction<string>>;
@@ -60,9 +58,10 @@ export const BoardList = (
 ) => {
   const navigate = useNavigate();
 
-  const [displayedPosts, setDisplayedPosts] = useState(5);
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [likeCounts, setLikeCounts] = useState<{ [postId: string]: number }>({});
+  const [postsData, setPostsData] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
   const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
@@ -70,6 +69,25 @@ export const BoardList = (
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await matchedPostCount(5);
+        if (data && data.length > 0) {
+          setPostsData(data);
+        } else {
+          console.log('포스트의 좋아요, 댓글수 불러오기 오류');
+        }
+      } catch (error) {
+        console.error('Error fetching likes data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(postsData);
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -84,10 +102,19 @@ export const BoardList = (
     navigate(`/boarddetail/${item}`);
   };
 
-  const initialDisplayedPosts = filteredPosts.slice(0, displayedPosts);
+  // const initialDisplayedPosts = filteredPosts.slice(0, displayedPosts);
 
-  const handleLoadMore = () => {
-    setDisplayedPosts((prev) => (prev === 0 ? 5 : prev + 5));
+  const handleLoadMore = async () => {
+    try {
+      const additionalData = await matchedPostCount(5, postsData.length);
+      if (additionalData && additionalData.length > 0) {
+        setPostsData((prevData) => [...prevData, ...additionalData]);
+      } else {
+        console.log('No more posts to load');
+      }
+    } catch (error) {
+      console.error('Error fetching additional posts:', error);
+    }
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,6 +133,7 @@ export const BoardList = (
     const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
+
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSearchedText('');
@@ -113,7 +141,6 @@ export const BoardList = (
 
   // 데이터 추출
   const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
-  console.log(delData.data);
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
@@ -155,7 +182,7 @@ export const BoardList = (
       </StSeachContainer>
 
       {filteredPosts.length > 0 ? (
-        initialDisplayedPosts.map((post: PostDetail) => {
+        postsData.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
           if (userInfo) {
@@ -198,7 +225,6 @@ export const BoardList = (
                       {games?.map((game) => {
                         if (game.name === post.game) {
                           const appId = game.app_id;
-                          console.log(`/detail/${appId}`);
                           return (
                             <Tag
                               key={appId}
@@ -230,11 +256,11 @@ export const BoardList = (
                 <StPostInfoWrapper>
                   <div>
                     <img src={comments} />
-                    <p>5</p>
+                    <p>{post.comment_count}</p>
                   </div>
                   <div>
                     <img src={thumsUp} />
-                    <p>5</p>
+                    <p>{post.like_count}</p>
                   </div>
                 </StPostInfoWrapper>
               </StcontentBox>
@@ -245,9 +271,7 @@ export const BoardList = (
         <StNullboard>게시물이 없습니다.</StNullboard>
       )}
 
-      {initialDisplayedPosts.length < filteredPosts.length && (
-        <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>
-      )}
+      {postsData.length < filteredPosts.length && <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>}
     </div>
   );
 };
