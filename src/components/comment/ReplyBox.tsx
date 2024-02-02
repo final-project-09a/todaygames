@@ -1,20 +1,39 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { BiLike, BiSolidLike } from 'react-icons/bi';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
-import { createComments, getComments } from 'api/comments';
+import { createComments, createReply, getComments } from 'api/comments';
 import { useParams } from 'react-router-dom';
 import { UserInfo } from 'api/user';
 import { getFormattedDate } from 'util/date';
 import { supabase } from 'types/supabase';
 import { Typedata } from 'types/supabaseTable';
+import commentIcon from '../../assets/img/comment.png';
+import sendImg from '../../assets/img/send.png';
+import { RootState } from 'redux/config/configStore';
+import { useSelector } from 'react-redux';
+import { getReplies } from 'api/replies';
+
+interface Comment {
+  user_id: string;
+  reply_text: string;
+  comment_id: string;
+}
 
 function ReplyBox() {
-  const [comment, setComment] = useState<Comment[]>([]);
-  const [likes, setLikes] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
+  const [reply, setReply] = useState<Comment[]>([]);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [replyText, setReplyText] = useState('');
+  const [isCommentVisible, setIsCommentVisible] = useState<Record<string, boolean>>({});
+
+  const queryClient = useQueryClient();
   const { id } = useParams();
+  const [selectedCommentId, setSelectedCommentId] = useState('');
+  const { data: replyData } = useQuery({
+    queryKey: [QUERY_KEYS.REPLIES],
+    queryFn: getReplies
+  });
   const { data: commentData } = useQuery({
     queryKey: [QUERY_KEYS.COMMENTS],
     queryFn: getComments
@@ -25,26 +44,53 @@ function ReplyBox() {
     queryFn: UserInfo
   });
 
-  const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['CommentsUrl']['Select'], Error>({
-    mutationFn: async (newComment) => {
-      await createComments(newComment);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReplyText(e.target.value);
+  };
+
+  const handleClickReplyBtn = (commentId: string) => {
+    setIsCommentVisible((prev) => {
+      const updated = Object.keys(prev).reduce((acc, id) => {
+        acc[id] = true;
+        return acc;
+      }, {} as Record<string, boolean>);
+      updated[commentId] = false;
+      return updated;
+    });
+    setSelectedCommentId(commentId);
+  };
+
+  const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['Control']['replies'], Error>({
+    mutationFn: async (newReply) => {
+      await createReply(newReply);
     },
-    onSuccess: (newComment) => {
-      setComment((prevComments) => [...prevComments, newComment] as Comment[]);
+    onSuccess: (newReply) => {
+      setReply((prevComments) => [...prevComments, newReply] as Comment[]);
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.REPLIES] });
     },
     onError: (error: Error) => {
       console.error('댓글 추가 에러', error);
     }
   });
 
+  const handleReplySubmit = async () => {
+    if (id === undefined || user === null) return; // 해당 페이지의 id(useParams)가 undefined이거나 user가 null일 경우 return 해줌으로써 예외처리
+    const newReply: Comment = {
+      user_id: user.id,
+      reply_text: replyText,
+      comment_id: selectedCommentId
+    } as Comment;
+    await mutation.mutateAsync(newReply);
+    setReplyText('');
+    setIsCommentVisible((prev) => ({ ...prev, [selectedCommentId!]: false }));
+  };
+
+  // const filteredReply = replyData?.filter((replies) => replies.comment_id === )
+
   const filteredComment = commentData?.filter((comment) => comment.id === id);
+
   // const filteredUser = userData?.filter((user) => user.id === )\
 
-  console.log(id);
-  console.log(commentData);
-  console.log(filteredComment);
-
-  console.log();
   return (
     <div>
       {filteredComment?.map((comment, index) => {
@@ -54,13 +100,62 @@ function ReplyBox() {
               <ProfileImage />
               <WrappingTextBox>
                 <NameAndDate>
-                  <NameText>{comment.comment_nickname}</NameText>
+                  <NameText>{comment.comment_nickname ? comment.comment_nickname : '무명'}</NameText>
                   <DateText>{getFormattedDate(comment.created_at)}</DateText>
                 </NameAndDate>
                 <ConmmentContent>{comment.comments}</ConmmentContent>
-                <ReplyLikeIcon>{isLiked ? <StLike /> : <StUnLike />}</ReplyLikeIcon>
+                <WrappingCommentCount>
+                  <ReplyIcon>
+                    <img src={commentIcon} />
+                  </ReplyIcon>
+                  <StNum>5</StNum>
+                  <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
+                </WrappingCommentCount>
               </WrappingTextBox>
             </WrappingBox>
+            {/*  */}
+            <WrappingInputAndComments>
+              <form
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleReplySubmit();
+                }}
+              >
+                <InputAndSend>
+                  <ReplyInput placeholder="댓글 남기기..." value={replyText} onChange={handleChange} />
+                  <SendReplyBtn />
+                </InputAndSend>
+              </form>
+
+              {isCommentVisible &&
+                filteredComment.map((comment, index) => (
+                  <>
+                    {replyData
+                      ?.filter((reply) => reply.comment_id === comment.comment_id)
+                      .map((filteredReply) => (
+                        <WrappingReplyBox key={index}>
+                          <ProfileImage />
+                          <WrappingTextBox>
+                            <NameAndDate>
+                              <NameText>
+                                {filteredReply.comment_nickname ? filteredReply.comment_nickname : '무명'}
+                              </NameText>
+                              <DateText>{getFormattedDate(comment.created_at)}</DateText>
+                            </NameAndDate>
+                            <ConmmentContent>{filteredReply.reply_text}</ConmmentContent>
+                            <WrappingCommentCount>
+                              <ReplyIcon>
+                                <img src={commentIcon} />
+                              </ReplyIcon>
+                              <NumberText>3</NumberText>
+                              <StNum>{}</StNum>
+                            </WrappingCommentCount>
+                          </WrappingTextBox>
+                        </WrappingReplyBox>
+                      ))}
+                  </>
+                ))}
+            </WrappingInputAndComments>
           </>
         );
       })}
@@ -68,12 +163,66 @@ function ReplyBox() {
   );
 }
 
-const WrappingBox = styled.div`
-  width: 1240px;
+const WrappingInputAndComments = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1200px;
   height: fit-content;
+  gap: 15px;
+`;
+
+const InputAndSend = styled.div`
   display: flex;
   flex-direction: row;
+  width: 1240px;
+  height: 40px;
+  position: relative;
+`;
+
+const ReplyInput = styled.input`
+  width: 1240px;
+  height: 40px;
+  border: 0px;
+  border-radius: 10px;
+  margin-left: 40px;
+  background-color: ${(props) => props.theme.color.inputcolor};
+  text-indent: 15px;
+  color: ${(props) => props.theme.color.white};
+`;
+
+const WrappingBox = styled.div`
+  display: flex;
+  width: 1240px;
+  height: fit-content;
+  flex-direction: row;
   margin-bottom: 15px;
+  gap: 10px;
+`;
+
+const WrappingReplyBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 1220px;
+  height: fit-content;
+  padding-left: 40px;
+  gap: 10px;
+`;
+
+const ReplyBtn = styled.button`
+  align-items: center;
+  display: flex;
+  border: 0px;
+  background-color: transparent;
+  color: ${(props) => props.theme.color.white};
+  cursor: pointer;
+`;
+
+const NumberText = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 43px;
+  height: 24px;
+  object-fit: cover;
 `;
 
 const ProfileImage = styled.img`
@@ -90,6 +239,7 @@ const NameAndDate = styled.div`
   flex-direction: row;
   width: fit-content;
   height: fit-content;
+  gap: 8px;
 `;
 
 const NameText = styled.div`
@@ -124,21 +274,42 @@ const ConmmentContent = styled.div`
   font-weight: 400;
 `;
 
-const ReplyLikeIcon = styled.div`
+const WrappingCommentCount = styled.div`
+  width: 37px;
+  height: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`;
+
+const ReplyIcon = styled.div`
   display: flex;
   align-items: center;
   width: 18px;
   height: 18px;
   cursor: pointer;
   justify-content: center;
+  font-size: 13px;
 `;
 
-const StLike = styled(BiSolidLike)`
-  font-size: 20px;
+const SendReplyBtn = styled.button`
+  width: 24px;
+  height: 24px;
+  border: 0px;
+  background-color: transparent;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 3;
+  background-image: url(${sendImg});
+  cursor: pointer;
 `;
 
-const StUnLike = styled(BiLike)`
-  font-size: 20px;
+const StNum = styled.div`
+  display: flex;
+  margin-top: 3px;
+  width: 9px;
+  height: 14px;
 `;
 
 export default ReplyBox;

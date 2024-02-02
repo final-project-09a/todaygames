@@ -36,6 +36,7 @@ const Comment = () => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [modalContent, setModalContent] = useState('');
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
+  const [isCommentVisible, setIsCommentVisible] = useState(false);
   const { id } = useParams();
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
@@ -66,7 +67,7 @@ const Comment = () => {
   });
   const filteredComment = commentData?.filter((comment) => comment.id === id);
 
-  const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+  const handleCommentSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (id === undefined || user === null) return; // 해당 페이지의 id(useParams)가 undefined이거나 user가 null일 경우 return 해줌으로써 예외처리
     const newComment: Comment = {
@@ -100,7 +101,7 @@ const Comment = () => {
             <StNoComment />
             아직 댓글이 없습니다.
           </NoComment>
-          <form onSubmit={handleReplySubmit}>
+          <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
               <ProfileImage src={user?.avatar_url} />
               <InputAndSend>
@@ -113,7 +114,7 @@ const Comment = () => {
       ) : (
         <StcommentContainer>
           <ReplyBox />
-          <form onSubmit={handleReplySubmit}>
+          <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
               <ProfileImage src={user?.avatar_url} />
               <InputAndSend>
@@ -138,14 +139,22 @@ const NoComment = styled.div`
   display: flex;
   flex-direction: column;
   width: 1281px;
-  height: 479px;
+  height: 130px;
   align-items: center;
   justify-content: center;
-  font-size: 50px;
+  font-size: 15px;
   margin-bottom: 20px;
   font-family: Pretendard;
   color: #999999;
   gap: 30px;
+`;
+
+const ReplyBtn = styled.button`
+  display: flex;
+  border: 0px;
+  background-color: transparent;
+  color: ${(props) => props.theme.color.white};
+  cursor: pointer;
 `;
 
 const StProfileAndInput = styled.div`
@@ -212,5 +221,5 @@ const StcommentContainer = styled.div`
 `;
 
 const StNoComment = styled(TfiComments)`
-  font-size: 300px;
+  font-size: 55px;
 `;

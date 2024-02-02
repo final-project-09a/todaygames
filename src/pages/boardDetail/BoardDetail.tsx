@@ -133,9 +133,6 @@ export const BoardDetail = () => {
     // centerMode: true,
     // centerPadding: '0px'
   };
-  console.log(postLikeData);
-  console.log(id);
-  console.log(filteredLike);
   return (
     <>
       <AllContainer>
