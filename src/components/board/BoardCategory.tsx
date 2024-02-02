@@ -1,50 +1,44 @@
 import { useQuery } from '@tanstack/react-query';
-import { getPosts } from 'api/post';
+import { getPosts, getPostsWithCount } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
 import { QUERY_KEYS } from 'query/keys';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
+import { useDispatch } from 'react-redux';
+import { setFilteredPosts, setSelectedGenres } from '../../redux/modules/boardSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
 
-// type Genre = typeof GENRE_NAME;
-type BoardCategoryProps = {
-  setFilteredPosts: any;
-  filteredPosts: any;
-};
-
-export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategoryProps) => {
+export const BoardCategory = () => {
   const [sortOption, setSortOption] = useState('최근순');
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
 
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    const data = await getPosts();
-    setFilteredPosts(data);
-  };
+  console.log(data?.length);
 
   const genrefilterOnClick = (tag: string) => {
     const updatedGenres = selectedGenres.includes(tag)
       ? selectedGenres.filter((selectedGenre: string) => selectedGenre)
       : [...selectedGenres, tag];
 
-    setSelectedGenres(updatedGenres);
-    const newFilteredPosts = data?.filter((post: any) => updatedGenres.some((genre) => post.category.includes(genre)));
+    dispatch(setSelectedGenres(updatedGenres));
+    const newFilteredPosts = data?.filter((post: any) =>
+      updatedGenres.some((genre: string) => post.category.includes(genre))
+    );
     setFilteredPosts(newFilteredPosts);
   };
 
   const handleCancelIconClick = (genre: string) => {
-    const updatedGenres = selectedGenres.filter((selectedGenre) => selectedGenre !== genre);
-    setSelectedGenres(updatedGenres);
+    const updatedGenres = selectedGenres.filter((selectedGenre: string) => selectedGenre !== genre);
+    dispatch(setSelectedGenres(updatedGenres));
     const newFilteredPosts = data?.filter(
-      (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre) => post.category.includes(genre))
+      (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre: string) => post.category.includes(genre))
     );
     setFilteredPosts(newFilteredPosts);
   };

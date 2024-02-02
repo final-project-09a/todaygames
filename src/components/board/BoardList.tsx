@@ -1,12 +1,10 @@
-// 게시판 리스트
-
 import styled from 'styled-components';
 import { useQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
 import MoreViewButton from 'common/MoreViewButton';
@@ -20,51 +18,35 @@ import { deletedata, getPosts } from 'api/post';
 import { getFormattedDate } from 'util/date';
 import { getGames } from 'api/games';
 import { getPostsWithCount } from 'api/post';
+import { RootState } from 'redux/config/configStore';
+import { useDispatch } from 'react-redux';
+import { setFilteredPosts } from '../../redux/modules/boardSlice';
 
-interface UserInfo {
-  userInfo: Typedata['public']['Tables']['userinfo']['Row'];
-}
-
-interface GameSearchProps {
-  searchedText: string;
-  setSearchedText: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export const BoardList = (
-  { filteredPosts, setFilteredPosts }: any,
-  { searchedText, setSearchedText }: GameSearchProps
-) => {
+export const BoardList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
+  const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
+  const user = useSelector((state: any) => state.userSlice.userInfo);
 
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [postsData, setPostsData] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
+  // const [postsData, setPostsData] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
 
-  const user = useSelector((state: any) => state.userSlice.userInfo);
-  const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getPostsWithCount(5);
-        if (data && data.length > 0) {
-          setPostsData(data);
-        } else {
-          console.log('포스트의 좋아요, 댓글수 불러오기 오류');
-        }
-      } catch (error) {
-        console.error('Error fetching likes data:', error);
-      }
-    };
+  const { data: games } = useQuery({
+    queryKey: [QUERY_KEYS.GAMES],
+    queryFn: getGames
+  });
 
-    fetchData();
-  }, []);
-
-  console.log(postsData);
+  const { data: posts } = useQuery({
+    queryKey: [QUERY_KEYS.POSTS],
+    queryFn: getPosts
+  });
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -79,18 +61,18 @@ export const BoardList = (
     navigate(`/boarddetail/${item}`);
   };
 
-  // const initialDisplayedPosts = filteredPosts.slice(0, displayedPosts);
-
   const handleLoadMore = async () => {
     try {
-      const additionalData = await getPostsWithCount(5, postsData.length);
+      console.log(filteredPosts);
+      const additionalData = await getPostsWithCount(5, filteredPosts.length);
+      console.log(additionalData);
       if (additionalData && additionalData.length > 0) {
-        setPostsData((prevData) => [...prevData, ...additionalData]);
+        dispatch(setFilteredPosts([...filteredPosts, ...additionalData]));
       } else {
-        console.log('No more posts to load');
+        console.log('Posts 데이터 로딩 실패');
       }
     } catch (error) {
-      console.error('Error fetching additional posts:', error);
+      console.error('additional posts 패칭 에러:', error);
     }
   };
 
@@ -113,11 +95,8 @@ export const BoardList = (
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSearchedText('');
+    SetSearchText('');
   };
-
-  // 데이터 추출
-  const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
 
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
@@ -125,10 +104,11 @@ export const BoardList = (
       return;
     }
     await deletedata(id, user_id);
-    const deletedFilterItems = newData.data?.filter((item) => item.id !== id);
+    const deletedFilterItems = posts?.filter((item) => item.id !== id);
     console.log('deletedFilterItems', deletedFilterItems);
     setFilteredPosts(deletedFilterItems);
   };
+
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
@@ -136,20 +116,18 @@ export const BoardList = (
     alert('신고기능 구현중...');
   };
 
-  const { data: games } = useQuery({
-    queryKey: [QUERY_KEYS.GAMES],
-    queryFn: getGames
-  });
+  console.log(filteredPosts);
+  console.log(selectedGenres);
 
   return (
     <div>
       <StSeachContainer onSubmit={handleFormSubmit}>
         <div>
-          <p>{filteredPosts.length}개의 일치하는 게시물</p>
+          <p>{posts?.length}개의 일치하는 게시물</p>
         </div>
         <StsearchBox>
-          <StseachInput value={searchedText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <div onClick={() => navigate(`/search/${searchedText}`)}>
+          <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
+          <div onClick={() => navigate(`/search/${searchText}`)}>
             <StSearchIcon type="submit" />
           </div>
           <Button type="button" size="small" onClick={moveregisterPageOnClick}>
@@ -159,7 +137,7 @@ export const BoardList = (
       </StSeachContainer>
 
       {filteredPosts.length > 0 ? (
-        postsData.map((post: Typedata['public']['Tables']['posts']['Row']) => {
+        filteredPosts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
           if (userInfo) {
@@ -248,7 +226,7 @@ export const BoardList = (
         <StNullboard>게시물이 없습니다.</StNullboard>
       )}
 
-      {postsData.length < filteredPosts.length && <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>}
+      {0 < filteredPosts.length && <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>}
     </div>
   );
 };
