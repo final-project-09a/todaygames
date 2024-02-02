@@ -133,6 +133,7 @@ export const BoardDetail = () => {
     // centerMode: true,
     // centerPadding: '0px'
   };
+
   return (
     <>
       <AllContainer>

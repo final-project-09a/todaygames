@@ -28,7 +28,6 @@ export const mappingComments = async (): Promise<
 export const getComments = async (): Promise<Typedata['public']['Tables']['comments']['Select'][]> => {
   try {
     const { data } = await supabase.from(QUERY_KEYS.COMMENTS).select('*');
-    console.log(data);
     return data || [];
   } catch (error) {
     console.error(error);

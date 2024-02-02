@@ -15,6 +15,8 @@ export interface Typedata {
           image: string;
           created_At: string;
           user_id: string;
+          like_count: number;
+          comment_count: number;
         };
         Insert: {
           id: string;
