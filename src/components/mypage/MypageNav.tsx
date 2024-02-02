@@ -7,6 +7,7 @@ import { supabase } from 'types/supabase';
 import { TbMessageCircle2Filled } from 'react-icons/tb';
 import { FaHeart } from 'react-icons/fa';
 import { IoPersonSharp } from 'react-icons/io5';
+import { nowdate } from 'api/nowdate';
 
 interface MypageProps {
   onCategoryChange: (category: string) => void;
@@ -24,59 +25,56 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
 
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      let uploadedImageUrls = '';
+      if (!user) return;
+
       if (e.target) {
         const selectedFile = e.target.files;
         if (selectedFile && selectedFile.length > 0) {
           const file = selectedFile[0];
-          // 공백 제거 및 특수 문자 대체
-          const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
-          // 파일 이름을 안전한 형태로 변환
-          const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-          const today = new Date();
-          const formattedYear = today.getFullYear().toString().slice(-2);
-          const formattedMonth = (today.getMonth() + 1).toString().padStart(2, '0');
-          const formattedDate = today.getDate().toString().padStart(2, '0');
-          const formattedHour = today.getHours().toString().padStart(2, '0');
-          const formattedMinute = today.getMinutes().toString().padStart(2, '0');
-          const formattedSecond = today.getSeconds().toString().padStart(2, '0');
-          const formattedFull = `${formattedYear}Y ${formattedMonth}M ${formattedDate}D ${formattedHour}H ${formattedMinute}M ${formattedSecond}S`;
+          const filePath = `${user.id}${nowdate()}`;
 
-          // const filePath = `${safeUserName}/${safeFileName}`;
-          const filePath = `${user?.id}${formattedFull}`;
+          // 버킷에서 파일 목록을 가져옵니다.
+          const { data: files, error } = await supabase.storage.from('avatars').list();
 
-          // 먼저 이미지를 업로드 시도합니다.
+          // 에러 처리
+          if (error) {
+            console.error('Error fetching files: ', error);
+            return;
+          }
+
+          // 현재 사용자의 uid를 포함한 파일만 선택하여 삭제합니다.
+          const filesToDelete = files.filter((file) => file.name.includes(user.id)).map((file) => file.name);
+
+          // 선택된 파일들을 삭제합니다.
+          const { error: deleteError } = await supabase.storage.from('avatars').remove(filesToDelete);
+
+          // 에러 처리
+          if (deleteError) {
+            console.error('Error deleting files: ', deleteError);
+          }
+
+          // 새 파일을 업로드합니다.
           const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
 
-          // 업로드에 실패한 경우
           if (uploadError) {
             console.error('Error uploading image:', uploadError.message);
-
-            // 다시 이미지를 업로드합니다.
-            const { error: retryUploadError } = await supabase.storage.from('avatars').update(filePath, file);
-            if (retryUploadError) {
-              console.error('Error uploading image:', retryUploadError.message);
-              alert('이미지 업로드 실패');
-              return;
-            }
+            return;
           }
-          // 업로드에 성공한 경우, 이미지의 URL을 가져옵니다.
+
           const { data: publicURL } = await supabase.storage.from('avatars').getPublicUrl(filePath);
-          uploadedImageUrls = publicURL.publicUrl;
-          alert('이미지 업로드 성공');
-          console.log(uploadedImageUrls);
+          const uploadedImageUrls = publicURL.publicUrl;
 
           const { error: updateError } = await supabase
             .from('userinfo')
             .update({ avatar_url: uploadedImageUrls })
-            .eq('id', user?.id);
+            .eq('id', user.id);
 
-          // 업데이트에 실패한 경우
           if (updateError) {
             console.error('Error updating avatar_url:', updateError.message);
             alert('프로필 이미지 업데이트 실패');
           } else {
             alert('프로필 이미지 업데이트 성공');
+            window.location.reload();
           }
         }
       }
