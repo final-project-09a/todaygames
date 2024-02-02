@@ -4,10 +4,11 @@ import { QUERY_KEYS } from 'query/keys';
 interface Post {
   id: string;
   content: string;
+  category: string;
 }
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
-    const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*').order('user_id', { ascending: true });
+    const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*').order('created_At', { ascending: true });
 
     return data || [];
   } catch (error) {
@@ -15,6 +16,37 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
     throw error;
   }
 };
+
+// 더보기 버튼 구현을 위한 post 데이터
+export const getPostsWithCount = async (limit = 5, offset = 0) => {
+  const { data } = await supabase
+    .from('posts_with_counts')
+    .select('*')
+    .range(offset, offset + limit - 1)
+    .order('created_At', { ascending: false });
+  return data;
+};
+
+// 장르 필터를 위한 post 데이터
+export const genreFilterPosts = async (selectedGenres: string[], limit = 5, offset = 0) => {
+  const { data } = await supabase
+    .from('posts_with_counts')
+    .select('category')
+    .range(offset, offset + limit - 1)
+    .order('created_At', { ascending: false });
+  const filteredData = data?.filter((post) => selectedGenres.some((genre: string) => post.category.includes(genre)));
+  return filteredData;
+};
+
+// export const genreFilterPosts = async (genre: string[], limit = 5, offset = 0) => {
+//   const { data } = await supabase
+//     .from('posts_with_counts')
+//     .select('*')
+//     .range(offset, offset + limit - 1)
+//     .order('created_At', { ascending: false })
+//     .in('category', genre);
+//   return data;
+// };
 
 export const updatedataPosts = async (
   postId: string,

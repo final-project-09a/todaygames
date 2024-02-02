@@ -19,32 +19,10 @@ import editBtn from '../../assets/img/editBtn.png';
 import { deletedata, getPosts } from 'api/post';
 import { getFormattedDate } from 'util/date';
 import { getGames } from 'api/games';
-import { matchedPostCount } from 'api/likes';
+import { getPostsWithCount } from 'api/post';
 
 interface UserInfo {
   userInfo: Typedata['public']['Tables']['userinfo']['Row'];
-}
-
-interface PostDetail {
-  user_id: string;
-  post: string;
-  id: string;
-  created_At: string;
-  title: string;
-  content: string;
-  category: string;
-  image: string;
-  game: string;
-}
-interface Data {
-  id: number;
-  user_id: string;
-  content: string;
-  image: string;
-  title: string;
-  category: string;
-  game: string;
-  created_At: Date;
 }
 
 interface GameSearchProps {
@@ -60,7 +38,6 @@ export const BoardList = (
 
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [likeCounts, setLikeCounts] = useState<{ [postId: string]: number }>({});
   const [postsData, setPostsData] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
 
   const user = useSelector((state: any) => state.userSlice.userInfo);
@@ -73,7 +50,7 @@ export const BoardList = (
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await matchedPostCount(5);
+        const data = await getPostsWithCount(5);
         if (data && data.length > 0) {
           setPostsData(data);
         } else {
@@ -106,7 +83,7 @@ export const BoardList = (
 
   const handleLoadMore = async () => {
     try {
-      const additionalData = await matchedPostCount(5, postsData.length);
+      const additionalData = await getPostsWithCount(5, postsData.length);
       if (additionalData && additionalData.length > 0) {
         setPostsData((prevData) => [...prevData, ...additionalData]);
       } else {
