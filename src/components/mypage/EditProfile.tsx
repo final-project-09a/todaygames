@@ -13,7 +13,7 @@ import {
   StpasswordInputGroup,
   StPasswordButton
 } from 'pages/mypage/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
@@ -21,7 +21,7 @@ import { UserData, setUser } from '../../redux/modules/userSlice';
 import { supabase } from 'types/supabase';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 import { GenreNameType } from 'types/games';
-import dropdown from 'assets/icons/drpodown.svg';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -37,6 +37,11 @@ const EditProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [PasswordError, setPasswordError] = useState<string>('');
   const [hasChanges, setHasChanges] = useState<boolean>(false);
+  const [userprovider, setuserprovider] = useState<string | undefined>('');
+  const userdata = supabase.auth.getUser().then((users) => {
+    setuserprovider(users.data.user?.app_metadata.provider);
+  });
+  console.log(userprovider);
 
   const isButtonDisabled = !(
     nickname &&
@@ -160,8 +165,6 @@ const EditProfile = () => {
         }
       });
   };
-
-  console.log(genres);
 
   if (!user) {
     return <div>Loading...</div>;
