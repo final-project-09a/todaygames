@@ -14,6 +14,7 @@ import sendImg from '../../assets/img/send.png';
 import { RootState } from 'redux/config/configStore';
 import { useSelector } from 'react-redux';
 import { getReplies } from 'api/replies';
+import { isVisible } from '@testing-library/user-event/dist/utils';
 
 interface Comment {
   user_id: string;
@@ -25,11 +26,11 @@ function ReplyBox() {
   const [reply, setReply] = useState<Comment[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [replyText, setReplyText] = useState('');
-  const [isCommentVisible, setIsCommentVisible] = useState<Record<string, boolean>>({});
+  const [isCommentVisible, setIsCommentVisible] = useState(false);
 
   const queryClient = useQueryClient();
   const { id } = useParams();
-  const [selectedCommentId, setSelectedCommentId] = useState('');
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const { data: replyData } = useQuery({
     queryKey: [QUERY_KEYS.REPLIES],
     queryFn: getReplies
@@ -48,16 +49,12 @@ function ReplyBox() {
     setReplyText(e.target.value);
   };
 
+  const handleCommentVisibility = () => {
+    setIsCommentVisible(!isCommentVisible);
+  };
+
   const handleClickReplyBtn = (commentId: string) => {
-    setIsCommentVisible((prev) => {
-      const updated = Object.keys(prev).reduce((acc, id) => {
-        acc[id] = true;
-        return acc;
-      }, {} as Record<string, boolean>);
-      updated[commentId] = false;
-      return updated;
-    });
-    setSelectedCommentId(commentId);
+    handleCommentVisibility();
   };
 
   const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['Control']['replies'], Error>({
@@ -73,16 +70,15 @@ function ReplyBox() {
     }
   });
 
-  const handleReplySubmit = async () => {
+  const handleReplySubmit = async (comentId: string) => {
     if (id === undefined || user === null) return; // 해당 페이지의 id(useParams)가 undefined이거나 user가 null일 경우 return 해줌으로써 예외처리
     const newReply: Comment = {
       user_id: user.id,
       reply_text: replyText,
-      comment_id: selectedCommentId
+      comment_id: comentId
     } as Comment;
-    await mutation.mutateAsync(newReply);
+    mutation.mutateAsync(newReply);
     setReplyText('');
-    setIsCommentVisible((prev) => ({ ...prev, [selectedCommentId!]: false }));
   };
 
   // const filteredReply = replyData?.filter((replies) => replies.comment_id === )
@@ -94,6 +90,7 @@ function ReplyBox() {
   return (
     <div>
       {filteredComment?.map((comment, index) => {
+        const commentReplies = replyData?.filter((reply) => reply.comment_id === comment.comment_id);
         return (
           <>
             <WrappingBox key={index}>
@@ -103,28 +100,38 @@ function ReplyBox() {
                   <NameText>{comment.comment_nickname ? comment.comment_nickname : '무명'}</NameText>
                   <DateText>{getFormattedDate(comment.created_at)}</DateText>
                 </NameAndDate>
-                <ConmmentContent>{comment.comments}</ConmmentContent>
-                <WrappingCommentCount>
-                  <ReplyIcon>
-                    <img src={commentIcon} />
-                  </ReplyIcon>
-                  <StNum>5</StNum>
-                  <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
-                </WrappingCommentCount>
+                <CommentContent>{comment.comments}</CommentContent>
+                {replyData
+                  ?.filter((replies) => replies.comment_id === comment.comment_id)
+                  .map((filteredReplies) => (
+                    <>
+                      <WrappingCommentCount>
+                        <ReplyIcon>
+                          <img src={commentIcon} />
+                        </ReplyIcon>
+                        <StNum>{commentReplies?.length}</StNum>
+                        <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
+                      </WrappingCommentCount>
+                    </>
+                  ))}
               </WrappingTextBox>
             </WrappingBox>
             {/*  */}
             <WrappingInputAndComments>
               <form
-                onClick={(e) => {
+                onSubmit={(e) => {
                   e.preventDefault();
-                  handleReplySubmit();
+                  handleReplySubmit(comment.comment_id);
                 }}
               >
-                <InputAndSend>
-                  <ReplyInput placeholder="댓글 남기기..." value={replyText} onChange={handleChange} />
-                  <SendReplyBtn />
-                </InputAndSend>
+                {isCommentVisible ? (
+                  <InputAndSend key={comment.comment_id}>
+                    <ReplyInput placeholder="댓글 남기기..." value={replyText} onChange={handleChange} />
+                    <SendReplyBtn />
+                  </InputAndSend>
+                ) : (
+                  <div></div>
+                )}
               </form>
 
               {isCommentVisible &&
@@ -132,27 +139,32 @@ function ReplyBox() {
                   <>
                     {replyData
                       ?.filter((reply) => reply.comment_id === comment.comment_id)
-                      .map((filteredReply) => (
-                        <WrappingReplyBox key={index}>
-                          <ProfileImage />
-                          <WrappingTextBox>
-                            <NameAndDate>
-                              <NameText>
-                                {filteredReply.comment_nickname ? filteredReply.comment_nickname : '무명'}
-                              </NameText>
-                              <DateText>{getFormattedDate(comment.created_at)}</DateText>
-                            </NameAndDate>
-                            <ConmmentContent>{filteredReply.reply_text}</ConmmentContent>
-                            <WrappingCommentCount>
+                      .map((filteredReply) =>
+                        filteredReply ? (
+                          <WrappingReplyBox key={index}>
+                            <ProfileImage />
+                            <WrappingTextBox>
+                              <NameAndDate>
+                                <NameText>
+                                  {filteredReply.comment_nickname ? filteredReply.comment_nickname : '무명'}
+                                </NameText>
+                                <DateText>{getFormattedDate(filteredReply.created_at)}</DateText>
+                              </NameAndDate>
+                              <CommentContent>{filteredReply.reply_text}</CommentContent>
+                              {/* <WrappingCommentCount>
                               <ReplyIcon>
                                 <img src={commentIcon} />
                               </ReplyIcon>
-                              <NumberText>3</NumberText>
+                              <NumberText></NumberText>
                               <StNum>{}</StNum>
-                            </WrappingCommentCount>
-                          </WrappingTextBox>
-                        </WrappingReplyBox>
-                      ))}
+                            </WrappingCommentCount> */}
+                            </WrappingTextBox>
+                          </WrappingReplyBox>
+                        ) : (
+                          // eslint-disable-next-line react/jsx-key
+                          <div></div>
+                        )
+                      )}
                   </>
                 ))}
             </WrappingInputAndComments>
@@ -262,7 +274,7 @@ const WrappingTextBox = styled.div`
   width: 1200px;
   height: fit-content;
 `;
-const ConmmentContent = styled.div`
+const CommentContent = styled.div`
   display: flex;
   width: 1200px;
   height: fit-content;
