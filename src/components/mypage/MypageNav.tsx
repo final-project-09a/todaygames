@@ -32,13 +32,23 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
           const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
           // 파일 이름을 안전한 형태로 변환
           const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-          const filePath = `${safeUserName}/${safeFileName}`;
+          // const filePath = `${safeUserName}/${safeFileName}`;
+          const filePath = `${user?.id}`;
 
+          // 먼저 이미지를 업로드 시도합니다.
           const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+
+          // 업로드에 실패한 경우
           if (uploadError) {
             console.error('Error uploading image:', uploadError.message);
-            alert('이미지 업로드 실패');
-            return;
+
+            // 다시 이미지를 업로드합니다.
+            const { error: retryUploadError } = await supabase.storage.from('avatars').update(filePath, file);
+            if (retryUploadError) {
+              console.error('Error uploading image:', retryUploadError.message);
+              alert('이미지 업로드 실패');
+              return;
+            }
           }
 
           alert('이미지 업로드 성공');
