@@ -112,7 +112,6 @@ const ConmmentContent = styled.div`
   height: fit-content;
   margin: 10px 0px 8px 0px;
   color: #fff;
-  font-family: Pretendard;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;

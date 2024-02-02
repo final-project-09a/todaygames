@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
@@ -16,22 +16,42 @@ import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
 import { deletedata, getPosts } from 'api/post';
 import { getFormattedDate } from 'util/date';
+import { genreFilterPosts } from 'api/post';
 import { getGames } from 'api/games';
-import { getPostsWithCount } from 'api/post';
 import { RootState } from 'redux/config/configStore';
 import { useDispatch } from 'react-redux';
 import { setFilteredPosts } from '../../redux/modules/boardSlice';
 
 export const BoardList = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
+  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
+  const dispatch = useDispatch();
+
+  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
+    queryKey: ['posts', selectedGenres.join(',')],
+    queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    }
+  });
+
+  const posts = useMemo(() => {
+    if (!data) return [];
+    const page = data.pages.reduce((prev, current) => {
+      return [...prev, ...current];
+    }, []);
+    return [...page];
+  }, [data]);
+
   const user = useSelector((state: any) => state.userSlice.userInfo);
 
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  // const [postsData, setPostsData] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
 
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
@@ -43,10 +63,10 @@ export const BoardList = () => {
     queryFn: getGames
   });
 
-  const { data: posts } = useQuery({
-    queryKey: [QUERY_KEYS.POSTS],
-    queryFn: getPosts
-  });
+  // const { data: postsData } = useQuery({
+  //   queryKey: [QUERY_KEYS.POSTS],
+  //   queryFn: getPosts
+  // });
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -61,20 +81,49 @@ export const BoardList = () => {
     navigate(`/boarddetail/${item}`);
   };
 
-  const handleLoadMore = async () => {
-    try {
-      console.log(filteredPosts);
-      const additionalData = await getPostsWithCount(5, filteredPosts.length);
-      console.log(additionalData);
-      if (additionalData && additionalData.length > 0) {
-        dispatch(setFilteredPosts([...filteredPosts, ...additionalData]));
-      } else {
-        console.log('Posts 데이터 로딩 실패');
+  // 무한스크롤
+  // const handleLoadMore = async () => {
+  //   try {
+  //     if (!hasMorePosts) {
+  //       console.log('No more posts to load.');
+  //       return;
+  //     }
+
+  //     const offset = filteredPosts.length || 0;
+  //     let additionalData;
+
+  //     if (selectedGenres && selectedGenres.length > 0) {
+  //       additionalData = await genreFilterPosts(selectedGenres, 5, offset);
+  //     } else {
+  //       additionalData = await getPostsWithCount(5, offset);
+  //     }
+
+  //     if (additionalData && additionalData.length > 0) {
+  //       dispatch(setFilteredPosts([...filteredPosts, ...additionalData]));
+  //     } else {
+  //       console.log('No more posts to load.');
+  //       setHasMorePosts(false);
+  //     }
+  //   } catch (error) {
+  //     console.error('additionalData 패칭 에러:', error);
+  //   }
+  // };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+
+      if (scrollTop + clientHeight >= scrollHeight - 10) {
+        if (hasNextPage) fetchNextPage();
       }
-    } catch (error) {
-      console.error('additional posts 패칭 에러:', error);
-    }
-  };
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [posts]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     SetSearchText(e.target.value);
@@ -106,7 +155,7 @@ export const BoardList = () => {
     await deletedata(id, user_id);
     const deletedFilterItems = posts?.filter((item) => item.id !== id);
     console.log('deletedFilterItems', deletedFilterItems);
-    setFilteredPosts(deletedFilterItems);
+    dispatch(setFilteredPosts(deletedFilterItems));
   };
 
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -116,14 +165,13 @@ export const BoardList = () => {
     alert('신고기능 구현중...');
   };
 
-  console.log(filteredPosts);
-  console.log(selectedGenres);
+  // console.log(selectedGenres);
 
   return (
     <div>
       <StSeachContainer onSubmit={handleFormSubmit}>
         <div>
-          <p>{posts?.length}개의 일치하는 게시물</p>
+          <p>{posts.length}개의 일치하는 게시물</p>
         </div>
         <StsearchBox>
           <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
@@ -136,8 +184,8 @@ export const BoardList = () => {
         </StsearchBox>
       </StSeachContainer>
 
-      {filteredPosts.length > 0 ? (
-        filteredPosts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
+      {posts.length > 0 ? (
+        posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
           if (userInfo) {
@@ -225,8 +273,6 @@ export const BoardList = () => {
       ) : (
         <StNullboard>게시물이 없습니다.</StNullboard>
       )}
-
-      {0 < filteredPosts.length && <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>}
     </div>
   );
 };

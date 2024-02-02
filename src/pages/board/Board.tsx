@@ -18,7 +18,7 @@ export const Board = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getPostsWithCount(5);
+        const data = await getPostsWithCount();
         if (data && data.length > 0) {
           dispatch(setFilteredPosts(data));
         } else {

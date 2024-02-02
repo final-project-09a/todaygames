@@ -9,38 +9,37 @@ import { useDispatch } from 'react-redux';
 import { setFilteredPosts, setSelectedGenres } from '../../redux/modules/boardSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
+import { genreFilterPosts } from 'api/post';
 
 export const BoardCategory = () => {
   const [sortOption, setSortOption] = useState('최근순');
   const dispatch = useDispatch();
   const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
+  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
 
   const { data } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
     queryFn: getPosts
   });
 
-  console.log(data?.length);
-
-  const genrefilterOnClick = (tag: string) => {
+  const genrefilterOnClick = async (tag: string) => {
     const updatedGenres = selectedGenres.includes(tag)
       ? selectedGenres.filter((selectedGenre: string) => selectedGenre)
       : [...selectedGenres, tag];
+    console.log(updatedGenres);
 
     dispatch(setSelectedGenres(updatedGenres));
-    const newFilteredPosts = data?.filter((post: any) =>
-      updatedGenres.some((genre: string) => post.category.includes(genre))
-    );
-    setFilteredPosts(newFilteredPosts);
+    const newFilteredPosts = await genreFilterPosts(updatedGenres);
+    dispatch(setFilteredPosts(newFilteredPosts));
   };
 
-  const handleCancelIconClick = (genre: string) => {
+  const handleCancelIconClick = async (genre: string) => {
     const updatedGenres = selectedGenres.filter((selectedGenre: string) => selectedGenre !== genre);
+    console.log(updatedGenres);
     dispatch(setSelectedGenres(updatedGenres));
-    const newFilteredPosts = data?.filter(
-      (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre: string) => post.category.includes(genre))
-    );
-    setFilteredPosts(newFilteredPosts);
+    const newFilteredPosts = await genreFilterPosts(updatedGenres);
+    console.log(newFilteredPosts);
+    dispatch(setFilteredPosts(newFilteredPosts));
   };
 
   return (

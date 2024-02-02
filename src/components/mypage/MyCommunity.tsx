@@ -232,7 +232,6 @@ const StCategory = styled.div`
 `;
 const StyledH3 = styled.h3`
   color: #eee;
-  font-family: Pretendard;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -242,7 +241,6 @@ const StyledH3 = styled.h3`
 
 const StyledH2 = styled.h2`
   color: #fff;
-  font-family: Pretendard;
   font-size: 18px;
   font-style: normal;
   font-weight: 700;

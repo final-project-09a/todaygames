@@ -1,11 +1,7 @@
 import { supabase } from 'types/supabase';
 import { Typedata } from 'types/supabaseTable';
 import { QUERY_KEYS } from 'query/keys';
-interface Post {
-  id: string;
-  content: string;
-  category: string;
-}
+
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
     const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*').order('created_At', { ascending: true });
@@ -17,7 +13,7 @@ export const getPosts = async (): Promise<Typedata['public']['Tables']['posts'][
   }
 };
 
-// 더보기 버튼 구현을 위한 post 데이터
+// 무한스크롤 구현을 위한 post 데이터
 export const getPostsWithCount = async (limit = 5, offset = 0) => {
   const { data } = await supabase
     .from('posts_with_counts')
@@ -28,14 +24,28 @@ export const getPostsWithCount = async (limit = 5, offset = 0) => {
 };
 
 // 장르 필터를 위한 post 데이터
-export const genreFilterPosts = async (selectedGenres: string[], limit = 5, offset = 0) => {
-  const { data } = await supabase
+export const genreFilterPosts = async (
+  selectedGenres: string[],
+  limit = 5,
+  offset = 0
+): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
+  if (selectedGenres.length === 0) {
+    const { data, error } = await supabase
+      .from('posts_with_counts')
+      .select('*')
+      .range(offset * limit, (offset + 1) * limit - 1)
+      .order('created_At', { ascending: false });
+    if (error) throw error;
+    return data;
+  }
+  const { data, error } = await supabase
     .from('posts_with_counts')
-    .select('category')
-    .range(offset, offset + limit - 1)
-    .order('created_At', { ascending: false });
-  const filteredData = data?.filter((post) => selectedGenres.some((genre: string) => post.category.includes(genre)));
-  return filteredData;
+    .select('*')
+    .range(offset * limit, (offset + 1) * limit - 1)
+    .order('created_At', { ascending: false })
+    .like('category', `%${selectedGenres.join(', ')}%`);
+  if (error) throw error;
+  return data;
 };
 
 // export const genreFilterPosts = async (genre: string[], limit = 5, offset = 0) => {
