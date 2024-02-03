@@ -8,6 +8,7 @@ import { Typedata } from 'types/supabaseTable';
 import Button from 'common/Button';
 import editBtn from '../../assets/img/editBtn.png';
 import { useNavigate } from 'react-router-dom';
+import { deletedata } from 'api/post';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,14 +43,18 @@ const MyCommunity = () => {
     return <StUserInfoContainer />;
   }
 
-  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const handleDeletePostButton = async (postId: string) => {
+    if (!user?.id) return;
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
+
+    await deletedata(postId, user.id);
+    const deletedPosts = posts.filter((post) => post.id !== postId);
+    setPosts(deletedPosts);
   };
 
-  const handleEditButtonClick = (postId: any) => {
-    // 이미 선택된 게시물일 경우 null을 설정하여 버튼을 숨김
-    setEditingPostId(editingPostId === postId ? null : postId);
+  const handleEditButtonClick = (postId: string) => {
+    navigate(`/board/edit/${postId}`);
   };
   console.log(editingPostId);
   const handleThreeDotsClick = (postId: any) => {
@@ -73,7 +78,7 @@ const MyCommunity = () => {
                 {editingPostId === post.id && (
                   <StfetchForm>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
-                    <StButton onClick={handleDeletePostButton}>삭제</StButton>
+                    <StButton onClick={() => handleDeletePostButton(post.id)}>삭제</StButton>
                   </StfetchForm>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
