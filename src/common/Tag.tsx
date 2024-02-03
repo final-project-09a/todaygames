@@ -11,7 +11,7 @@ interface TagProps {
 
 const Tag = ({ onClick, children, size, prefix, backgroundColor = 'secondary' }: TagProps) => {
   return (
-    <StTag hasOnClick={!!onClick} onClick={onClick} size={size} $backgroundColor={backgroundColor || ''}>
+    <StTag $hasOnClick={!!onClick} onClick={onClick} size={size} $backgroundColor={backgroundColor || ''}>
       {prefix && <span>{prefix}</span>}
       {children}
     </StTag>
@@ -45,17 +45,17 @@ const getSizeStyles = (size: string) => {
   }
 };
 
-const StTag = styled.div<{ size: string; $backgroundColor: string; hasOnClick: boolean }>`
+const StTag = styled.div<{ size: string; $backgroundColor: string; $hasOnClick: boolean }>`
   width: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
   user-select: none;
-  cursor: ${(props) => (props.hasOnClick ? 'pointer' : 'default')};
+  cursor: ${(props) => (props.$hasOnClick ? 'pointer' : 'default')};
   &:hover {
     ${(props) =>
-      props.hasOnClick
+      props.$hasOnClick
         ? css`
             background-color: ${(props) => props.theme.color.primary};
           `

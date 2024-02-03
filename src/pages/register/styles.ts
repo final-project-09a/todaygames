@@ -10,7 +10,6 @@ const MainBackground = styled.div`
   width: 1280px;
   margin: 70px auto;
   display: flex;
-  justify-content: center;
 `;
 
 const WrappingTitleAndBtn = styled.div`
@@ -31,12 +30,11 @@ const WrappingBtnAndInput = styled.div`
 const WrappingAllComponents = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
   height: fit-content;
   background-color: ${(props) => props.theme.color.postback};
   border-radius: 10px;
-  gap: 15px;
+  gap: 18px;
   padding: 30px;
 `;
 
@@ -67,11 +65,31 @@ const CancelBtn = styled.button`
 `;
 
 const WrappingInput = styled.form`
-  align-items: center;
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
-  gap: 10px;
+  gap: 12px;
+  & label {
+  width: 42px;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: center;
+  }
+  & select {
+    width: 400px;
+    padding: 10px;
+    border-radius: 10px;
+    height: 48px;
+    background: ${(props) => props.theme.color.inputcolor};
+    color: ${(props) => props.theme.color.white};
+    border: none;
+  }
+  &div {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  }
 `;
 
 const Titles = styled.div`
@@ -79,12 +97,11 @@ const Titles = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
-`;
-
-const TextSpace = styled.h2`
-  font-size: 16px;
-  font-weight: 700;
-  white-space: nowrap;
+& div {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 `;
 
 const TitleInput = styled.input`
@@ -100,9 +117,35 @@ const TitleInput = styled.input`
   font-weight: 400;
 `;
 
+const GameInput = styled.input`
+  border: none;
+  display: flex;
+  width: 400px;
+  height: 46px;
+  border-radius: 10px;
+  background: ${(props) => props.theme.color.inputcolor};
+  color: ${(props) => props.theme.color.white};
+  padding-left: 18px;
+  font-size: 14px;
+  font-weight: 400;
+`
+
+const ReviewInput = styled.input`
+  border: none;
+  display: flex;
+  width: 676px;
+  height: 46px;
+  border-radius: 10px;
+  background: ${(props) => props.theme.color.inputcolor};
+  color: ${(props) => props.theme.color.white};
+  padding-left: 18px;
+  font-size: 14px;
+  font-weight: 400;
+`
+
 const SearchBtn = styled.button`
   position: absolute;
-  right: 1%;
+  right: 63%;
   top: 50%;
   transform: translate(-50%, -50%);
   background-image: url(${searchIcon});
@@ -118,7 +161,7 @@ const SearchBtn = styled.button`
 
 const TagArea = styled.div`
   font-size: 20px;
-  width: 1173px;
+  width: 676px;
   height: 46px;
 `;
 
@@ -258,7 +301,6 @@ export {
   RegisterBtn,
   Titles,
   WrappingAllComponents,
-  TextSpace,
   ImageUploadBtn,
   BottomBtn,
   ImageBox,
@@ -269,5 +311,7 @@ export {
   TagArea,
   TagText,
   RemoveImgBtn,
-  WrappingCardAndBtn
+  WrappingCardAndBtn,
+  ReviewInput,
+  GameInput
 };

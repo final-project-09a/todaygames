@@ -13,7 +13,7 @@ import {
   StpasswordInputGroup,
   StPasswordButton
 } from 'pages/mypage/styles';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
@@ -21,7 +21,6 @@ import { UserData, setUser } from '../../redux/modules/userSlice';
 import { supabase } from 'types/supabase';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 import { GenreNameType } from 'types/games';
-import { SupabaseClient } from '@supabase/supabase-js';
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -41,7 +40,7 @@ const EditProfile = () => {
   const userdata = supabase.auth.getUser().then((users) => {
     setuserprovider(users.data.user?.app_metadata.provider);
   });
-  console.log(userprovider);
+  const [genre, setGenre] = useState<string>('');
 
   const isButtonDisabled = !(
     nickname &&
@@ -132,6 +131,7 @@ const EditProfile = () => {
 
   const handleGenresChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value;
+    setGenre(e.target.value);
     if (selectedOption && !selectedGenres.includes(selectedOption)) {
       setSelectedGenres((prev) => [...prev, selectedOption]);
       setHasChanges(true);
@@ -201,7 +201,7 @@ const EditProfile = () => {
       <StUserinfoBox>
         <h2>계정 관리</h2>
         <label htmlFor="id">계정 아이디</label>
-        <input id="id" type="email" placeholder={email} readOnly />
+        <input id="id" type="email" placeholder={email} readOnly autoComplete="username" />
         {userprovider !== 'kakao' && userprovider !== 'google' && (
           <>
             <label htmlFor="password">비밀번호 변경</label>
@@ -227,6 +227,7 @@ const EditProfile = () => {
                     }
                   }
                 }}
+                autoComplete="new-password"
               />
               {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
               <br></br>
@@ -245,6 +246,7 @@ const EditProfile = () => {
                     setpasswordisValidIsValid(true);
                   }
                 }}
+                autoComplete="new-password"
               />
               <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
                 비밀번호 변경
@@ -257,8 +259,8 @@ const EditProfile = () => {
       <StUserinfoBox>
         <h2>관심 장르</h2>
         <label htmlFor="genres">관심장르 등록</label>
-        <select id="genres" value={genres || ''} onChange={handleGenresChange}>
-          <option value={genres}>관심 장르를 선택하세요</option>
+        <select id="genres" value={genre} onChange={handleGenresChange}>
+          <option value="">관심 장르를 선택하세요</option>
           {GENRE_NAME.map((genre: GenreNameType) => (
             <option key={genre.tag} value={genre.tag}>
               {genre.tag}

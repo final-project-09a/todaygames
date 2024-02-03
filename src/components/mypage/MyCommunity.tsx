@@ -12,7 +12,6 @@ import { deletedata } from 'api/post';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
-  const [isButtonsVisible, setIsButtonsVisible] = useState(false);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -56,7 +55,6 @@ const MyCommunity = () => {
   const handleEditButtonClick = (postId: string) => {
     navigate(`/board/edit/${postId}`);
   };
-  console.log(editingPostId);
   const handleThreeDotsClick = (postId: any) => {
     setSelectedPostId(selectedPostId === postId ? null : postId);
   };
@@ -102,7 +100,7 @@ const MyCommunity = () => {
                     </div>
                   </div>
                   <StImageWrapper style={{ cursor: 'pointer' }} onClick={() => navigate(`/boarddetail/${post.id}`)}>
-                    <img src={post?.image} alt={post.game} />
+                    <img src={post?.image[0]} alt={post.game} />
                   </StImageWrapper>
                 </div>
               </PostContainer>

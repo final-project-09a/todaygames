@@ -48,23 +48,15 @@ export const genreFilterPosts = async (
   return data;
 };
 
-// export const genreFilterPosts = async (genre: string[], limit = 5, offset = 0) => {
-//   const { data } = await supabase
-//     .from('posts_with_counts')
-//     .select('*')
-//     .range(offset, offset + limit - 1)
-//     .order('created_At', { ascending: false })
-//     .in('category', genre);
-//   return data;
-// };
-
 export const updatedataPosts = async (
   postId: string,
   postTitle: string,
   postGame: string,
   postCategory: string,
   postContent: string,
-  postImage: string[]
+  postImage: string[],
+  review:string,
+  star_rating:string
 ) => {
   try {
     const { data } = await supabase
@@ -74,7 +66,8 @@ export const updatedataPosts = async (
         game: postGame,
         category: postCategory,
         content: postContent,
-        image: postImage
+        image: postImage,
+        review, star_rating
       })
       .eq('id', postId);
     return data || [];
