@@ -25,8 +25,5 @@ const StNoResultWrapper = styled.div`
   align-items: center;
   margin-top: 100px;
 `;
-// const StSearchWrapper = styled.div`
-// width: ;
-// `
 
 export { StContainer, StSearchResultWrapper, StNoResultWrapper };

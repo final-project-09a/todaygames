@@ -16,17 +16,28 @@ import editBtn from '../../assets/img/editBtn.png';
 import { deletedata } from 'api/post';
 import { getFormattedDate } from 'util/date';
 import { genreFilterPosts } from 'api/post';
-import { getGames } from 'api/games';
+import { getGamesWithGameName } from 'api/games';
 import { RootState } from 'redux/config/configStore';
 import { useDispatch } from 'react-redux';
 import { setFilteredPosts } from '../../redux/modules/boardSlice';
+import folderIcon from 'assets/icons/folderIcon.svg';
+
+type GameInfoMap = {
+  [appId: string]: Typedata['public']['Tables']['games']['Row'];
+};
 
 export const BoardList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
-  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
+  const [searchText, SetSearchText] = useState<string>('');
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
+
+  // useInfiniteQuery를 이용한 무한스크롤 구현
   const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
     queryKey: ['posts', selectedGenres.join(',')],
     queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam),
@@ -47,25 +58,35 @@ export const BoardList = () => {
     return [...page];
   }, [data]);
 
-  const user = useSelector((state: any) => state.userSlice.userInfo);
+  // posts 데이터의 게임정보만 가져오기(게임 클릭 시 상세페이지 이동을 위함)
+  useEffect(() => {
+    const fetchGameInfo = async () => {
+      try {
+        const infoMap: GameInfoMap = {};
+        await Promise.all(
+          posts.map(async (post: Typedata['public']['Tables']['posts']['Row']) => {
+            try {
+              const gameInfo = await getGamesWithGameName(post.game);
+              infoMap[post.game] = gameInfo;
+            } catch (error) {
+              console.error(`${post.game} 게임 정보 패칭오류:`, error);
+            }
+          })
+        );
 
-  const [searchText, SetSearchText] = useState<string>('');
-  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+        setGameInfoMap(infoMap);
+      } catch (error) {
+        console.error('게임 정보 패칭 에러:', error);
+      }
+    };
+
+    fetchGameInfo();
+  }, [posts]);
 
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
-
-  const { data: games } = useQuery({
-    queryKey: [QUERY_KEYS.GAMES],
-    queryFn: getGames
-  });
-
-  // const { data: postsData } = useQuery({
-  //   queryKey: [QUERY_KEYS.POSTS],
-  //   queryFn: getPosts
-  // });
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -79,34 +100,6 @@ export const BoardList = () => {
   const movedetailPageOnClick = (item: string) => {
     navigate(`/boarddetail/${item}`);
   };
-
-  // 무한스크롤
-  // const handleLoadMore = async () => {
-  //   try {
-  //     if (!hasMorePosts) {
-  //       console.log('No more posts to load.');
-  //       return;
-  //     }
-
-  //     const offset = filteredPosts.length || 0;
-  //     let additionalData;
-
-  //     if (selectedGenres && selectedGenres.length > 0) {
-  //       additionalData = await genreFilterPosts(selectedGenres, 5, offset);
-  //     } else {
-  //       additionalData = await getPostsWithCount(5, offset);
-  //     }
-
-  //     if (additionalData && additionalData.length > 0) {
-  //       dispatch(setFilteredPosts([...filteredPosts, ...additionalData]));
-  //     } else {
-  //       console.log('No more posts to load.');
-  //       setHasMorePosts(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('additionalData 패칭 에러:', error);
-  //   }
-  // };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -136,16 +129,20 @@ export const BoardList = () => {
     setEditingPostId((prev) => (prev === postId ? null : postId));
   };
 
+  //검색
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    SetSearchText('');
+    navigate(`/search/${searchText}`);
+  };
+
+  //수정
   const handleEditButtonClick = (postId: string) => {
     const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    SetSearchText('');
-  };
-
+  //삭제
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) {
@@ -164,23 +161,14 @@ export const BoardList = () => {
     alert('신고기능 구현중...');
   };
 
-  // console.log(selectedGenres);
-
   return (
-    <div>
+    <StBoardListContainer>
       <StSeachContainer onSubmit={handleFormSubmit}>
-        <div>
-          <p>{posts.length}개의 일치하는 게시물</p>
-        </div>
-        <StsearchBox>
-          <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <div onClick={() => navigate(`/search/${searchText}`)}>
-            <StSearchIcon type="submit" />
-          </div>
-          <Button type="button" size="small" onClick={moveregisterPageOnClick}>
-            글쓰기
-          </Button>
-        </StsearchBox>
+        <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
+        <StSearchIcon type="submit" />
+        <Button type="button" size="small" onClick={moveregisterPageOnClick}>
+          글쓰기
+        </Button>
       </StSeachContainer>
 
       {posts.length > 0 ? (
@@ -189,6 +177,7 @@ export const BoardList = () => {
 
           if (userInfo) {
             const postIsOwner = isOwner(post.user_id);
+
             return (
               <StcontentBox key={post?.id} defaultValue={post.id}>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
@@ -224,21 +213,14 @@ export const BoardList = () => {
                       </StHiddenText>
                     </StText>
                     <StTagWrapper>
-                      {games?.map((game) => {
-                        if (game.name === post.game) {
-                          const appId = game.app_id;
-                          return (
-                            <Tag
-                              key={appId}
-                              onClick={() => navigate(`/detail/${appId}`)}
-                              size="small"
-                              backgroundColor="secondary"
-                            >
-                              {post.game}
-                            </Tag>
-                          );
-                        }
-                      })}
+                      <Tag
+                        onClick={() => navigate(`/detail/${gameInfoMap[post.game]?.app_id}`)}
+                        size="small"
+                        backgroundColor="secondary"
+                      >
+                        {post.game}
+                      </Tag>
+
                       {post?.category
                         .split(',')
                         .map((item) => item.trim())
@@ -270,11 +252,27 @@ export const BoardList = () => {
           }
         })
       ) : (
-        <StNullboard>게시물이 없습니다.</StNullboard>
+        <StNoResultWrapper>
+          <img src={folderIcon} alt="폴더아이콘" />
+          <p>해당 장르의 포스트가 없습니다.</p>
+        </StNoResultWrapper>
       )}
-    </div>
+    </StBoardListContainer>
   );
 };
+
+const StBoardListContainer = styled.div`
+  width: 100%;
+`;
+
+const StNoResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+`;
 
 const StButton = styled.button`
   position: flex;
@@ -322,16 +320,10 @@ const StSeachContainer = styled.form`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 20px;
-`;
-
-const StsearchBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  position: relative;
   gap: 10px;
+  position: relative;
 `;
 
 const StseachInput = styled.input`
@@ -349,7 +341,7 @@ const StSearchIcon = styled.button`
   display: flex;
   position: absolute;
   top: 50%;
-  right: 24%;
+  right: 9%;
   width: 24px;
   height: 24px;
   transform: translate(-50%, -50%);
