@@ -27,11 +27,20 @@ const StCardWrapper = styled.div<{ $isSelected: boolean }>`
   margin-left: 10px;
   border-radius: 20px;
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0.17%, rgba(0, 0, 0, 0) 99.93%);
-  border: ${(props) => (props.$isSelected ? '5px solid white' : 'none')};
   overflow: hidden;
   cursor: pointer;
   & img {
     object-fit: cover;
+  }
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: inherit;
+    border: ${(props) => (props.$isSelected ? '5px solid white' : 'none')};
+    content: '';
   }
 `;
 

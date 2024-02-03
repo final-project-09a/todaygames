@@ -7,25 +7,15 @@ export const fetchLike = async () => {
   return data;
 };
 
-// 해당 포스트(post_id)와 일치하는 좋아요 조회
-export const matchedPostCount = async (limit = 5, offset = 0) => {
-  const { data } = await supabase
-    .from('posts_with_counts')
-    .select('*')
-    .range(offset, offset + limit - 1)
-    .order('created_At', { ascending: false });
-  return data;
-};
-
-// 장르 필터 적용
-export const genreFilterPosts = async (limit = 5, offset = 0) => {
-  const { data } = await supabase
-    .from('posts_with_counts')
-    .select('category')
-    .range(offset, offset + limit - 1)
-    .order('created_At', { ascending: false });
-  return data;
-};
+// // 장르 필터 적용
+// export const genreFilterPosts = async (limit = 5, offset = 0) => {
+//   const { data } = await supabase
+//     .from('posts_with_counts')
+//     .select('category')
+//     .range(offset, offset + limit - 1)
+//     .order('created_At', { ascending: false });
+//   return data;
+// };
 
 // 해당 포스트(post_id)와 유저(user_id)가 일치하는 좋아요 조회
 export const matchLikes = async (userId: string, postId: string) => {

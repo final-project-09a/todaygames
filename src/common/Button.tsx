@@ -44,7 +44,6 @@ const getSizeStyles = (size: string) => {
 };
 
 const StButton = styled.button<{ size: string }>`
-  font-family: 'Pretendard-Regular';
   border-radius: 10px;
   background: ${(props) => props.theme.color.primary};
   backdrop-filter: blur(7.5px);
