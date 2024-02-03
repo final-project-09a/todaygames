@@ -64,10 +64,10 @@ const MyCommunity = () => {
   return (
     <StUserInfoContainer>
       <StContentBox>
+        <h1>등록된 게시물{posts.length}개</h1>
         {posts.length > 0 ? (
           posts.map((post, index) => (
             <div key={index}>
-              <h1>등록된 게시물{posts.length}개</h1>
               <PostContainer>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {editingPostId === post.id && (
