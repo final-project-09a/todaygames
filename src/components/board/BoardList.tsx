@@ -233,7 +233,7 @@ export const BoardList = () => {
                   </StContent>
                   {post?.image && (
                     <StImageWrapper onClick={() => movedetailPageOnClick(post?.id)}>
-                      <img src={post?.image} alt={post.game} />
+                      <img src={post?.image[0]} alt={post.game} />
                     </StImageWrapper>
                   )}
                 </StContentWrapper>

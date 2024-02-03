@@ -8,15 +8,11 @@ import {
   NickNameAndDate,
   NickNameAndTitleText,
   DateText,
-  EditBtn,
-  DetailImage,
   DetailTitle,
   DetailContent,
   WrappingTags,
   EachTag,
   CommentAndLike,
-  CommentsNum,
-  LikeNum,
   RowCommentAndLike,
   WrappingComments,
   NumText
@@ -26,21 +22,17 @@ import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { getPosts } from 'api/post';
 import { useParams } from 'react-router-dom';
-import { supabase } from 'types/supabase';
 import { useEffect, useState } from 'react';
-import { Post } from 'types/global.d';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import CustomCarousel from 'common/CustomCarousel';
 import styled from 'styled-components';
 import { getFormattedDate } from 'util/date';
 import comment from '../../assets/img/comment.png';
-import like from '../../assets/img/like.png';
 import Comment from 'components/comment/Comment';
 import { createLike, deleteLike, fetchLike, matchLikes } from 'api/likes';
 import { BiLike, BiSolidLike } from 'react-icons/bi';
-import { createComments, getComments } from 'api/comments';
-import AlertModal from 'components/register/AlertModal';
+import { getComments } from 'api/comments';
 
 export const BoardDetail = () => {
   const queryClient = useQueryClient();
@@ -70,8 +62,6 @@ export const BoardDetail = () => {
   const filterdPost = gameData?.find((game) => game.id === id);
   const filteredLike = postLikeData?.filter((like) => like.post_id === id);
   const filteredUser = userInfoData?.filter((user) => user.id === filterdPost?.user_id).find(() => true);
-  const splitImages = filterdPost?.image.replace('[', '').replace(']', '').split(',');
-  const correctImageArray = splitImages?.map((item) => item.replace(/"/g, ''));
   const correctTime = filterdPost ? getFormattedDate(filterdPost.created_At) : undefined;
 
   //본인이 누른 좋아요가 계속 눌려있는지 확인
@@ -159,7 +149,7 @@ export const BoardDetail = () => {
           </UserInfoAndBtn>
           <StCarouselWrapper>
             <CustomCarousel settings={settings}>
-              {correctImageArray?.map((images, index) =>
+              {filterdPost?.image?.map((images, index) =>
                 images ? (
                   <StImageWrapper key={index}>
                     <img src={images} />
