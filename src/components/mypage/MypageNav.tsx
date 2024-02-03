@@ -93,7 +93,7 @@ const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          <img src={user?.avatar_url} alt="프로필이미지" />
+          <img src={user?.avatar_url ? user.avatar_url : userimg} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
         <p>{user?.nickname ? user.nickname : ''}</p>
