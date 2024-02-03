@@ -218,7 +218,7 @@ function Signup() {
         <StInputBtwrap>
           <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
           <StInputGroup>
-            <StyledInputShort
+            <StyledInput
               placeholder="사용할 닉네임을 적어주세요."
               type="text"
               id="displayName"
@@ -226,10 +226,10 @@ function Signup() {
               value={formData.displayName}
               onChange={handleChange}
             />
-
+            {/* 
             <StyledButtonShort onClick={handleCheckNickname} type="button">
               닉네임 중복 확인
-            </StyledButtonShort>
+            </StyledButtonShort> */}
           </StInputGroup>
           {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}{' '}
           <p>{errors.displayName && <p>{errors.displayName}</p>}</p>
@@ -238,7 +238,7 @@ function Signup() {
           <StyledLabel htmlFor="email">이메일</StyledLabel>
 
           <StInputGroup>
-            <StyledInputShort
+            <StyledInput
               placeholder="이메일을 입력해 주세요."
               type="email"
               id="email"
@@ -247,9 +247,9 @@ function Signup() {
               onChange={handleChange}
             />
 
-            <StyledButtonShort onClick={handleCheckEmail} type="button">
+            {/* <StyledButtonShort onClick={handleCheckEmail} type="button">
               email 중복 확인
-            </StyledButtonShort>
+            </StyledButtonShort> */}
           </StInputGroup>
           {EmailError && <StErrorMessage>{EmailError}</StErrorMessage>}
           <p>{errors.email && <p>{errors.email}</p>}</p>
@@ -270,6 +270,7 @@ function Signup() {
           <p>8~16자 영문, 숫자, 특수문자를 조합해 주세요.</p>
         </StInputBtwrap>
         <StInputBtwrap>
+          <StyledLabel htmlFor="password">비밀번호 확인</StyledLabel>
           <StyledInput
             placeholder="비밀번호 확인"
             type="password"
