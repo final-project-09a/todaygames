@@ -11,7 +11,6 @@ import { useNavigate } from 'react-router-dom';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
-  const [isButtonsVisible, setIsButtonsVisible] = useState(false);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
@@ -51,7 +50,6 @@ const MyCommunity = () => {
     // 이미 선택된 게시물일 경우 null을 설정하여 버튼을 숨김
     setEditingPostId(editingPostId === postId ? null : postId);
   };
-  console.log(editingPostId);
   const handleThreeDotsClick = (postId: any) => {
     setSelectedPostId(selectedPostId === postId ? null : postId);
   };
@@ -97,7 +95,7 @@ const MyCommunity = () => {
                     </div>
                   </div>
                   <StImageWrapper style={{ cursor: 'pointer' }} onClick={() => navigate(`/boarddetail/${post.id}`)}>
-                    <img src={post?.image} alt={post.game} />
+                    <img src={post?.image[0]} alt={post.game} />
                   </StImageWrapper>
                 </div>
               </PostContainer>

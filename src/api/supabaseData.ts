@@ -1,9 +1,16 @@
-import { Post } from 'types/global.d';
 import { supabase } from '../types/supabase';
 import { QUERY_KEYS } from 'query/keys';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from 'redux/config/configStore';
+
+export type Post = {
+  title: string;
+  game: string;
+  category: string;
+  image: string[];
+  content: string;
+  user_id: string;
+  review:string,
+  star_rating:string
+};
 
 const postContents = async (newPost: Post) => {
   await supabase.from(QUERY_KEYS.POST).insert(newPost);
@@ -17,7 +24,9 @@ const insertPost = async (newPost: Post) => {
       game: newPost.game,
       category: newPost.category,
       image: newPost.image,
-      content: newPost.content
+      content: newPost.content,
+      review:newPost.review,
+      star_rating:newPost.star_rating
     }
   ]);
   if (error) {

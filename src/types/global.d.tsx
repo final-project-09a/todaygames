@@ -3,14 +3,14 @@ export type SteamProfile = {
   playtime_forever: number;
 };
 
-export type Post = {
-  title: string;
-  game: string;
-  category: string;
-  image: string[];
-  content: string;
-  user_id: string;
-};
+// export type Post = {
+//   title: string;
+//   game: string;
+//   category: string;
+//   image: string[];
+//   content: string;
+//   user_id: string;
+// };
 
 export type FormData = {
   email: string;

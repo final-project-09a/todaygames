@@ -231,9 +231,9 @@ export const BoardList = () => {
                         ))}
                     </StTagWrapper>
                   </StContent>
-                  {post?.image && (
+                  {post?.image && post.image.length > 0 && (
                     <StImageWrapper onClick={() => movedetailPageOnClick(post?.id)}>
-                      <img src={post?.image} alt={post.game} />
+                      <img src={post?.image[0]} alt={post.game} />
                     </StImageWrapper>
                   )}
                 </StContentWrapper>
@@ -300,8 +300,8 @@ const StfetchForm = styled.form`
   display: flex;
   position: absolute;
   z-index: 20;
-  right: 2%;
-  top: 16%;
+  right: 1.5%;
+  top: 20%;
 `;
 
 const EditBtn = styled.button`
@@ -360,7 +360,7 @@ const StcontentBox = styled.div`
   border-radius: 10px;
   white-space: nowrap;
   color: ${(props) => props.theme.color.white};
-  padding: 20px;
+  padding: 30px;
 `;
 
 const StProfileWrapper = styled.div`
@@ -427,7 +427,6 @@ const StContent = styled.div`
   & p {
     font-size: 14px;
     font-weight: 400;
-    /* line-height: 1.1; */
     max-height: 66px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -450,7 +449,7 @@ const StText = styled.div`
 const StTagWrapper = styled.div`
   display: flex;
   gap: 5px;
-  margin-top: 10px;
+  margin-top: 20px;
 `;
 
 const StImageWrapper = styled.figure`

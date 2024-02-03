@@ -60,8 +60,6 @@ const MyBookMark = () => {
     }
   }, [bookmarks]);
 
-  console.log(games);
-
   return (
     <StContentBox>
       {games.length > 0 ? (

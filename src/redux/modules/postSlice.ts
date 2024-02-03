@@ -1,20 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-interface Post {
-  id: string;
-  title: string;
-  game: string;
-  category: string;
-  content: string;
-  image: string;
-  created_At: string;
-  user_id: string;
-}
+import { Typedata } from 'types/supabaseTable';
 
 interface PostState {
   updatePost: any;
   deletePost: any;
-  posts: Post[];
+  posts: Typedata['public']['Tables']['posts']['Row'][];
 }
 
 const initialState: PostState = {
@@ -27,10 +17,10 @@ const postSlice = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    addPost: (state, action: PayloadAction<Post>) => {
+    addPost: (state, action: PayloadAction<Typedata['public']['Tables']['posts']['Row']>) => {
       state.posts.push(action.payload);
     },
-    updatePost: (state, action: PayloadAction<Post>) => {
+    updatePost: (state, action: PayloadAction<Typedata['public']['Tables']['posts']['Row']>) => {
       const { id } = action.payload;
       return {
         ...state,
@@ -42,7 +32,7 @@ const postSlice = createSlice({
         })
       };
     },
-    deletePost: (state, action: PayloadAction<Post>) => {
+    deletePost: (state, action: PayloadAction<Typedata['public']['Tables']['posts']['Row']>) => {
       const postIdToDelete = action.payload.id;
       const newState = {
         ...state,
