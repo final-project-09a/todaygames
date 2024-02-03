@@ -185,7 +185,7 @@ const EditProfile = () => {
           placeholder={nickname || '닉네임 (2 ~ 6자)'}
           autoComplete="off"
         />
-        <StNickNameCount>{nickname?.length ? nickname.length : '0'} / 30</StNickNameCount>
+        <StNickNameCount>{nickname?.length ? nickname.length : '0'} / 6</StNickNameCount>
         {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}
         <label htmlFor="profile">프로필 소개(필수)</label>
         <textarea

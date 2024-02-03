@@ -15,7 +15,6 @@ const StyledSignup = styled.div`
 `;
 
 const StyledH1 = styled.h1`
-  font-family: 'Pretendard-Regular';
   font-size: 34px;
   font-weight: 700;
   margin-bottom: 50px;
@@ -42,7 +41,6 @@ const StInputGroup = styled.div`
 `;
 
 const StyledInput = styled.input`
-  font-family: 'Pretendard-Regular';
   width: 490px;
   height: 48px;
   margin-top: 5px;
@@ -59,14 +57,12 @@ const StyledInputShort = styled(StyledInput)`
 `;
 
 const StyledLabel = styled.label`
-  font-family: 'Pretendard-Regular';
   font-size: 14px;
   font-weight: 400;
   margin-bottom: 6px;
 `;
 
 const StyledButton = styled.button`
-  font-family: 'Pretendard-Regular';
   width: 490px;
   height: 50px;
   background-color: ${(props) => props.theme.color.primary};

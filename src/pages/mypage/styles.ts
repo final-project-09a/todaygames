@@ -39,7 +39,6 @@ export const StUserinfoBox = styled.div`
     user-select: none;
   }
   & input {
-    font-family: 'Pretendard';
     font-size: 14px;
     font-weight: 100;
     line-height: 15px;
@@ -56,7 +55,6 @@ export const StUserinfoBox = styled.div`
     }
   }
   & textarea {
-    font-family: 'Pretendard';
     font-size: 14px;
     font-weight: 100;
     line-height: 15px;
@@ -85,7 +83,6 @@ export const StUserinfoBox = styled.div`
     /* -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none; */
-    font-family: 'Pretendard';
     width: 355px;
     padding: 18px;
     border-radius: 10px;
@@ -102,7 +99,6 @@ export const StUserinfoBox = styled.div`
     appearance: none;
 
     font-size: 14px;
-    font-family: 'Pretendard';
     border: none;
     border-radius: 10px;
     padding: 5px;
@@ -159,7 +155,6 @@ export const StCancelIcon = styled.img`
   cursor: pointer;
 `;
 export const StPasswordButton = styled.button`
-  font-family: 'Pretendard-Regular';
   align-self: flex-end;
   border-radius: 10px;
   background: ${(props) => props.theme.color.white};

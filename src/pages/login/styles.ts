@@ -17,7 +17,6 @@ const StFormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
-  font-family: 'Pretendard-Regular';
 `;
 
 const StSignInfo = styled.div`
@@ -33,7 +32,6 @@ const StSignInfo = styled.div`
 `;
 
 const StyledInput = styled.input`
-  font-family: 'Pretendard-Regular';
   width: 350px;
   height: 48px;
   flex-shrink: 0;
@@ -43,10 +41,23 @@ const StyledInput = styled.input`
   background: ${(props) => props.theme.color.postback};
   border: none;
   padding-left: 18px;
+  &:focus {
+    background: ${(props) => props.theme.color.postback};
+  }
+
+  &:-webkit-autofill {
+    background-color: ${(props) => props.theme.color.postback} !important;
+    -webkit-text-fill-color: ${(props) => props.theme.color.white} !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  &:-webkit-autofill:focus {
+    background-color: ${(props) => props.theme.color.postback} !important;
+    -webkit-text-fill-color: ${(props) => props.theme.color.white} !important;
+  }
 `;
 
 const StyledButton = styled.button`
-  font-family: 'Pretendard-Regular';
   width: 350px;
   height: 50px;
   background-color: ${(props) => props.theme.color.primary};
