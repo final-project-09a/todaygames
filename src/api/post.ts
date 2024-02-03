@@ -89,3 +89,18 @@ export const deletedata = async (
     throw error;
   }
 };
+
+// 게임 이름과 일치하는 게시글만 불러오기
+export const getPostsWithGameName = async (gameName: string) => {
+  try {
+    const response = await supabase.from(QUERY_KEYS.POSTS).select('id, user_id, star_rating, review').eq('game', gameName);
+    if (response.data && response.data.length > 0) {
+      return response.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
