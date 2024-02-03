@@ -13,7 +13,7 @@ import {
   StpasswordInputGroup,
   StPasswordButton
 } from 'pages/mypage/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
@@ -21,7 +21,7 @@ import { UserData, setUser } from '../../redux/modules/userSlice';
 import { supabase } from 'types/supabase';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 import { GenreNameType } from 'types/games';
-import dropdown from 'assets/icons/drpodown.svg';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 const EditProfile = () => {
   const dispatch = useDispatch();
@@ -37,6 +37,11 @@ const EditProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [PasswordError, setPasswordError] = useState<string>('');
   const [hasChanges, setHasChanges] = useState<boolean>(false);
+  const [userprovider, setuserprovider] = useState<string | undefined>('');
+  const userdata = supabase.auth.getUser().then((users) => {
+    setuserprovider(users.data.user?.app_metadata.provider);
+  });
+  console.log(userprovider);
 
   const isButtonDisabled = !(
     nickname &&
@@ -161,8 +166,6 @@ const EditProfile = () => {
       });
   };
 
-  console.log(genres);
-
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -182,7 +185,7 @@ const EditProfile = () => {
           placeholder={nickname || '닉네임 (2 ~ 6자)'}
           autoComplete="off"
         />
-        <StNickNameCount>{nickname?.length ? nickname.length : '0'} / 30</StNickNameCount>
+        <StNickNameCount>{nickname?.length ? nickname.length : '0'} / 6</StNickNameCount>
         {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}
         <label htmlFor="profile">프로필 소개(필수)</label>
         <textarea
@@ -195,57 +198,64 @@ const EditProfile = () => {
         <StProfileCount>{profile?.length ? profile.length : '0'} / 200</StProfileCount>
         {profileError && <StErrorMessage>{profileError}</StErrorMessage>}
       </StUserinfoBox>
+      {/* 비번호 변경 부분은 userprovider가 'kakao'나 'google'이 아닐 때만 보여줍니다. */}
+
       <StUserinfoBox>
         <h2>계정 관리</h2>
         <label htmlFor="id">계정 아이디</label>
         <input id="id" type="email" placeholder={email} readOnly />
-        <label htmlFor="password">비밀번호 변경</label>
-        <StpasswordInputGroup>
-          <input
-            placeholder="변경할 비밀번호"
-            type="password"
-            value={newPassword || ''}
-            onChange={(e) => {
-              setNewPassword(e.target.value);
-              if (!isValidPassword(e.target.value)) {
-                setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
-                setpasswordisValidIsValid(false);
-              } else {
-                setPasswordError('');
-                // 비밀번호 확인도 같이 검사합니다.
-                if (e.target.value !== confirmPassword) {
-                  setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-                  setpasswordisValidIsValid(false);
-                } else {
-                  setPasswordError('');
-                  setpasswordisValidIsValid(true);
-                }
-              }
-            }}
-          />
-          {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
-          <br></br>
-          <input
-            placeholder="변경할 비밀번호 확인"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              // 비밀번호 확인이 비밀번호와 일치하는지 검사합니다.
-              if (newPassword !== e.target.value) {
-                setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-                setpasswordisValidIsValid(false);
-              } else {
-                setPasswordError('');
-                setpasswordisValidIsValid(true);
-              }
-            }}
-          />
-          <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
-            비밀번호 변경
-          </StPasswordButton>
-        </StpasswordInputGroup>
+        {userprovider !== 'kakao' && userprovider !== 'google' && (
+          <>
+            <label htmlFor="password">비밀번호 변경</label>
+            <StpasswordInputGroup>
+              <input
+                placeholder="변경할 비밀번호"
+                type="password"
+                value={newPassword || ''}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (!isValidPassword(e.target.value)) {
+                    setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+                    setpasswordisValidIsValid(false);
+                  } else {
+                    setPasswordError('');
+                    // 비밀번호 확인도 같이 검사합니다.
+                    if (e.target.value !== confirmPassword) {
+                      setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                      setpasswordisValidIsValid(false);
+                    } else {
+                      setPasswordError('');
+                      setpasswordisValidIsValid(true);
+                    }
+                  }
+                }}
+              />
+              {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
+              <br></br>
+              <input
+                placeholder="변경할 비밀번호 확인"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  // 비밀번호 확인이 비밀번호와 일치하는지 검사합니다.
+                  if (newPassword !== e.target.value) {
+                    setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                    setpasswordisValidIsValid(false);
+                  } else {
+                    setPasswordError('');
+                    setpasswordisValidIsValid(true);
+                  }
+                }}
+              />
+              <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
+                비밀번호 변경
+              </StPasswordButton>
+            </StpasswordInputGroup>
+          </>
+        )}
       </StUserinfoBox>
+
       <StUserinfoBox>
         <h2>관심 장르</h2>
         <label htmlFor="genres">관심장르 등록</label>

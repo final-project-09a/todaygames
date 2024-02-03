@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
 import Button from 'common/Button';
 import editBtn from '../../assets/img/editBtn.png';
+import { useNavigate } from 'react-router-dom';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ const MyCommunity = () => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -76,7 +77,7 @@ const MyCommunity = () => {
                   </StfetchForm>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>
+                  <div style={{ cursor: 'pointer' }} onClick={() => navigate(`/boarddetail/${post.id}`)}>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <StUserImageWrapper>
                         <img src={user?.avatar_url} alt="프로필이미지" />
@@ -87,6 +88,7 @@ const MyCommunity = () => {
                       </div>
                     </div>
                     <StyledH2>{post.title}</StyledH2>
+
                     <StyledH3>{post.content}</StyledH3>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                       {post.category.split(',').map((category: string, idx: number) => (
@@ -94,7 +96,7 @@ const MyCommunity = () => {
                       ))}
                     </div>
                   </div>
-                  <StImageWrapper>
+                  <StImageWrapper style={{ cursor: 'pointer' }} onClick={() => navigate(`/boarddetail/${post.id}`)}>
                     <img src={post?.image} alt={post.game} />
                   </StImageWrapper>
                 </div>
@@ -232,7 +234,6 @@ const StCategory = styled.div`
 `;
 const StyledH3 = styled.h3`
   color: #eee;
-  font-family: Pretendard;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -242,7 +243,6 @@ const StyledH3 = styled.h3`
 
 const StyledH2 = styled.h2`
   color: #fff;
-  font-family: Pretendard;
   font-size: 18px;
   font-style: normal;
   font-weight: 700;

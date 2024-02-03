@@ -75,7 +75,7 @@ const NickNameAndTitleText = styled.div`
   height: 22.5px;
   color: #fff;
   align-items: center;
-  font-family: 'Pretendard-Regular';
+
   font-size: 14px;
   font-weight: 400;
 `;
@@ -86,7 +86,7 @@ const DateText = styled.div`
   width: fit-content;
   height: 22.5px;
   color: #999;
-  font-family: 'Pretendard-Regular';
+
   font-size: 12px;
   font-weight: 400;
   text-align: center;
@@ -105,7 +105,7 @@ const DetailTitle = styled.div`
   width: fit-content;
   height: fit-content;
   color: #fff;
-  font-family: 'Pretendard-Regular';
+
   font-size: 18px;
   font-weight: 700;
   margin: 30px 0px 9px 20px;
@@ -113,7 +113,7 @@ const DetailTitle = styled.div`
 
 const DetailContent = styled.div`
   color: #eee;
-  font-family: 'Pretendard-Regular';
+
   font-size: 14px;
   font-weight: 400;
   line-height: 22px; /* 157.143% */
@@ -130,7 +130,7 @@ const WrappingTags = styled.div`
 
 const EachTag = styled.div`
   color: #fff;
-  font-family: 'Pretendard-Regular';
+
   font-size: 12px;
   font-weight: 400;
   width: auto;

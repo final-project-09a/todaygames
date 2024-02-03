@@ -58,7 +58,7 @@ const CancelBtn = styled.button`
   border-radius: 10px;
   background: ${(props) => props.theme.color.white};
   border: 0px;
-  font-family: 'Pretendard-Regular';
+
   font-size: 14px;
   font-weight: 500;
   line-height: 15px;
@@ -82,9 +82,9 @@ const Titles = styled.div`
 `;
 
 const TextSpace = styled.h2`
-  font-family: Pretendard;
   font-size: 16px;
   font-weight: 700;
+  white-space: nowrap;
 `;
 
 const TitleInput = styled.input`
@@ -96,7 +96,6 @@ const TitleInput = styled.input`
   background: ${(props) => props.theme.color.inputcolor};
   color: ${(props) => props.theme.color.white};
   padding-left: 18px;
-  font-family: Pretendard;
   font-size: 14px;
   font-weight: 400;
 `;
@@ -142,7 +141,7 @@ const ContentInput = styled.textarea`
   border-radius: 10px;
   border: none;
   background: ${(props) => props.theme.color.inputcolor};
-  font-family: 'Pretendard-Regular';
+
   resize: none;
   font-size: 14px;
   padding: 20px;
@@ -163,7 +162,7 @@ const ImageUploadBtn = styled.button`
   height: 47px;
   background-color: ${(props) => props.theme.color.white};
   cursor: pointer;
-  font-family: 'Pretendard-Regular';
+
   text-align: center;
   font-size: 14px;
   font-weight: 500;
@@ -237,7 +236,6 @@ const RegisterBtn = styled.button`
   border-radius: 10px;
   background: ${(props) => props.theme.color.primary};
   border: 0px;
-  font-family: 'Pretendard-Regular';
 
   color: white;
   font-size: 14px;

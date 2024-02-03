@@ -1,93 +1,92 @@
-// 게시판 리스트
-
 import styled from 'styled-components';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
-import MoreViewButton from 'common/MoreViewButton';
 import Button from 'common/Button';
 import userimg from 'assets/img/userimg.png';
 import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { deletedata, getPosts } from 'api/post';
+import { deletedata } from 'api/post';
 import { getFormattedDate } from 'util/date';
-import { getGames } from 'api/games';
-import { matchedPostCount } from 'api/likes';
+import { genreFilterPosts } from 'api/post';
+import { getGamesWithGameName } from 'api/games';
+import { RootState } from 'redux/config/configStore';
+import { useDispatch } from 'react-redux';
+import { setFilteredPosts } from '../../redux/modules/boardSlice';
+import folderIcon from 'assets/icons/folderIcon.svg';
 
-interface UserInfo {
-  userInfo: Typedata['public']['Tables']['userinfo']['Row'];
-}
+type GameInfoMap = {
+  [appId: string]: Typedata['public']['Tables']['games']['Row'];
+};
 
-interface PostDetail {
-  user_id: string;
-  post: string;
-  id: string;
-  created_At: string;
-  title: string;
-  content: string;
-  category: string;
-  image: string;
-  game: string;
-}
-interface Data {
-  id: number;
-  user_id: string;
-  content: string;
-  image: string;
-  title: string;
-  category: string;
-  game: string;
-  created_At: Date;
-}
-
-interface GameSearchProps {
-  searchedText: string;
-  setSearchedText: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export const BoardList = (
-  { filteredPosts, setFilteredPosts }: any,
-  { searchedText, setSearchedText }: GameSearchProps
-) => {
+export const BoardList = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
+  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   const [searchText, SetSearchText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [likeCounts, setLikeCounts] = useState<{ [postId: string]: number }>({});
-  const [postsData, setPostsData] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
+  const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
 
-  const user = useSelector((state: any) => state.userSlice.userInfo);
-  const newData = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts });
+  // useInfiniteQuery를 이용한 무한스크롤 구현
+  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
+    queryKey: ['posts', selectedGenres.join(',')],
+    queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    }
+  });
+
+  const posts = useMemo(() => {
+    if (!data) return [];
+    const page = data.pages.reduce((prev, current) => {
+      return [...prev, ...current];
+    }, []);
+    return [...page];
+  }, [data]);
+
+  // posts 데이터의 게임정보만 가져오기(게임 클릭 시 상세페이지 이동을 위함)
+  useEffect(() => {
+    const fetchGameInfo = async () => {
+      try {
+        const infoMap: GameInfoMap = {};
+        await Promise.all(
+          posts.map(async (post: Typedata['public']['Tables']['posts']['Row']) => {
+            try {
+              const gameInfo = await getGamesWithGameName(post.game);
+              infoMap[post.game] = gameInfo;
+            } catch (error) {
+              console.error(`${post.game} 게임 정보 패칭오류:`, error);
+            }
+          })
+        );
+
+        setGameInfoMap(infoMap);
+      } catch (error) {
+        console.error('게임 정보 패칭 에러:', error);
+      }
+    };
+
+    fetchGameInfo();
+  }, [posts]);
+
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await matchedPostCount(5);
-        if (data && data.length > 0) {
-          setPostsData(data);
-        } else {
-          console.log('포스트의 좋아요, 댓글수 불러오기 오류');
-        }
-      } catch (error) {
-        console.error('Error fetching likes data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  console.log(postsData);
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -102,20 +101,21 @@ export const BoardList = (
     navigate(`/boarddetail/${item}`);
   };
 
-  // const initialDisplayedPosts = filteredPosts.slice(0, displayedPosts);
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
 
-  const handleLoadMore = async () => {
-    try {
-      const additionalData = await matchedPostCount(5, postsData.length);
-      if (additionalData && additionalData.length > 0) {
-        setPostsData((prevData) => [...prevData, ...additionalData]);
-      } else {
-        console.log('No more posts to load');
+      if (scrollTop + clientHeight >= scrollHeight - 10) {
+        if (hasNextPage) fetchNextPage();
       }
-    } catch (error) {
-      console.error('Error fetching additional posts:', error);
-    }
-  };
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [posts]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     SetSearchText(e.target.value);
@@ -129,29 +129,31 @@ export const BoardList = (
     setEditingPostId((prev) => (prev === postId ? null : postId));
   };
 
+  //검색
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    SetSearchText('');
+    navigate(`/search/${searchText}`);
+  };
+
+  //수정
   const handleEditButtonClick = (postId: string) => {
     const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSearchedText('');
-  };
-
-  // 데이터 추출
-  const delData = useQuery({ queryKey: ['posts'], queryFn: () => deletedata('user_id', 'id') });
-
+  //삭제
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) {
       return;
     }
     await deletedata(id, user_id);
-    const deletedFilterItems = newData.data?.filter((item) => item.id !== id);
+    const deletedFilterItems = posts?.filter((item) => item.id !== id);
     console.log('deletedFilterItems', deletedFilterItems);
-    setFilteredPosts(deletedFilterItems);
+    dispatch(setFilteredPosts(deletedFilterItems));
   };
+
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
@@ -159,34 +161,23 @@ export const BoardList = (
     alert('신고기능 구현중...');
   };
 
-  const { data: games } = useQuery({
-    queryKey: [QUERY_KEYS.GAMES],
-    queryFn: getGames
-  });
-
   return (
-    <div>
+    <StBoardListContainer>
       <StSeachContainer onSubmit={handleFormSubmit}>
-        <div>
-          <p>{filteredPosts.length}개의 일치하는 게시물</p>
-        </div>
-        <StsearchBox>
-          <StseachInput value={searchedText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <div onClick={() => navigate(`/search/${searchedText}`)}>
-            <StSearchIcon type="submit" />
-          </div>
-          <Button type="button" size="small" onClick={moveregisterPageOnClick}>
-            글쓰기
-          </Button>
-        </StsearchBox>
+        <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
+        <StSearchIcon type="submit" />
+        <Button type="button" size="small" onClick={moveregisterPageOnClick}>
+          글쓰기
+        </Button>
       </StSeachContainer>
 
-      {filteredPosts.length > 0 ? (
-        postsData.map((post: Typedata['public']['Tables']['posts']['Row']) => {
+      {posts.length > 0 ? (
+        posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
           if (userInfo) {
             const postIsOwner = isOwner(post.user_id);
+
             return (
               <StcontentBox key={post?.id} defaultValue={post.id}>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
@@ -222,21 +213,14 @@ export const BoardList = (
                       </StHiddenText>
                     </StText>
                     <StTagWrapper>
-                      {games?.map((game) => {
-                        if (game.name === post.game) {
-                          const appId = game.app_id;
-                          return (
-                            <Tag
-                              key={appId}
-                              onClick={() => navigate(`/detail/${appId}`)}
-                              size="small"
-                              backgroundColor="secondary"
-                            >
-                              {post.game}
-                            </Tag>
-                          );
-                        }
-                      })}
+                      <Tag
+                        onClick={() => navigate(`/detail/${gameInfoMap[post.game]?.app_id}`)}
+                        size="small"
+                        backgroundColor="secondary"
+                      >
+                        {post.game}
+                      </Tag>
+
                       {post?.category
                         .split(',')
                         .map((item) => item.trim())
@@ -268,13 +252,27 @@ export const BoardList = (
           }
         })
       ) : (
-        <StNullboard>게시물이 없습니다.</StNullboard>
+        <StNoResultWrapper>
+          <img src={folderIcon} alt="폴더아이콘" />
+          <p>해당 장르의 포스트가 없습니다.</p>
+        </StNoResultWrapper>
       )}
-
-      {postsData.length < filteredPosts.length && <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>}
-    </div>
+    </StBoardListContainer>
   );
 };
+
+const StBoardListContainer = styled.div`
+  width: 100%;
+`;
+
+const StNoResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+`;
 
 const StButton = styled.button`
   position: flex;
@@ -322,16 +320,10 @@ const StSeachContainer = styled.form`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 20px;
-`;
-
-const StsearchBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  position: relative;
   gap: 10px;
+  position: relative;
 `;
 
 const StseachInput = styled.input`
@@ -349,7 +341,7 @@ const StSearchIcon = styled.button`
   display: flex;
   position: absolute;
   top: 50%;
-  right: 24%;
+  right: 9%;
   width: 24px;
   height: 24px;
   transform: translate(-50%, -50%);
