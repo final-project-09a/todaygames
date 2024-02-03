@@ -1,8 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { getPosts, getPostsWithCount } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
-import { QUERY_KEYS } from 'query/keys';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 import { useDispatch } from 'react-redux';
@@ -15,12 +12,6 @@ export const BoardCategory = () => {
   const [sortOption, setSortOption] = useState('최근순');
   const dispatch = useDispatch();
   const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
-  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
-
-  const { data } = useQuery({
-    queryKey: [QUERY_KEYS.POSTS],
-    queryFn: getPosts
-  });
 
   const genrefilterOnClick = async (tag: string) => {
     const updatedGenres = selectedGenres.includes(tag)
