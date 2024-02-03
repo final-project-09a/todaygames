@@ -231,7 +231,7 @@ export const BoardList = () => {
                         ))}
                     </StTagWrapper>
                   </StContent>
-                  {post?.image && (
+                  {post?.image && post.image.length > 0 && (
                     <StImageWrapper onClick={() => movedetailPageOnClick(post?.id)}>
                       <img src={post?.image[0]} alt={post.game} />
                     </StImageWrapper>
@@ -427,7 +427,6 @@ const StContent = styled.div`
   & p {
     font-size: 14px;
     font-weight: 400;
-    /* line-height: 1.1; */
     max-height: 66px;
     overflow: hidden;
     text-overflow: ellipsis;

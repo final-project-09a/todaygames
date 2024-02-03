@@ -155,8 +155,7 @@ export const BoardDetail = () => {
                     <img src={images} />
                   </StImageWrapper>
                 ) : (
-                  // eslint-disable-next-line react/jsx-key
-                  <div></div>
+                  <div key={index}></div>
                 )
               )}
             </CustomCarousel>
