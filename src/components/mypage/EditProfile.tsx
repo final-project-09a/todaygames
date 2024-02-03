@@ -198,8 +198,6 @@ const EditProfile = () => {
         <StProfileCount>{profile?.length ? profile.length : '0'} / 200</StProfileCount>
         {profileError && <StErrorMessage>{profileError}</StErrorMessage>}
       </StUserinfoBox>
-      {/* 비번호 변경 부분은 userprovider가 'kakao'나 'google'이 아닐 때만 보여줍니다. */}
-
       <StUserinfoBox>
         <h2>계정 관리</h2>
         <label htmlFor="id">계정 아이디</label>
