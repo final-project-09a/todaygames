@@ -10,7 +10,7 @@ export const fetchLike = async () => {
 // 해당 포스트(post_id)와 일치하는 좋아요 조회
 export const matchedPostCount = async (limit = 5, offset = 0) => {
   const { data } = await supabase
-    .from('posts_with_counts')
+    .from('post_with_counts')
     .select('*')
     .range(offset, offset + limit - 1)
     .order('created_At', { ascending: false });
