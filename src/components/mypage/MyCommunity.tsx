@@ -50,7 +50,6 @@ const MyCommunity = () => {
     // 이미 선택된 게시물일 경우 null을 설정하여 버튼을 숨김
     setEditingPostId(editingPostId === postId ? null : postId);
   };
-  console.log(editingPostId);
   const handleThreeDotsClick = (postId: any) => {
     setSelectedPostId(selectedPostId === postId ? null : postId);
   };
