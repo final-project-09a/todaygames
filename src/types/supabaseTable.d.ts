@@ -12,49 +12,58 @@ export interface Typedata {
           game: string;
           category: string;
           content: string;
-          image: string;
+          image: string[];
           created_At: string;
           user_id: string;
           like_count: number;
           comment_count: number;
+          star_rating: "" | "⭐" | "⭐⭐" | "⭐⭐⭐" | "⭐⭐⭐⭐" | "⭐⭐⭐⭐⭐" | string[];
+          review:string
         };
         Insert: {
           id: string;
-          user_id: string;
-          content: string;
-          image: string;
           title: string;
-          category: string;
           game: string;
-          created_At: Date;
+          category: string;
+          content: string;
+          image: string[];
+          created_At: string;
+          user_id: string;
+          star_rating:string,
+          review:string
         };
         Update: {
           id: string;
-          user_id: string;
-          content: string;
-          image: string;
           title: string;
-          category: string;
           game: string;
-          created_At: Date;
+          category: string;
+          content: string;
+          image: string[];
+          created_At: string;
+          user_id: string;
+
+          star_rating:string,
+          review:string
         };
         Controll: {
           id?: string;
           user_id?: string;
           category: string;
           title?: string;
-          image?: string;
+          image?: string[];
           content?: string;
         };
         Delete: {
           id: string;
-          user_id: string;
-          content: string;
-          image: string;
           title: string;
-          category: string;
           game: string;
-          created_At: Date;
+          category: string;
+          content: string;
+          image: string[];
+          created_At: string;
+          user_id: string;
+          star_rating:string,
+          review:string
         };
       };
       comments: {

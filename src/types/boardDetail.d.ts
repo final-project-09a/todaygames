@@ -1,15 +1,18 @@
-export interface PostDetail {
-  id: string;
-  title: string;
-  game: string;
-  category: string;
-  content: string;
-  image: string;
-  created_At: string;
-  user_id: string;
-}
 
 export interface DetailImages {
   index: number;
   img: string;
+}
+
+export interface ReviewPostType {
+  id:stirng;
+  user_id:string;
+  star_rating:"" | "⭐" | "⭐⭐" | "⭐⭐⭐" | "⭐⭐⭐⭐" | "⭐⭐⭐⭐⭐" | string[];
+  review:string
+}
+
+export interface ReviewUserType {
+  id:string;
+  nickname:string;
+  avatar_url:string;
 }

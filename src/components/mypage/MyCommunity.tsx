@@ -8,14 +8,16 @@ import { Typedata } from 'types/supabaseTable';
 import Button from 'common/Button';
 import editBtn from '../../assets/img/editBtn.png';
 import { useNavigate } from 'react-router-dom';
+import { deletedata } from 'api/post';
+import { setFilteredPosts } from '../../redux/modules/boardSlice';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
-  const [isButtonsVisible, setIsButtonsVisible] = useState(false);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
+  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchPosts = async () => {
@@ -42,16 +44,24 @@ const MyCommunity = () => {
     return <StUserInfoContainer />;
   }
 
-  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
+  const handleDeletePostButton = async (postId: string) => {
+    if (!user?.id) return;
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) return;
+
+    await deletedata(postId, user.id);
+    const deletedPosts = posts.filter((post) => post.id !== postId);
+    setPosts(deletedPosts);
   };
 
-  const handleEditButtonClick = (postId: any) => {
-    // 이미 선택된 게시물일 경우 null을 설정하여 버튼을 숨김
-    setEditingPostId(editingPostId === postId ? null : postId);
+  // const handleEditButtonClick = (postId: string) => {
+  //   navigate(`/board/edit/${postId}`);
+  // };
+
+  const handleEditButtonClick = (postId: string) => {
+    const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
-  console.log(editingPostId);
   const handleThreeDotsClick = (postId: any) => {
     setSelectedPostId(selectedPostId === postId ? null : postId);
   };
@@ -64,16 +74,16 @@ const MyCommunity = () => {
   return (
     <StUserInfoContainer>
       <StContentBox>
+        <h1>등록된 게시물{posts.length}개</h1>
         {posts.length > 0 ? (
           posts.map((post, index) => (
             <div key={index}>
-              <h1>등록된 게시물{posts.length}개</h1>
               <PostContainer>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {editingPostId === post.id && (
                   <StfetchForm>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
-                    <StButton onClick={handleDeletePostButton}>삭제</StButton>
+                    <StButton onClick={() => handleDeletePostButton(post.id)}>삭제</StButton>
                   </StfetchForm>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -97,7 +107,7 @@ const MyCommunity = () => {
                     </div>
                   </div>
                   <StImageWrapper style={{ cursor: 'pointer' }} onClick={() => navigate(`/boarddetail/${post.id}`)}>
-                    <img src={post?.image} alt={post.game} />
+                    <img src={post?.image[0]} alt={post.game} />
                   </StImageWrapper>
                 </div>
               </PostContainer>
