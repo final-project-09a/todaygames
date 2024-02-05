@@ -30,9 +30,6 @@ function Login() {
     password: ''
   });
 
-  // const { user, session } = supabase.auth.session()
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -59,22 +56,6 @@ function Login() {
     } catch (error) {
       console.error(error);
       alert('로그인 중에 오류가 발생했습니다');
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error(error);
-        alert('로그아웃 중에 오류가 발생했습니다');
-      } else {
-        alert('로그아웃 성공!');
-        // You can redirect or perform other actions upon successful logout
-      }
-    } catch (error) {
-      console.error(error);
-      alert('로그아웃 중에 오류가 발생했습니다');
     }
   };
 
@@ -110,7 +91,7 @@ function Login() {
             value={formData.email}
             onChange={handleChange}
           />
-          {errors.email && <p>{errors.email}</p>}
+          {/* {errors.email && <p>{errors.email}</p>} */}
         </StFormWrapper>
         <StFormWrapper>
           <StyledLabel htmlFor="password">비밀번호</StyledLabel>
@@ -122,7 +103,6 @@ function Login() {
             value={formData.password}
             onChange={handleChange}
           />
-          {errors.password && <p>{errors.password}</p>}
         </StFormWrapper>
         <StyledButton type="submit">로그인</StyledButton>
       </form>
