@@ -4,10 +4,11 @@ import { RootState } from 'redux/config/configStore';
 import { supabase } from 'types/supabase';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { Game, BookMark } from 'types/mybookmark';
 
 const MyBookMark = () => {
-  const [bookmarks, setBookmarks] = useState<any[]>([]);
-  const [games, setGames] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<BookMark[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   useEffect(() => {
@@ -20,7 +21,9 @@ const MyBookMark = () => {
         } else {
           if (data && data.length > 0) {
             setBookmarks(data);
+            console.log(bookmarks);
             console.log(data);
+
             console.log(bookmarks[0].app_id);
           } else {
             console.warn('No bookmarks found.');
@@ -45,8 +48,8 @@ const MyBookMark = () => {
           console.error('Error fetching game details:', error);
         } else {
           if (data) {
+            console.log(data);
             setGames(data);
-            console.log(games);
           } else {
             console.warn('No game details found.');
           }
@@ -66,7 +69,7 @@ const MyBookMark = () => {
         <>
           <h2>찜한 게임 {games.length}개</h2>
           <StGameList>
-            {games.map((game: any, index: number) => (
+            {games.map((game: Game, index: number) => (
               <div key={index}>
                 <GameItem>
                   <Link to={`/detail/${game.app_id}`}>
