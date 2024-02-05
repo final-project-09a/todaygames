@@ -33,12 +33,12 @@ export const BoardList = () => {
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
-  const [searchText, SetSearchText] = useState<string>('');
+  const [searchText, SetSearchText] = useState<Typedata['public']['Tables']['games']['Row'][]>([]);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
-
+  const [searchTerm, setSearchTerm] = useState(''); // 검색기능
   // useInfiniteQuery를 이용한 무한스크롤 구현
-  const { data, error, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ['posts', selectedGenres.join(',')],
     queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam),
     initialPageParam: 0,
@@ -55,8 +55,15 @@ export const BoardList = () => {
     const page = data.pages.reduce((prev, current) => {
       return [...prev, ...current];
     }, []);
-    return [...page];
-  }, [data]);
+    const listpostfiltered = page.filter(
+      (post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1)) ||
+        post.content.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1)) ||
+        post.category.toLowerCase().includes(searchTerm.toLowerCase().slice(1)) ||
+        post.game.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1))
+    );
+    return listpostfiltered;
+  }, [data, searchTerm]);
 
   // posts 데이터의 게임정보만 가져오기(게임 클릭 시 상세페이지 이동을 위함)
   useEffect(() => {
@@ -118,7 +125,7 @@ export const BoardList = () => {
   }, [posts]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    SetSearchText(e.target.value);
+    setSearchTerm(e.target.value);
   };
 
   const isOwner = (userId: string) => {
@@ -132,8 +139,7 @@ export const BoardList = () => {
   //검색
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    SetSearchText('');
-    navigate(`/search/${searchText}`);
+    setSearchTerm('');
   };
 
   //수정
@@ -150,7 +156,6 @@ export const BoardList = () => {
     }
     await deletedata(id, user_id);
     const deletedFilterItems = posts?.filter((item) => item.id !== id);
-    console.log('deletedFilterItems', deletedFilterItems);
     dispatch(setFilteredPosts(deletedFilterItems));
   };
 
@@ -160,12 +165,15 @@ export const BoardList = () => {
   const handleReport = () => {
     alert('신고기능 구현중...');
   };
+  const handleSearch = () => {
+    setSearchTerm('검색어');
+  };
 
   return (
     <StBoardListContainer>
       <StSeachContainer onSubmit={handleFormSubmit}>
-        <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
-        <StSearchIcon type="submit" />
+        <StseachInput value={searchTerm} onChange={handleOnChange} placeholder="게시글 검색" />
+        <StSearchIcon value={searchTerm} type="submit" onClick={handleSearch} />
         <Button type="button" size="small" onClick={moveregisterPageOnClick}>
           글쓰기
         </Button>
