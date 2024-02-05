@@ -37,6 +37,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
 import { updatedataPosts } from 'api/post';
+import { getFormattedDate } from 'util/date';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -82,6 +83,7 @@ const Register = () => {
   };
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const timeStamp = getFormattedDate(Date());
 
   // 이미지를 Supabase 스토리지에 업로드하는 함수
   const uploadImagesToSupabase = async () => {
@@ -100,6 +102,7 @@ const Register = () => {
 
         uploadedImageUrls.push(publicURL.publicUrl);
         console.log(uploadedImageUrls);
+        console.log(filePath);
       }
     } catch (error) {
       console.error('Error uploading image: ', error);

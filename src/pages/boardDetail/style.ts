@@ -55,7 +55,7 @@ const ProfileImage = styled.img`
   height: 45px;
   flex-shrink: 0;
   border-radius: 50px;
-  background-color: aqua;
+  background-color: transparent;
   border: 0px;
 `;
 
