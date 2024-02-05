@@ -19,7 +19,6 @@ import { genreFilterPosts } from 'api/post';
 import { getGamesWithGameName } from 'api/games';
 import { RootState } from 'redux/config/configStore';
 import { useDispatch } from 'react-redux';
-import { setFilteredPosts } from '../../redux/modules/boardSlice';
 import folderIcon from 'assets/icons/folderIcon.svg';
 
 type GameInfoMap = {
@@ -29,18 +28,18 @@ type GameInfoMap = {
 export const BoardList = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
+  const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
+
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
-  const [searchText, SetSearchText] = useState<Typedata['public']['Tables']['games']['Row'][]>([]);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
   const [searchTerm, setSearchTerm] = useState(''); // 검색기능
   // useInfiniteQuery를 이용한 무한스크롤 구현
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ['posts', selectedGenres.join(',')],
-    queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam),
+    queryKey: ['posts', selectedGenres.join(','), sortOption],
+    queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam, sortOption),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       if (lastPage.length === 0) {
@@ -156,7 +155,8 @@ export const BoardList = () => {
     }
     await deletedata(id, user_id);
     const deletedFilterItems = posts?.filter((item) => item.id !== id);
-    dispatch(setFilteredPosts(deletedFilterItems));
+    console.log('deletedFilterItems', deletedFilterItems);
+    // dispatch(setFilteredPosts(deletedFilterItems));
   };
 
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,6 +180,7 @@ export const BoardList = () => {
       </StSeachContainer>
 
       {posts.length > 0 ? (
+        filteredPosts &&
         posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
