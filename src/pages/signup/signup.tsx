@@ -77,8 +77,6 @@ function Signup() {
     displayName: ''
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const confirmPassword = e.target.value;
     setConfirmPassword(confirmPassword);
@@ -200,7 +198,6 @@ function Signup() {
             />
           </StInputGroup>
           {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}{' '}
-          <p>{errors.displayName && <p>{errors.displayName}</p>}</p>
         </StInputBtwrap>
         <StInputBtwrap>
           <StyledLabel htmlFor="email">이메일</StyledLabel>
@@ -216,7 +213,6 @@ function Signup() {
             />
           </StInputGroup>
           {EmailError && <StErrorMessage>{EmailError}</StErrorMessage>}
-          <p>{errors.email && <p>{errors.email}</p>}</p>
         </StInputBtwrap>
 
         <StInputBtwrap>
@@ -229,7 +225,6 @@ function Signup() {
             value={formData.password}
             onChange={handleChange}
           />
-          {errors.password && <p>{errors.password}</p>}
           {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
           <p>8~16자 영문, 숫자, 특수문자를 조합해 주세요.</p>
         </StInputBtwrap>
@@ -244,7 +239,6 @@ function Signup() {
             onChange={handleConfirmPasswordChange}
           />
 
-          {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
           {ConfirmPasswordError && <StErrorMessage>{ConfirmPasswordError}</StErrorMessage>}
           <p>비밀번호를 한번 더 입력해 주세요.</p>
         </StInputBtwrap>
