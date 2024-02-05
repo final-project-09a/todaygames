@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { supabase } from '../../types/supabase';
 import { useNavigate } from 'react-router-dom';
 import {
-  StyledInputShort,
   StyledSignup,
   StyledForm,
   StyledInput,
@@ -10,7 +9,6 @@ import {
   StyledH1,
   StyledLabel,
   StInputGroup,
-  StyledButtonShort,
   StInputBtwrap,
   StErrorMessage
 } from './styles';
@@ -78,32 +76,6 @@ function Signup() {
     password: '',
     displayName: ''
   });
-
-  const handleCheckEmail = async () => {
-    if (!isValidEmail(formData.email)) {
-      alert('유효한 이메일 형식이 아닙니다.');
-      return;
-    }
-    const isDuplicate = await checkEmail(formData.email);
-    if (isDuplicate) {
-      alert('이미 사용중인 email입니다. 다른 email을 선택해주세요.');
-    } else {
-      alert('사용 가능한 email입니다.');
-    }
-  };
-
-  const handleCheckNickname = async () => {
-    if (!isValidDisplayName(formData.displayName)) {
-      alert('닉네임은 최소 2자,최대 6자로 설정해주세요');
-      return;
-    }
-    const isDuplicate = await checkNickname(formData.displayName);
-    if (isDuplicate) {
-      alert('이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
-    } else {
-      alert('사용 가능한 닉네임입니다.');
-    }
-  };
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -226,10 +198,6 @@ function Signup() {
               value={formData.displayName}
               onChange={handleChange}
             />
-            {/* 
-            <StyledButtonShort onClick={handleCheckNickname} type="button">
-              닉네임 중복 확인
-            </StyledButtonShort> */}
           </StInputGroup>
           {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}{' '}
           <p>{errors.displayName && <p>{errors.displayName}</p>}</p>
@@ -246,10 +214,6 @@ function Signup() {
               value={formData.email}
               onChange={handleChange}
             />
-
-            {/* <StyledButtonShort onClick={handleCheckEmail} type="button">
-              email 중복 확인
-            </StyledButtonShort> */}
           </StInputGroup>
           {EmailError && <StErrorMessage>{EmailError}</StErrorMessage>}
           <p>{errors.email && <p>{errors.email}</p>}</p>
