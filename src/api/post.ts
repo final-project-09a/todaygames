@@ -5,7 +5,6 @@ import { QUERY_KEYS } from 'query/keys';
 export const getPosts = async (): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
   try {
     const { data } = await supabase.from(QUERY_KEYS.POSTS).select('*').order('created_At', { ascending: true });
-
     return data || [];
   } catch (error) {
     console.error(error);
@@ -26,24 +25,21 @@ export const getPostsWithCount = async (limit = 5, offset = 0) => {
 // 장르 필터를 위한 post 데이터
 export const genreFilterPosts = async (
   selectedGenres: string[],
-  limit = 5,
-  offset = 0
-): Promise<Typedata['public']['Tables']['posts']['Row'][]> => {
-  if (selectedGenres.length === 0) {
-    const { data, error } = await supabase
-      .from('posts_with_counts')
-      .select('*')
-      .range(offset * limit, (offset + 1) * limit - 1)
-      .order('created_At', { ascending: false });
-    if (error) throw error;
-    return data;
+  limit: number,
+  offset: number,
+  orderType: '최근순' | '인기순'
+): Promise<Typedata[ 'public' ][ 'Tables' ][ 'posts' ][ 'Row' ][]> =>
+{
+  let query = supabase
+  .from('posts_with_counts')
+  .select('*')
+  .range(offset * limit, (offset + 1) * limit - 1)
+  .order(orderType === '최근순' ? 'created_At' : 'like_count', { ascending: false });
+  if ( selectedGenres.length > 0 )
+  {
+    query = query.like('category', `%${selectedGenres.join(', ')}%`);
   }
-  const { data, error } = await supabase
-    .from('posts_with_counts')
-    .select('*')
-    .range(offset * limit, (offset + 1) * limit - 1)
-    .order('created_At', { ascending: false })
-    .like('category', `%${selectedGenres.join(', ')}%`);
+  const { data, error } = await query;
   if (error) throw error;
   return data;
 };

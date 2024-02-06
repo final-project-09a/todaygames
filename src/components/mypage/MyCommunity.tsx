@@ -5,14 +5,17 @@ import { supabase } from 'types/supabase';
 import { RootState } from 'redux/config/configStore';
 import { Link } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
+import Button from 'common/Button';
 import editBtn from '../../assets/img/editBtn.png';
 import { useNavigate } from 'react-router-dom';
 import { deletedata } from 'api/post';
+import { setFilteredPosts } from '../../redux/modules/boardSlice';
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [selectedPostId, setSelectedPostId] = useState(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const navigate = useNavigate();
@@ -51,9 +54,16 @@ const MyCommunity = () => {
     setPosts(deletedPosts);
   };
 
+  // const handleEditButtonClick = (postId: string) => {
+  //   navigate(`/board/edit/${postId}`);
+  // };
+
   const handleEditButtonClick = (postId: string) => {
-    const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    const postToEdit = filteredPosts.find((post) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
+  };
+  const handleThreeDotsClick = (postId: any) => {
+    setSelectedPostId(selectedPostId === postId ? null : postId);
   };
 
   const handleMoreInfoClick = (postId: string) => {
@@ -72,8 +82,8 @@ const MyCommunity = () => {
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {editingPostId === post.id && (
                   <StfetchForm>
-                    <button onClick={() => handleEditButtonClick(post.id)}>수정</button>
-                    <button onClick={() => handleDeletePostButton(post.id)}>삭제</button>
+                    <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
+                    <StButton onClick={() => handleDeletePostButton(post.id)}>삭제</StButton>
                   </StfetchForm>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -87,8 +97,9 @@ const MyCommunity = () => {
                         <div>{post.created_At.split('T')[0]}</div>
                       </div>
                     </div>
-                    <h2>{post.title}</h2>
-                    <h3>{post.content}</h3>
+                    <StyledH2>{post.title}</StyledH2>
+
+                    <StyledH3>{post.content}</StyledH3>
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
                       {post.category.split(',').map((category: string, idx: number) => (
                         <StCategory key={idx}>#{category.trim()}</StCategory>
@@ -130,6 +141,26 @@ const StImageWrapper = styled.figure`
   }
 `;
 
+const StButton = styled.button`
+  position: flex;
+  height: 40px;
+  width: 90px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+  transition: 0.3s ease;
+  cursor: pointer;
+  & p {
+    color: ${(props) => props.theme.color.white};
+    font-weight: 500;
+  }
+  &:hover {
+    & h4 {
+      color: ${(props) => props.theme.color.gray};
+    }
+    background-color: ${(props) => props.theme.color.gray};
+  }
+`;
+
 const StfetchForm = styled.div`
   flex-direction: column;
   padding: 10px;
@@ -139,25 +170,6 @@ const StfetchForm = styled.div`
   z-index: 20;
   right: 2%;
   top: 16%;
-  & button {
-    position: flex;
-    height: 40px;
-    width: 90px;
-    background-color: #3a3a3a;
-    color: ${(props) => props.theme.color.white};
-    transition: 0.3s ease;
-    cursor: pointer;
-    & p {
-      color: ${(props) => props.theme.color.white};
-      font-weight: 500;
-    }
-    &:hover {
-      & h4 {
-        color: ${(props) => props.theme.color.gray};
-      }
-      background-color: ${(props) => props.theme.color.gray};
-    }
-  }
 `;
 
 const EditBtn = styled.button`
@@ -222,21 +234,6 @@ const PostContainer = styled.div`
   padding: 15px;
   border-color: #333;
   position: relative;
-  &h3 {
-    color: ${(props) => props.theme.color.white};
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 22px;
-    margin-bottom: 10px;
-  }
-  &h2 {
-    color: ${(props) => props.theme.color.white};
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-  }
 `;
 const StCategory = styled.div`
   padding: 7px 16px;
@@ -244,6 +241,22 @@ const StCategory = styled.div`
   background-color: #363636;
   margin-top: 10px;
   margin-bottom: 20px;
+`;
+const StyledH3 = styled.h3`
+  color: #eee;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  margin-bottom: 10px;
+`;
+
+const StyledH2 = styled.h2`
+  color: #fff;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 `;
 
 const StUserInfoContainer = styled.div`
