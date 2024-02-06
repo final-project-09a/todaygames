@@ -18,7 +18,6 @@ import { getFormattedDate } from 'util/date';
 import { genreFilterPosts } from 'api/post';
 import { getGamesWithGameName } from 'api/games';
 import { RootState } from 'redux/config/configStore';
-import { useDispatch } from 'react-redux';
 import folderIcon from 'assets/icons/folderIcon.svg';
 
 type GameInfoMap = {
@@ -27,7 +26,7 @@ type GameInfoMap = {
 
 export const BoardList = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
   const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
 
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
@@ -154,9 +153,6 @@ export const BoardList = () => {
       return;
     }
     await deletedata(id, user_id);
-    const deletedFilterItems = posts?.filter((item) => item.id !== id);
-    console.log('deletedFilterItems', deletedFilterItems);
-    // dispatch(setFilteredPosts(deletedFilterItems));
   };
 
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
