@@ -147,7 +147,6 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
                                 {filteredReply.reply_nickname ? filteredReply.reply_nickname : '닉네임을 설정해주세요'}
                               </NameText>
                               <DateText>{getFormattedDate(filteredReply.created_at)}</DateText>
-
                               <EditBtn onClick={() => handleDeleteReplyButton(filteredReply.for_delete)}>삭제</EditBtn>
                             </NameAndDate>
                             {selectedCommentId === comment.comment_id ? (
@@ -173,10 +172,10 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
 
 const EditBtn = styled.button`
   display: flex;
-  position: relative;
+  position: absolute;
   flex-direction: row;
   top: 3px;
-  left: 800px;
+  left: 950px;
   width: 24px;
   height: 24px;
   background-color: transparent;
@@ -287,6 +286,7 @@ const ProfileImage = styled.img`
 `;
 
 const NameAndDate = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
