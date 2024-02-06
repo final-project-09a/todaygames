@@ -128,7 +128,7 @@ const Comment = () => {
             return (
               <StcommentContainer key={index}>
                 <WrappingBox key={index}>
-                  {comment.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
+                  {comment.avatar_url ? <ProfileImage src={comment?.avatar_url} /> : <ProfileImage src={userImage} />}
                   <WrappingTextBox>
                     <NameAndDate>
                       <NameText>
