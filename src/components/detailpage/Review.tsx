@@ -45,9 +45,6 @@ const Review = ({ gameName }: { gameName: string }) => {
     pauseOnHover: true
   };
 
-  console.log(postData);
-  console.log(reviewUsers);
-
   return (
     <StReviewContainer>
       <StTitle>유저들의 한줄 리뷰</StTitle>

@@ -46,7 +46,6 @@ const getGameDetails = async (appid: number) => {
     const gameDetails = response.data[appid]?.data;
 
     if (gameDetails) {
-
       return gameDetails;
     } else {
       console.error('Invalide game deatil', appid);
