@@ -5,27 +5,25 @@ import { supabase } from 'types/supabase';
 import { RootState } from 'redux/config/configStore';
 import { Link } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
-import Button from 'common/Button';
+
 import editBtn from '../../assets/img/editBtn.png';
 import { useNavigate } from 'react-router-dom';
 import { deletedata } from 'api/post';
-import { setFilteredPosts } from '../../redux/modules/boardSlice';
+
 const MyCommunity = () => {
   const [posts, setPosts] = useState<Typedata['public']['Tables']['posts']['Row'][]>([]);
   const [loading, setLoading] = useState(true);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [selectedPostId, setSelectedPostId] = useState(null);
   const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const { data, error } = await supabase.from('posts').select().eq('user_id', user?.id);
+        const { data } = await supabase.from('posts').select().eq('user_id', user?.id);
         if (data && data.length > 0) {
           setPosts(data);
-          console.log(data);
         } else {
           console.warn('No posts found.');
         }
@@ -54,16 +52,9 @@ const MyCommunity = () => {
     setPosts(deletedPosts);
   };
 
-  // const handleEditButtonClick = (postId: string) => {
-  //   navigate(`/board/edit/${postId}`);
-  // };
-
   const handleEditButtonClick = (postId: string) => {
     const postToEdit = filteredPosts.find((post) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
-  };
-  const handleThreeDotsClick = (postId: any) => {
-    setSelectedPostId(selectedPostId === postId ? null : postId);
   };
 
   const handleMoreInfoClick = (postId: string) => {

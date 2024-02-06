@@ -21,10 +21,6 @@ const MyBookMark = () => {
         } else {
           if (data && data.length > 0) {
             setBookmarks(data);
-            console.log(bookmarks);
-            console.log(data);
-
-            console.log(bookmarks[0].app_id);
           } else {
             console.warn('No bookmarks found.');
           }
@@ -48,7 +44,6 @@ const MyBookMark = () => {
           console.error('Error fetching game details:', error);
         } else {
           if (data) {
-            console.log(data);
             setGames(data);
           } else {
             console.warn('No game details found.');

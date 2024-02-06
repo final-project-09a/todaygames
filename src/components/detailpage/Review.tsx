@@ -23,7 +23,6 @@ const Review = ({ gameName }: { gameName: string }) => {
           const userIds = data.map((post) => post.user_id);
           const userInfoPromises = userIds.map((userId) => UserInfoById(userId));
           const userInfoData = await Promise.all(userInfoPromises);
-          console.log(userInfoData);
           setReviewUsers(userInfoData);
         }
       } catch (error) {
@@ -45,9 +44,6 @@ const Review = ({ gameName }: { gameName: string }) => {
     arrow: false,
     pauseOnHover: true
   };
-
-  console.log(postData);
-  console.log(reviewUsers);
 
   return (
     <StReviewContainer>

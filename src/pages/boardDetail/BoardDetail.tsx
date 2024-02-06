@@ -107,7 +107,6 @@ export const BoardDetail = () => {
         console.error('Error handling bookmark:', error);
       }
     }
-    console.log('좋아요 눌렀음');
   };
 
   const settings = {
@@ -120,8 +119,6 @@ export const BoardDetail = () => {
     draggable: true,
     focusOnSelect: true,
     arrow: true
-    // centerMode: true,
-    // centerPadding: '0px'
   };
 
   return (

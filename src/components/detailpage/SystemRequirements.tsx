@@ -31,7 +31,7 @@ const SystemRequirements = ({ appid }: SystemRequirementsProps) => {
   }
 
   const { pcRequirements } = game;
-  console.log(pcRequirements);
+
   return (
     <>
       <h2>시스템 요구사항</h2>

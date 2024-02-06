@@ -18,7 +18,6 @@ import { getFormattedDate } from 'util/date';
 import { genreFilterPosts } from 'api/post';
 import { getGamesWithGameName } from 'api/games';
 import { RootState } from 'redux/config/configStore';
-import { useDispatch } from 'react-redux';
 import folderIcon from 'assets/icons/folderIcon.svg';
 
 type GameInfoMap = {
@@ -27,15 +26,13 @@ type GameInfoMap = {
 
 export const BoardList = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
-
   const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
   const [searchTerm, setSearchTerm] = useState(''); // 검색기능
+
   // useInfiniteQuery를 이용한 무한스크롤 구현
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: ['posts', selectedGenres.join(','), sortOption],
@@ -56,10 +53,8 @@ export const BoardList = () => {
     }, []);
     const listpostfiltered = page.filter(
       (post) =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1)) ||
-        post.content.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1)) ||
-        post.category.toLowerCase().includes(searchTerm.toLowerCase().slice(1)) ||
-        post.game.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1))
+        post.title.toLowerCase().includes(searchTerm.toLowerCase().slice()) ||
+        post.game.toLowerCase().includes(searchTerm.toLowerCase().slice())
     );
     return listpostfiltered;
   }, [data, searchTerm]);
@@ -79,7 +74,6 @@ export const BoardList = () => {
             }
           })
         );
-
         setGameInfoMap(infoMap);
       } catch (error) {
         console.error('게임 정보 패칭 에러:', error);
@@ -117,7 +111,6 @@ export const BoardList = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -154,9 +147,6 @@ export const BoardList = () => {
       return;
     }
     await deletedata(id, user_id);
-    const deletedFilterItems = posts?.filter((item) => item.id !== id);
-    console.log('deletedFilterItems', deletedFilterItems);
-    // dispatch(setFilteredPosts(deletedFilterItems));
   };
 
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -178,7 +168,6 @@ export const BoardList = () => {
           글쓰기
         </Button>
       </StSeachContainer>
-
       {posts.length > 0 ? (
         filteredPosts &&
         posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
