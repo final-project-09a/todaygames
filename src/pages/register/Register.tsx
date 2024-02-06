@@ -139,11 +139,7 @@ const Register = () => {
     setTagText(e.target.value);
   };
 
-  const {
-    isLoading,
-    isError,
-    data: allGames
-  } = useQuery({
+  const { data: allGames } = useQuery({
     queryKey: [QUERY_KEYS.GAMES],
     queryFn: getGames,
     enabled: isModalOpen
