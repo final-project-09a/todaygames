@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { BiLike, BiSolidLike } from 'react-icons/bi';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
-import { createComments, createReply, getComments } from 'api/comments';
+import { createComments, createReply, deleteReply, getComments } from 'api/comments';
 import { useParams } from 'react-router-dom';
 import { UserInfo } from 'api/user';
 import { getFormattedDate } from 'util/date';
@@ -15,14 +15,18 @@ import { RootState } from 'redux/config/configStore';
 import { useSelector } from 'react-redux';
 import { getReplies } from 'api/replies';
 import userImage from '../../assets/img/userimg.png';
+import editBtn from '../../assets/img/editBtn.png';
+import { error } from 'console';
 
 interface Comment {
   user_id: string;
   reply_text: string;
   comment_id: string;
+  reply_nickname: string;
+  reply_avatar_url: string;
 }
 
-function ReplyBox() {
+function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
   const [reply, setReply] = useState<Comment[]>([]);
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [replyText, setReplyText] = useState('');
@@ -30,7 +34,6 @@ function ReplyBox() {
 
   const queryClient = useQueryClient();
   const { id } = useParams();
-  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const { data: replyData } = useQuery({
     queryKey: [QUERY_KEYS.REPLIES],
     queryFn: getReplies
@@ -53,8 +56,23 @@ function ReplyBox() {
   //   setIsCommentVisible(!isCommentVisible);
   // };
 
-  const handleClickReplyBtn = (commentId: string) => {
-    setSelectedCommentId((prev) => (prev === commentId ? null : commentId));
+  const deleteMutation = useMutation({
+    mutationFn: deleteReply,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.REPLIES] });
+    },
+    onError: (error: Error) => {
+      console.log('댓글 삭제 에러', error);
+    }
+  });
+
+  const handleDeleteReplyButton = async (for_delete: string) => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) {
+      return;
+    }
+    await deleteMutation.mutateAsync({ for_delete });
+    // dispatch(setFilteredPosts(deletedFilterItems));
   };
 
   const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['Control']['replies'], Error>({
@@ -75,48 +93,24 @@ function ReplyBox() {
     const newReply: Comment = {
       user_id: user.id,
       reply_text: replyText,
-      comment_id: comentId
+      comment_id: comentId,
+      reply_nickname: user.nickname,
+      reply_avatar_url: user.avatar_url
     } as Comment;
     mutation.mutateAsync(newReply);
     setReplyText('');
   };
 
-  // const filteredReply = replyData?.filter((replies) => replies.comment_id === )
-
   const filteredComment = commentData?.filter((comment) => comment.id === id);
-
-  // const filteredUser = userData?.filter((user) => user.id === )\
+  console.log(filteredComment);
 
   return (
     <div>
       {filteredComment?.map((comment, index) => {
         const commentReplies = replyData?.filter((reply) => reply.comment_id === comment.comment_id);
+        console.log(commentReplies);
         return (
           <>
-            <WrappingBox key={index}>
-              {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
-              <WrappingTextBox>
-                <NameAndDate>
-                  <NameText>{comment.comment_nickname ? comment.comment_nickname : '무명'}</NameText>
-                  <DateText>{getFormattedDate(comment.created_at)}</DateText>
-                </NameAndDate>
-                <CommentContent>{comment.comments}</CommentContent>
-                <>
-                  <WrappingCommentCount>
-                    <ReplyIcon>
-                      <img src={commentIcon} />
-                    </ReplyIcon>
-                    <StNum>{commentReplies?.length}</StNum>
-                    <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
-                  </WrappingCommentCount>
-                </>
-                {/* {replyData
-                  ?.filter((replies) => replies.comment_id === comment.comment_id)
-                  .map((filteredReplies) => (
-
-                  ))} */}
-              </WrappingTextBox>
-            </WrappingBox>
             {/*  */}
             <WrappingInputAndComments>
               <form
@@ -142,31 +136,25 @@ function ReplyBox() {
                     .map((filteredReply, index) =>
                       filteredReply ? (
                         <WrappingReplyBox key={index}>
-                          {user?.avatar_url ? (
-                            <ProfileImage src={user?.avatar_url} />
+                          {filteredReply?.reply_avatar_url ? (
+                            <ProfileImage src={filteredReply.reply_avatar_url} />
                           ) : (
                             <ProfileImage src={userImage} />
                           )}
                           <WrappingTextBox>
                             <NameAndDate>
                               <NameText>
-                                {filteredReply.comment_nickname ? filteredReply.comment_nickname : '무명'}
+                                {filteredReply.reply_nickname ? filteredReply.reply_nickname : '닉네임을 설정해주세요'}
                               </NameText>
                               <DateText>{getFormattedDate(filteredReply.created_at)}</DateText>
+
+                              <EditBtn onClick={() => handleDeleteReplyButton(filteredReply.for_delete)}>삭제</EditBtn>
                             </NameAndDate>
                             {selectedCommentId === comment.comment_id ? (
                               <CommentContent>{filteredReply.reply_text}</CommentContent>
                             ) : (
                               <div></div>
                             )}
-
-                            {/* <WrappingCommentCount>
-                              <ReplyIcon>
-                                <img src={commentIcon} />
-                              </ReplyIcon>
-                              <NumberText></NumberText>
-                              <StNum>{}</StNum>
-                            </WrappingCommentCount> */}
                           </WrappingTextBox>
                         </WrappingReplyBox>
                       ) : (
@@ -182,6 +170,50 @@ function ReplyBox() {
     </div>
   );
 }
+
+const EditBtn = styled.button`
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  top: 3px;
+  left: 800px;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  cursor: pointer;
+  color: white;
+`;
+
+const StDeleteForm = styled.form`
+  flex-direction: column;
+  padding: 10px;
+  justify-content: flex-end;
+  display: flex;
+  position: absolute;
+  z-index: 20;
+  right: 1.5%;
+  top: 20%;
+`;
+
+const StDeleteBtn = styled.button`
+  position: flex;
+  height: 40px;
+  width: 90px;
+  background-color: #3a3a3a;
+  color: ${(props) => props.theme.color.white};
+  transition: 0.3s ease;
+  cursor: pointer;
+  & p {
+    color: ${(props) => props.theme.color.white};
+    font-weight: 500;
+  }
+  &:hover {
+    & h4 {
+      color: ${(props) => props.theme.color.gray};
+    }
+    background-color: ${(props) => props.theme.color.gray};
+  }
+`;
 
 const WrappingInputAndComments = styled.div`
   display: flex;
@@ -200,11 +232,10 @@ const InputAndSend = styled.div`
 `;
 
 const ReplyInput = styled.input`
-  width: 1240px;
+  width: 1100px;
   height: 40px;
   border: 0px;
   border-radius: 10px;
-  margin-left: 40px;
   background-color: ${(props) => props.theme.color.inputcolor};
   text-indent: 15px;
   color: ${(props) => props.theme.color.white};
@@ -251,13 +282,14 @@ const ProfileImage = styled.img`
   height: 30px;
   flex-shrink: 0;
   border-radius: 50px;
-  background-color: aqua;
+  background-color: transparent;
   border: 0px;
 `;
 
 const NameAndDate = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   width: fit-content;
   height: fit-content;
   gap: 8px;
@@ -319,7 +351,7 @@ const SendReplyBtn = styled.button`
   border: 0px;
   background-color: transparent;
   position: absolute;
-  right: 8px;
+  right: 150px;
   top: 8px;
   z-index: 3;
   background-image: url(${sendImg});
