@@ -8,14 +8,11 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import sendImg from '../../assets/img/send.png';
-import { getReplies } from 'api/replies';
 import ReplyBox from './ReplyBox';
 import { useParams } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
-import { error } from 'console';
-import AlertModal from 'components/register/AlertModal';
-import noCommentIcon from '../../assets/img/comments_icon.png';
 import { TfiComments } from 'react-icons/tfi';
+import userImage from '../../assets/img/userimg.png';
 
 type userInfotypelist = {
   userInfoData: React.ReactNode;
@@ -103,7 +100,8 @@ const Comment = () => {
           </NoComment>
           <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
-              <ProfileImage src={user?.avatar_url} />
+              {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
+
               <InputAndSend>
                 <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
                 <SendBtn />
@@ -116,7 +114,7 @@ const Comment = () => {
           <ReplyBox />
           <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
-              <ProfileImage src={user?.avatar_url} />
+              {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
               <InputAndSend>
                 <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
                 <SendBtn />
@@ -164,6 +162,7 @@ const StProfileAndInput = styled.div`
   align-items: center;
   width: 1240px;
   height: 40px;
+  margin: 15px 0px 0px 0px;
 `;
 
 const ProfileImage = styled.img`
@@ -171,7 +170,7 @@ const ProfileImage = styled.img`
   height: 30px;
   flex-shrink: 0;
   border-radius: 50px;
-  background-color: aqua;
+  background-color: transparent;
   border: 0px;
 `;
 
