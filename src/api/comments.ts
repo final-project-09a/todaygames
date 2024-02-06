@@ -39,6 +39,18 @@ export const createComments = async (newComment: Typedata['public']['Tables']['c
   await supabase.from(QUERY_KEYS.COMMENTS).insert(newComment);
 };
 
+export const deleteReply = async (
+  { for_delete }: { for_delete: string }
+): Promise<Typedata['public']['Tables']['comments']['Control']['delete_replies'][]> => {
+  try {
+    const { data } = await supabase.from('replies').delete().match({ for_delete});
+    return data || [];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 // 대댓글데이터 삽입
 export const createReply = async (newReply: Typedata['public']['Tables']['comments']['Control']['replies']) => {
   await supabase.from(QUERY_KEYS.REPLIES).insert(newReply);

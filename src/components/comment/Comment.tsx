@@ -13,6 +13,9 @@ import { useParams } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
 import { TfiComments } from 'react-icons/tfi';
 import userImage from '../../assets/img/userimg.png';
+import commentIcon from '../../assets/img/comment.png';
+import { getFormattedDate } from 'util/date';
+import { getReplies } from 'api/replies';
 
 type userInfotypelist = {
   userInfoData: React.ReactNode;
@@ -23,6 +26,7 @@ interface Comment {
   comment_nickname: string;
   comments: string;
   id: string;
+  avatar_url: string;
 }
 
 const Comment = () => {
@@ -31,10 +35,12 @@ const Comment = () => {
   const [commentCount, setCommentCount] = useState(0);
   const [commentContent, setCommentContent] = useState('');
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
-  const [modalContent, setModalContent] = useState('');
-  const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
-  const [isCommentVisible, setIsCommentVisible] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const { id } = useParams();
+  const { data: replyData } = useQuery({
+    queryKey: [QUERY_KEYS.REPLIES],
+    queryFn: getReplies
+  });
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
     queryFn: UserInfo
@@ -47,6 +53,10 @@ const Comment = () => {
 
   const handleCommentOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCommentContent(e.target.value);
+  };
+
+  const handleClickReplyBtn = (commentId: string) => {
+    setSelectedCommentId((prev) => (prev === commentId ? null : commentId));
   };
 
   const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['CommentsUrl']['Select'], Error>({
@@ -71,11 +81,13 @@ const Comment = () => {
       id: id,
       user_id: user.id,
       comment_nickname: user.nickname,
-      comments: commentContent
+      comments: commentContent,
+      avatar_url: user.avatar_url
     } as Comment;
     mutation.mutateAsync(newComment);
     setCommentContent('');
   };
+
   console.log(filteredComment);
 
   // 댓글 정보 가져오기
@@ -89,6 +101,7 @@ const Comment = () => {
   //   queryKey: [QUERY_KEYS.COMMENTS],
   //   queryFn: getComments
   // });
+  console.log(replyData);
 
   return (
     <>
@@ -101,7 +114,6 @@ const Comment = () => {
           <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
               {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
-
               <InputAndSend>
                 <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
                 <SendBtn />
@@ -110,8 +122,36 @@ const Comment = () => {
           </form>
         </StcommentContainer>
       ) : (
-        <StcommentContainer>
-          <ReplyBox />
+        <>
+          {filteredComment?.map((comment, index) => {
+            const filteredReplies = replyData?.filter((reply) => reply.comment_id === comment.comment_id);
+            return (
+              <StcommentContainer key={index}>
+                <WrappingBox key={index}>
+                  {comment.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
+                  <WrappingTextBox>
+                    <NameAndDate>
+                      <NameText>
+                        {comment.comment_nickname ? comment.comment_nickname : '닉네임을 설정해주세요'}
+                      </NameText>
+                      <DateText>{getFormattedDate(comment.created_at)}</DateText>
+                    </NameAndDate>
+                    <CommentContent>{comment.comments}</CommentContent>
+                    <>
+                      <WrappingCommentCount>
+                        <ReplyIcon>
+                          <img src={commentIcon} />
+                        </ReplyIcon>
+                        <StNum>{filteredReplies?.length}</StNum>
+                        <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
+                      </WrappingCommentCount>
+                    </>
+                    {selectedCommentId === comment.comment_id && <ReplyBox selectedCommentId={selectedCommentId} />}
+                  </WrappingTextBox>
+                </WrappingBox>
+              </StcommentContainer>
+            );
+          })}
           <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
               {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
@@ -121,17 +161,90 @@ const Comment = () => {
               </InputAndSend>
             </StProfileAndInput>
           </form>
-        </StcommentContainer>
+        </>
       )}
-      {/* <form onClick={handleReplySubmit}>
-          <input value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기" />
-          <button>제출</button>
-        </form> */}
     </>
   );
 };
 
 export default Comment;
+
+const WrappingBox = styled.div`
+  display: flex;
+  width: 1240px;
+  height: fit-content;
+  flex-direction: row;
+  gap: 10px;
+`;
+
+const WrappingTextBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1200px;
+  height: fit-content;
+`;
+
+const WrappingCommentCount = styled.div`
+  align-items: center;
+  width: 37px;
+  height: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+`;
+
+const StNum = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3px;
+  width: 9px;
+  height: 14px;
+`;
+
+const ReplyIcon = styled.div`
+  display: flex;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  justify-content: center;
+  font-size: 13px;
+`;
+
+const CommentContent = styled.div`
+  display: flex;
+  width: 1200px;
+  height: fit-content;
+  margin: 10px 0px 8px 0px;
+  color: #fff;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+`;
+
+const NameAndDate = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: fit-content;
+  height: fit-content;
+  gap: 8px;
+`;
+
+const NameText = styled.div`
+  width: fit-content;
+  height: 16px;
+  color: #dddddd;
+  font-size: 13px;
+`;
+
+const DateText = styled.div`
+  width: fit-content;
+  height: 16px;
+  color: #999999;
+  font-size: 13px;
+`;
 
 const NoComment = styled.div`
   display: flex;
@@ -162,7 +275,7 @@ const StProfileAndInput = styled.div`
   align-items: center;
   width: 1240px;
   height: 40px;
-  margin: 15px 0px 0px 0px;
+  margin: 5px 0px 10px 20px;
 `;
 
 const ProfileImage = styled.img`
@@ -211,7 +324,6 @@ const StcommentContainer = styled.div`
   align-items: center;
   max-width: 1281px;
   height: fit-content;
-  margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   white-space: nowrap;

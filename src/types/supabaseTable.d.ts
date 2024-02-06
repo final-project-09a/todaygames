@@ -73,6 +73,7 @@ export interface Typedata {
             comments: string;
             comment_nickname: string;
             id: string;
+            avatar_url: string
           };
           Userinfo: {
             avatar_url: string;
@@ -86,6 +87,7 @@ export interface Typedata {
           comments: string;
           created_at: string;
           id: string;
+          avatar_url: string
         };
         Insert: {
           id: string;
@@ -112,6 +114,16 @@ export interface Typedata {
             user_id: string;
             reply_text: string;
             comment_id: string;
+            reply_nickname: string;
+            reply_avatar_url: string
+          };
+          delete_replies: {
+            user_id: string;
+            reply_text: string;
+            comment_id: string;
+            reply_nickname: string;
+            reply_avatar_url: string;
+            for_delete: string
           };
         };
       };
