@@ -1,36 +1,28 @@
 import { GENRE_NAME } from 'constants/genre';
-import { useState } from 'react';
 import styled from 'styled-components';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
 import { useDispatch } from 'react-redux';
-import { setFilteredPosts, setSelectedGenres } from '../../redux/modules/boardSlice';
+import { setSelectedGenres, setSortOption, SortOption } from '../../redux/modules/boardSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { genreFilterPosts } from 'api/post';
 
 export const BoardCategory = () => {
-  const [sortOption, setSortOption] = useState('최근순');
   const dispatch = useDispatch();
-  const selectedGenres = useSelector((state: RootState) => state.boardSlice.selectedGenres);
+  const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
 
-  const genrefilterOnClick = async (tag: string) => {
-    const updatedGenres = selectedGenres.includes(tag)
-      ? selectedGenres.filter((selectedGenre: string) => selectedGenre)
-      : [...selectedGenres, tag];
-    console.log(updatedGenres);
-
-    dispatch(setSelectedGenres(updatedGenres));
-    const newFilteredPosts = await genreFilterPosts(updatedGenres);
-    dispatch(setFilteredPosts(newFilteredPosts));
+  const genrefilterOnClick = async (genre: string) => {
+    if (selectedGenres.includes(genre)) return;
+    dispatch(setSelectedGenres([...selectedGenres, genre]));
   };
 
   const handleCancelIconClick = async (genre: string) => {
-    const updatedGenres = selectedGenres.filter((selectedGenre: string) => selectedGenre !== genre);
-    console.log(updatedGenres);
-    dispatch(setSelectedGenres(updatedGenres));
-    const newFilteredPosts = await genreFilterPosts(updatedGenres);
-    console.log(newFilteredPosts);
-    dispatch(setFilteredPosts(newFilteredPosts));
+    if (!selectedGenres.includes(genre)) return;
+    dispatch(setSelectedGenres(selectedGenres.filter((item) => item !== genre)));
+  };
+
+  const handleSortOption = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value as SortOption;
+    dispatch(setSortOption(value));
   };
 
   return (
@@ -41,16 +33,21 @@ export const BoardCategory = () => {
           <StRadio>
             <input
               type="radio"
-              id="recent"
               name="sort"
-              value={sortOption}
+              value="최근순"
               checked={sortOption === '최근순'}
-              onChange={() => setSortOption('최근순')}
+              onChange={handleSortOption}
             />
             <p>최근순</p>
           </StRadio>
           <StRadio>
-            <input type="radio" id="recent" name="sort" value="인기순" onChange={() => setSortOption('인기순')} />
+            <input
+              type="radio"
+              name="sort"
+              value="인기순"
+              checked={sortOption === '인기순'}
+              onChange={handleSortOption}
+            />
             <p>인기순</p>
           </StRadio>
         </div>
