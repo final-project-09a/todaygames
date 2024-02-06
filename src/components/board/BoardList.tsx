@@ -53,8 +53,8 @@ export const BoardList = () => {
     }, []);
     const listpostfiltered = page.filter(
       (post) =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1)) ||
-        post.game.toLowerCase().includes(searchTerm.toLowerCase().slice(0, 1))
+        post.title.toLowerCase().includes(searchTerm.toLowerCase().slice()) ||
+        post.game.toLowerCase().includes(searchTerm.toLowerCase().slice())
     );
     return listpostfiltered;
   }, [data, searchTerm]);
