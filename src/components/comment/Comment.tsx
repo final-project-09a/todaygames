@@ -8,12 +8,11 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import sendImg from '../../assets/img/send.png';
-import { getReplies } from 'api/replies';
 import ReplyBox from './ReplyBox';
 import { useParams } from 'react-router-dom';
 import { Typedata } from 'types/supabaseTable';
-import { error } from 'console';
-import AlertModal from 'components/register/AlertModal';
+import { TfiComments } from 'react-icons/tfi';
+import userImage from '../../assets/img/userimg.png';
 
 type userInfotypelist = {
   userInfoData: React.ReactNode;
@@ -34,6 +33,7 @@ const Comment = () => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [modalContent, setModalContent] = useState('');
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
+  const [isCommentVisible, setIsCommentVisible] = useState(false);
   const { id } = useParams();
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.AUTH],
@@ -62,8 +62,9 @@ const Comment = () => {
       console.error('댓글 추가 에러', error);
     }
   });
+  const filteredComment = commentData?.filter((comment) => comment.id === id);
 
-  const handleReplySubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+  const handleCommentSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (id === undefined || user === null) return; // 해당 페이지의 id(useParams)가 undefined이거나 user가 null일 경우 return 해줌으로써 예외처리
     const newComment: Comment = {
@@ -75,6 +76,7 @@ const Comment = () => {
     mutation.mutateAsync(newComment);
     setCommentContent('');
   };
+  console.log(filteredComment);
 
   // 댓글 정보 가져오기
   // useEffect(() => {
@@ -90,33 +92,68 @@ const Comment = () => {
 
   return (
     <>
-      <StcommentContainer>
-        <ReplyBox />
-        <form onSubmit={handleReplySubmit}>
-          <StProfileAndInput>
-            <ProfileImage src={user?.avatar_url} />
-            <InputAndSend>
-              <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
-              <SendBtn />
-            </InputAndSend>
-          </StProfileAndInput>
-        </form>
+      {filteredComment?.length === 0 ? (
+        <StcommentContainer>
+          <NoComment>
+            <StNoComment />
+            아직 댓글이 없습니다.
+          </NoComment>
+          <form onSubmit={handleCommentSubmit}>
+            <StProfileAndInput>
+              {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
 
-        {/* <form onClick={handleReplySubmit}>
+              <InputAndSend>
+                <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
+                <SendBtn />
+              </InputAndSend>
+            </StProfileAndInput>
+          </form>
+        </StcommentContainer>
+      ) : (
+        <StcommentContainer>
+          <ReplyBox />
+          <form onSubmit={handleCommentSubmit}>
+            <StProfileAndInput>
+              {user?.avatar_url ? <ProfileImage src={user?.avatar_url} /> : <ProfileImage src={userImage} />}
+              <InputAndSend>
+                <CommentInput value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기..." />
+                <SendBtn />
+              </InputAndSend>
+            </StProfileAndInput>
+          </form>
+        </StcommentContainer>
+      )}
+      {/* <form onClick={handleReplySubmit}>
           <input value={commentContent} onChange={handleCommentOnChange} placeholder="댓글 남기기" />
           <button>제출</button>
         </form> */}
-      </StcommentContainer>
-      {isAlertModalOpen && (
-        <AlertModal isOpen={isAlertModalOpen}>
-          <p>{modalContent}</p>
-        </AlertModal>
-      )}
     </>
   );
 };
 
 export default Comment;
+
+const NoComment = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 1281px;
+  height: 130px;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  margin-bottom: 20px;
+  font-family: Pretendard;
+  color: #999999;
+  gap: 30px;
+`;
+
+const ReplyBtn = styled.button`
+  display: flex;
+  border: 0px;
+  background-color: transparent;
+  color: ${(props) => props.theme.color.white};
+  cursor: pointer;
+`;
 
 const StProfileAndInput = styled.div`
   display: flex;
@@ -125,6 +162,7 @@ const StProfileAndInput = styled.div`
   align-items: center;
   width: 1240px;
   height: 40px;
+  margin: 15px 0px 0px 0px;
 `;
 
 const ProfileImage = styled.img`
@@ -132,7 +170,7 @@ const ProfileImage = styled.img`
   height: 30px;
   flex-shrink: 0;
   border-radius: 50px;
-  background-color: aqua;
+  background-color: transparent;
   border: 0px;
 `;
 
@@ -172,11 +210,15 @@ const StcommentContainer = styled.div`
   flex-direction: column;
   align-items: center;
   max-width: 1281px;
-  height: 479px;
+  height: fit-content;
   margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   white-space: nowrap;
   color: ${(props) => props.theme.color.white};
   padding: 20px;
+`;
+
+const StNoComment = styled(TfiComments)`
+  font-size: 55px;
 `;

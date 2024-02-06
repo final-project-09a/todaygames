@@ -111,7 +111,6 @@ export interface Typedata {
           replies: {
             user_id: string;
             reply_text: string;
-            created_at: string;
             comment_id: string;
           };
         };
