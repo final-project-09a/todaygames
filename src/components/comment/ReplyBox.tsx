@@ -31,6 +31,9 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [replyText, setReplyText] = useState('');
   const [isCommentVisible, setIsCommentVisible] = useState<Record<string, boolean>>({});
+  const isOwner = (userId: string) => {
+    return user && user.id === userId;
+  };
 
   const queryClient = useQueryClient();
   const { id } = useParams();
