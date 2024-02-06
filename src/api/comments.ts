@@ -40,7 +40,7 @@ export const createComments = async (newComment: Typedata['public']['Tables']['c
 };
 
 // 대댓글데이터 삽입
-export const createReply = async (newReply: Typedata['public']['Tables']['comments']['Control']['comment']) => {
+export const createReply = async (newReply: Typedata['public']['Tables']['comments']['Control']['replies']) => {
   await supabase.from(QUERY_KEYS.REPLIES).insert(newReply);
 };
 // 댓글데이터 수정

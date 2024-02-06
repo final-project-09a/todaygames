@@ -75,7 +75,7 @@ export const updatedataPosts = async (
 
 export const deletedata = async (
   id: string,
-  user_id: string
+  user_id: string,
 ): Promise<Typedata['public']['Tables']['posts']['Delete'][]> => {
   try {
     const { data } = await supabase.from('posts').delete().eq('id', id).eq('user_id', user_id);

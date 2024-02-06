@@ -37,6 +37,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
 import { updatedataPosts } from 'api/post';
+import { getFormattedDate } from 'util/date';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -82,9 +83,16 @@ const Register = () => {
   };
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const timeStamp = getFormattedDate(Date());
 
   // 이미지를 Supabase 스토리지에 업로드하는 함수
   const uploadImagesToSupabase = async () => {
+    const timestamp = Date.now();
+    const dateObject = new Date(timestamp);
+    const isoString = dateObject.toISOString();
+    const urlTimeStamp = getFormattedDate(isoString);
+    const onlyNumbers = urlTimeStamp.replace(/\D/g, '');
+
     const uploadedImageUrls: string[] = [];
     try {
       for (const file of imageFiles) {
@@ -92,7 +100,7 @@ const Register = () => {
         const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
         // 파일 이름을 안전한 형태로 변환
         const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const filePath = `${safeUserName}/${safeFileName}`;
+        const filePath = `${safeUserName}/${onlyNumbers}_${safeFileName}`;
 
         const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
         if (error) throw error;
@@ -100,10 +108,12 @@ const Register = () => {
 
         uploadedImageUrls.push(publicURL.publicUrl);
         console.log(uploadedImageUrls);
+        console.log(filePath);
       }
     } catch (error) {
       console.error('Error uploading image: ', error);
     }
+    console.log(urlTimeStamp);
 
     return uploadedImageUrls;
   };
