@@ -63,6 +63,7 @@ function Login() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'kakao'
     });
+    return data;
   };
 
   const googlelogin = async function signInWithgoogle() {
@@ -75,6 +76,7 @@ function Login() {
         }
       }
     });
+    return data;
   };
 
   return (
