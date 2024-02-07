@@ -15,8 +15,7 @@ import { RootState } from 'redux/config/configStore';
 import { useSelector } from 'react-redux';
 import { getReplies } from 'api/replies';
 import userImage from '../../assets/img/userimg.png';
-import editBtn from '../../assets/img/editBtn.png';
-import { error } from 'console';
+import { TbAlertSquareFilled } from 'react-icons/tb';
 
 interface Comment {
   user_id: string;
@@ -31,9 +30,6 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [replyText, setReplyText] = useState('');
   const [isCommentVisible, setIsCommentVisible] = useState<Record<string, boolean>>({});
-  const isOwner = (userId: string) => {
-    return user && user.id === userId;
-  };
 
   const queryClient = useQueryClient();
   const { id } = useParams();
@@ -46,7 +42,7 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
     queryFn: getComments
   });
 
-  const { data: userData } = useQuery({
+  const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
@@ -55,11 +51,7 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
     setReplyText(e.target.value);
   };
 
-  // const handleCommentVisibility = () => {
-  //   setIsCommentVisible(!isCommentVisible);
-  // };
-
-  const deleteMutation = useMutation({
+  const replyDeleteMutation = useMutation({
     mutationFn: deleteReply,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.REPLIES] });
@@ -74,8 +66,7 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
     if (!answer) {
       return;
     }
-    await deleteMutation.mutateAsync({ for_delete });
-    // dispatch(setFilteredPosts(deletedFilterItems));
+    await replyDeleteMutation.mutateAsync({ for_delete });
   };
 
   const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['Control']['replies'], Error>({
@@ -90,6 +81,14 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
       console.error('댓글 추가 에러', error);
     }
   });
+
+  const isOwner = (userId: string) => {
+    return user && user.id === userId;
+  };
+
+  const handleReport = () => {
+    alert('신고기능 구현중...');
+  };
 
   const handleReplySubmit = async (comentId: string) => {
     if (id === undefined || user === null) return; // 해당 페이지의 id(useParams)가 undefined이거나 user가 null일 경우 return 해줌으로써 예외처리
@@ -136,34 +135,48 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
                 {selectedCommentId === comment.comment_id &&
                   replyData
                     ?.filter((reply) => reply.comment_id === comment.comment_id)
-                    .map((filteredReply, index) =>
-                      filteredReply ? (
-                        <WrappingReplyBox key={index}>
-                          {filteredReply?.reply_avatar_url ? (
-                            <ProfileImage src={filteredReply.reply_avatar_url} />
-                          ) : (
-                            <ProfileImage src={userImage} />
-                          )}
-                          <WrappingTextBox>
-                            <NameAndDate>
-                              <NameText>
-                                {filteredReply.reply_nickname ? filteredReply.reply_nickname : '닉네임을 설정해주세요'}
-                              </NameText>
-                              <DateText>{getFormattedDate(filteredReply.created_at)}</DateText>
-                              <EditBtn onClick={() => handleDeleteReplyButton(filteredReply.for_delete)}>삭제</EditBtn>
-                            </NameAndDate>
-                            {selectedCommentId === comment.comment_id ? (
-                              <CommentContent>{filteredReply.reply_text}</CommentContent>
+                    .map((filteredReply, index) => {
+                      const filteredUserInfo = userInfoData?.find((user) => user.id === comment.user_id);
+                      if (filteredUserInfo) {
+                        const postIsOwner = isOwner(filteredReply.user_id);
+                        return filteredReply ? (
+                          <WrappingReplyBox key={index}>
+                            {filteredReply?.reply_avatar_url ? (
+                              <ProfileImage src={filteredReply.reply_avatar_url} />
                             ) : (
-                              <div></div>
+                              <ProfileImage src={userImage} />
                             )}
-                          </WrappingTextBox>
-                        </WrappingReplyBox>
-                      ) : (
-                        // eslint-disable-next-line react/jsx-key
-                        <div></div>
-                      )
-                    )}
+                            <WrappingTextBox>
+                              <NameAndDate>
+                                <NameText>
+                                  {filteredReply.reply_nickname
+                                    ? filteredReply.reply_nickname
+                                    : '닉네임을 설정해주세요'}
+                                </NameText>
+                                <DateText>{getFormattedDate(filteredReply.created_at)}</DateText>
+                                {postIsOwner && filteredReply.comment_id && (
+                                  <DeleteBtn onClick={() => handleDeleteReplyButton(filteredReply.for_delete)}>
+                                    삭제
+                                  </DeleteBtn>
+                                )}
+                                {!postIsOwner && filteredReply.comment_id && (
+                                  <DeleteBtn onClick={handleReport}>
+                                    <TbAlertSquareFilled />
+                                  </DeleteBtn>
+                                )}
+                              </NameAndDate>
+                              {selectedCommentId === comment.comment_id ? (
+                                <CommentContent>{filteredReply.reply_text}</CommentContent>
+                              ) : (
+                                <div></div>
+                              )}
+                            </WrappingTextBox>
+                          </WrappingReplyBox>
+                        ) : (
+                          <div></div>
+                        );
+                      }
+                    })}
               </>
             </WrappingInputAndComments>
           </>
@@ -173,48 +186,17 @@ function ReplyBox({ selectedCommentId }: { selectedCommentId: string | null }) {
   );
 }
 
-const EditBtn = styled.button`
+const DeleteBtn = styled.button`
   display: flex;
   position: absolute;
   flex-direction: row;
   top: 3px;
-  left: 950px;
+  left: 1060px;
   width: 24px;
   height: 24px;
   background-color: transparent;
   cursor: pointer;
   color: white;
-`;
-
-const StDeleteForm = styled.form`
-  flex-direction: column;
-  padding: 10px;
-  justify-content: flex-end;
-  display: flex;
-  position: absolute;
-  z-index: 20;
-  right: 1.5%;
-  top: 20%;
-`;
-
-const StDeleteBtn = styled.button`
-  position: flex;
-  height: 40px;
-  width: 90px;
-  background-color: #3a3a3a;
-  color: ${(props) => props.theme.color.white};
-  transition: 0.3s ease;
-  cursor: pointer;
-  & p {
-    color: ${(props) => props.theme.color.white};
-    font-weight: 500;
-  }
-  &:hover {
-    & h4 {
-      color: ${(props) => props.theme.color.gray};
-    }
-    background-color: ${(props) => props.theme.color.gray};
-  }
 `;
 
 const WrappingInputAndComments = styled.div`
@@ -234,22 +216,14 @@ const InputAndSend = styled.div`
 `;
 
 const ReplyInput = styled.input`
-  width: 1100px;
+  width: 1140px;
   height: 40px;
   border: 0px;
   border-radius: 10px;
   background-color: ${(props) => props.theme.color.inputcolor};
   text-indent: 15px;
   color: ${(props) => props.theme.color.white};
-`;
-
-const WrappingBox = styled.div`
-  display: flex;
-  width: 1240px;
-  height: fit-content;
-  flex-direction: row;
-  margin-bottom: 15px;
-  gap: 10px;
+  margin: 10px 0px 0px 0px;
 `;
 
 const WrappingReplyBox = styled.div`
@@ -257,26 +231,8 @@ const WrappingReplyBox = styled.div`
   flex-direction: row;
   width: 1220px;
   height: fit-content;
-  padding-left: 40px;
   gap: 10px;
-`;
-
-const ReplyBtn = styled.button`
-  text-align: center;
-  align-items: center;
-  display: flex;
-  border: 0px;
-  background-color: transparent;
-  color: ${(props) => props.theme.color.white};
-  cursor: pointer;
-`;
-
-const NumberText = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 43px;
-  height: 24px;
-  object-fit: cover;
+  margin: 10px 0px 0px 0px;
 `;
 
 const ProfileImage = styled.img`
@@ -315,7 +271,7 @@ const DateText = styled.div`
 const WrappingTextBox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 1200px;
+  width: 1100px;
   height: fit-content;
 `;
 const CommentContent = styled.div`
@@ -329,45 +285,17 @@ const CommentContent = styled.div`
   font-weight: 400;
 `;
 
-const WrappingCommentCount = styled.div`
-  align-items: center;
-  width: 37px;
-  height: 24px;
-  display: flex;
-  flex-direction: row;
-  gap: 4px;
-`;
-
-const ReplyIcon = styled.div`
-  display: flex;
-  align-items: center;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  justify-content: center;
-  font-size: 13px;
-`;
-
 const SendReplyBtn = styled.button`
   width: 24px;
   height: 24px;
   border: 0px;
   background-color: transparent;
   position: absolute;
-  right: 150px;
-  top: 8px;
+  right: 110px;
+  top: 15px;
   z-index: 3;
   background-image: url(${sendImg});
   cursor: pointer;
-`;
-
-const StNum = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 3px;
-  width: 9px;
-  height: 14px;
 `;
 
 export default ReplyBox;
