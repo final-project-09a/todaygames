@@ -70,7 +70,10 @@ const Register = () => {
     setSelectedRating(post?.star_rating || '');
   }, []);
 
-  const isEditing = post;
+
+  const isEditing = !!post;
+  console.log(post);
+
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
