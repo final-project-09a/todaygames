@@ -28,8 +28,8 @@ type GameInfoMap = {
 
 export const BoardList = () => {
   const navigate = useNavigate();
-  const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
-  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
+  const { selectedGenres, sortOption, filteredPosts } = useSelector((state: RootState) => state.boardSlice);
+
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
@@ -38,7 +38,7 @@ export const BoardList = () => {
 
   // useInfiniteQuery를 이용한 무한스크롤 구현
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ['posts', selectedGenres.join(','), sortOption],
+    queryKey: ['posts', selectedGenres.join(','), sortOption, filteredPosts],
     queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam, sortOption),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
@@ -148,9 +148,10 @@ export const BoardList = () => {
     if (!answer) {
       return;
     }
-    await deletedata(id, user_id);
+    await deletedata(id, user_id); // 삭제 데이터 실행
     const updatedPosts = filteredPosts.filter((post: Typedata['public']['Tables']['posts']['Row']) => post.id !== id); // 삭제된 게시물을 제외한 배열 생성
-    dispatch(setFilteredPosts(updatedPosts)); // 수정된 배열을 setFilteredPosts 액션으로 전달
+    console.log('updatedPosts', updatedPosts);
+    dispatch(setFilteredPosts(updatedPosts));
   };
 
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
