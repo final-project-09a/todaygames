@@ -1,7 +1,7 @@
 import { supabase } from 'types/supabase';
 import { Typedata } from 'types/supabaseTable';
 import { QUERY_KEYS } from 'query/keys';
-import exp from 'constants';
+
 
 // 댓글 && userid mix (2Table)
 export const mappingComments = async (): Promise<
