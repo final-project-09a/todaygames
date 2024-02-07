@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
@@ -26,12 +26,13 @@ type GameInfoMap = {
 
 export const BoardList = () => {
   const navigate = useNavigate();
-  const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
-  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
+  const { selectedGenres, sortOption, filteredPosts } = useSelector((state: RootState) => state.boardSlice);
+
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
   const [searchTerm, setSearchTerm] = useState(''); // 검색기능
+  const queryClient = useQueryClient();
 
   // useInfiniteQuery를 이용한 무한스크롤 구현
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
@@ -140,13 +141,38 @@ export const BoardList = () => {
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
-  //삭제
+  const deleteMutation = useMutation<
+    {
+      id: string;
+      title: string;
+      game: string;
+      category: string;
+      content: string;
+      image: string[];
+      created_At: string;
+      user_id: string;
+      star_rating: string;
+      review: string;
+    }[],
+    Error,
+    { id: string; user_id: string },
+    unknown
+  >({
+    mutationFn: async (data) => {
+      const deleteResult = await deletedata(data.id, data.user_id);
+      return deleteResult;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+    }
+  });
+
   const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
     if (!answer) {
       return;
     }
-    await deletedata(id, user_id);
+    await deleteMutation.mutateAsync({ id, user_id });
   };
 
   const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -169,7 +195,6 @@ export const BoardList = () => {
         </Button>
       </StSeachContainer>
       {posts.length > 0 ? (
-        filteredPosts &&
         posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
@@ -182,7 +207,9 @@ export const BoardList = () => {
                 {postIsOwner && editingPostId === post.id && (
                   <StfetchForm onSubmit={editdeleteForm}>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
-                    <StButton onClick={() => handleDeletePostButton(post.id, post.user_id)}>삭제</StButton>
+                    <StButton value={post.id} onClick={() => handleDeletePostButton(post.id, post.user_id)}>
+                      삭제
+                    </StButton>
                   </StfetchForm>
                 )}
 

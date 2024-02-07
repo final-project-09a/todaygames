@@ -41,7 +41,6 @@ export interface Typedata {
           image: string[];
           created_At: string;
           user_id: string;
-
           star_rating:string,
           review:string
         };
