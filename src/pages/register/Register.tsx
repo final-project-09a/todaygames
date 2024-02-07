@@ -42,6 +42,7 @@ import { getFormattedDate } from 'util/date';
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  console.log('location: ' + location);
   // Register 페이지 들어올 때 받아온 게시물 데이터
   const { post } = location.state || {};
 
@@ -69,7 +70,7 @@ const Register = () => {
     setSelectedRating(post?.star_rating || '');
   }, []);
 
-  const isEditing = !!post;
+  const isEditing = post;
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);

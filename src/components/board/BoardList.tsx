@@ -36,7 +36,7 @@ export const BoardList = () => {
 
   // useInfiniteQuery를 이용한 무한스크롤 구현
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ['posts', selectedGenres.join(','), sortOption, filteredPosts],
+    queryKey: ['posts', selectedGenres.join(','), sortOption],
     queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam, sortOption),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
@@ -195,7 +195,6 @@ export const BoardList = () => {
         </Button>
       </StSeachContainer>
       {posts.length > 0 ? (
-        filteredPosts &&
         posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
