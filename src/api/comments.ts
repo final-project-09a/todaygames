@@ -39,6 +39,33 @@ export const createComments = async (newComment: Typedata['public']['Tables']['c
   await supabase.from(QUERY_KEYS.COMMENTS).insert(newComment);
 };
 
+// 댓글데이터 수정
+export const updateComments = async (): Promise<Typedata['public']['Tables']['comments']['CommentsUrl'][]> => {
+  try {
+    const { data } = await supabase.from(QUERY_KEYS.COMMENTS).update('*');
+    console.log(data);
+    return data || [];
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+// 댓글 데이터 삭제
+export const deleteComments = async ({ comment_id, user_id }: { comment_id: string, user_id: string }): Promise<void> => {
+  try {
+    await supabase
+      .from(QUERY_KEYS.COMMENTS)
+      .delete()
+      .eq('comment_id', comment_id)
+      .eq('user_id', user_id);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+//대댓글데이터 삭제
 export const deleteReply = async (
   { for_delete }: { for_delete: string }
 ): Promise<Typedata['public']['Tables']['comments']['Control']['delete_replies'][]> => {
@@ -55,14 +82,4 @@ export const deleteReply = async (
 export const createReply = async (newReply: Typedata['public']['Tables']['comments']['Control']['replies']) => {
   await supabase.from(QUERY_KEYS.REPLIES).insert(newReply);
 };
-// 댓글데이터 수정
-export const updateComments = async (): Promise<Typedata['public']['Tables']['comments']['CommentsUrl'][]> => {
-  try {
-    const { data } = await supabase.from(QUERY_KEYS.COMMENTS).update('*');
-    console.log(data);
-    return data || [];
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
+

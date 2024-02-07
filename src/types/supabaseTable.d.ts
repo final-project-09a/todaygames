@@ -79,6 +79,15 @@ export interface Typedata {
             avatar_url: string;
             nickname: string;
           };
+          Delete: {
+            comment_id: string;
+            comments: string;
+            created_at: string;
+            user_id: string;
+            comment_nickname: string;
+            id: string;
+            avatar_url: string;
+          }
         };
         Select: {
           user_id: string;

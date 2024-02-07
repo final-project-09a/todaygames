@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { UserInfo } from 'api/user';
-import { createComments, mappingComments } from 'api/comments';
+import { createComments, deleteComments, mappingComments } from 'api/comments';
 import { getComments } from 'api/comments';
 import { QUERY_KEYS } from 'query/keys';
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -16,10 +16,6 @@ import userImage from '../../assets/img/userimg.png';
 import commentIcon from '../../assets/img/comment.png';
 import { getFormattedDate } from 'util/date';
 import { getReplies } from 'api/replies';
-
-type userInfotypelist = {
-  userInfoData: React.ReactNode;
-};
 
 interface Comment {
   user_id: string;
@@ -59,6 +55,7 @@ const Comment = () => {
     setSelectedCommentId((prev) => (prev === commentId ? null : commentId));
   };
 
+  //댓글 새로 입력하는 함수
   const mutation = useMutation<void, Error, Typedata['public']['Tables']['comments']['CommentsUrl']['Select'], Error>({
     mutationFn: async (newComment) => {
       await createComments(newComment);
@@ -88,20 +85,31 @@ const Comment = () => {
     setCommentContent('');
   };
 
-  console.log(filteredComment);
+  const isOwner = (userId: string) => {
+    return user && user.id === userId;
+  };
 
-  // 댓글 정보 가져오기
-  // useEffect(() => {
-  //   getComments(); // 댓글 data 실행?
-  // }, []);
-  // 댓글과 대댓글을 담을 이차원 배열 선언
-  // const commentArrayContent: [Comment[], replies[]] = [[], []];
-  // const { data: repliesData } = useQuery({ queryKey: [QUERY_KEYS.REPLIES], queryFn: getReplies });
-  // const { data: commentData } = useQuery({
-  //   queryKey: [QUERY_KEYS.COMMENTS],
-  //   queryFn: getComments
-  // });
-  console.log(replyData);
+  const deleteMutation = useMutation({
+    mutationFn: deleteComments,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.COMMENTS] });
+    },
+    onError: (error: Error) => {
+      alert('삭제 기능에 오류가 발생했습니다');
+    }
+  });
+
+  const handleReport = () => {
+    alert('신고기능 구현중...');
+  };
+
+  const handleDeleteCommentButton = async (comment_id: string, user_id: string) => {
+    const answer = window.confirm('정말로 삭제하시겠습니까?');
+    if (!answer) {
+      return;
+    }
+    await deleteMutation.mutateAsync({ comment_id, user_id });
+  };
 
   return (
     <>
@@ -125,32 +133,42 @@ const Comment = () => {
         <>
           {filteredComment?.map((comment, index) => {
             const filteredReplies = replyData?.filter((reply) => reply.comment_id === comment.comment_id);
-            return (
-              <StcommentContainer key={index}>
-                <WrappingBox key={index}>
-                  {comment.avatar_url ? <ProfileImage src={comment?.avatar_url} /> : <ProfileImage src={userImage} />}
-                  <WrappingTextBox>
-                    <NameAndDate>
-                      <NameText>
-                        {comment.comment_nickname ? comment.comment_nickname : '닉네임을 설정해주세요'}
-                      </NameText>
-                      <DateText>{getFormattedDate(comment.created_at)}</DateText>
-                    </NameAndDate>
-                    <CommentContent>{comment.comments}</CommentContent>
-                    <>
-                      <WrappingCommentCount>
-                        <ReplyIcon>
-                          <img src={commentIcon} />
-                        </ReplyIcon>
-                        <StNum>{filteredReplies?.length}</StNum>
-                        <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
-                      </WrappingCommentCount>
-                    </>
-                    {selectedCommentId === comment.comment_id && <ReplyBox selectedCommentId={selectedCommentId} />}
-                  </WrappingTextBox>
-                </WrappingBox>
-              </StcommentContainer>
-            );
+            const filteredUserInfo = userInfoData?.find((user) => user.id === comment.user_id);
+            if (filteredUserInfo) {
+              const postIsOwner = isOwner(comment.user_id);
+              return (
+                <StcommentContainer key={index}>
+                  <WrappingBox key={index}>
+                    {comment.avatar_url ? <ProfileImage src={comment?.avatar_url} /> : <ProfileImage src={userImage} />}
+                    <WrappingTextBox>
+                      <NameAndDate>
+                        <NameText>
+                          {comment.comment_nickname ? comment.comment_nickname : '닉네임을 설정해주세요'}
+                        </NameText>
+                        <DateText>{getFormattedDate(comment.created_at)}</DateText>
+                        {postIsOwner && comment.comment_id && (
+                          <DeleteBtn onClick={() => handleDeleteCommentButton(comment.comment_id, comment.user_id)}>
+                            삭제
+                          </DeleteBtn>
+                        )}
+                        {!postIsOwner && comment.comment_id && <DeleteBtn onClick={handleReport}>신고하기</DeleteBtn>}
+                      </NameAndDate>
+                      <CommentContent>{comment.comments}</CommentContent>
+                      <>
+                        <WrappingCommentCount>
+                          <ReplyIcon>
+                            <img src={commentIcon} />
+                          </ReplyIcon>
+                          <StNum>{filteredReplies?.length}</StNum>
+                          <ReplyBtn onClick={() => handleClickReplyBtn(comment.comment_id)}>답글</ReplyBtn>
+                        </WrappingCommentCount>
+                      </>
+                      {selectedCommentId === comment.comment_id && <ReplyBox selectedCommentId={selectedCommentId} />}
+                    </WrappingTextBox>
+                  </WrappingBox>
+                </StcommentContainer>
+              );
+            }
           })}
           <form onSubmit={handleCommentSubmit}>
             <StProfileAndInput>
@@ -224,6 +242,7 @@ const CommentContent = styled.div`
 `;
 
 const NameAndDate = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -329,6 +348,19 @@ const StcommentContainer = styled.div`
   white-space: nowrap;
   color: ${(props) => props.theme.color.white};
   padding: 20px;
+`;
+
+const DeleteBtn = styled.button`
+  display: flex;
+  position: absolute;
+  flex-direction: row;
+  top: 3px;
+  left: 1140px;
+  width: 24px;
+  height: 24px;
+  background-color: transparent;
+  cursor: pointer;
+  color: white;
 `;
 
 const StNoComment = styled(TfiComments)`

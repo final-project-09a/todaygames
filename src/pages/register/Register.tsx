@@ -101,20 +101,14 @@ const Register = () => {
         // 파일 이름을 안전한 형태로 변환
         const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
         const filePath = `${safeUserName}/${onlyNumbers}_${safeFileName}`;
-
         const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
-        if (error) throw error;
         const { data: publicURL } = supabase.storage.from('postImage').getPublicUrl(filePath);
 
         uploadedImageUrls.push(publicURL.publicUrl);
-        console.log(uploadedImageUrls);
-        console.log(filePath);
       }
     } catch (error) {
       console.error('Error uploading image: ', error);
     }
-    console.log(urlTimeStamp);
-
     return uploadedImageUrls;
   };
 
@@ -133,10 +127,6 @@ const Register = () => {
 
   const searchOnClickHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setGameName(e.target.value);
-  };
-
-  const tagOnChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setTagText(e.target.value);
   };
 
   const { data: allGames } = useQuery({
