@@ -70,6 +70,7 @@ const Register = () => {
   }, []);
 
   const isEditing = !!post;
+  console.log(post);
 
   const titleTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
