@@ -34,13 +34,7 @@ const Like: React.FC<LikeProps> = () => {
         app_id: appId
       })
     });
-
-    console.log(response);
-    const data = await response.json();
-    console.log('Like Toggled:', data);
   };
-
-  console.log(toggleLike);
 
   // 북마크 토글
   const toggleBookmark = async (userId: string, appId: number) => {

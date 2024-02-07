@@ -9,6 +9,7 @@ import RelatedGames from 'components/detailpage/RelatedGames';
 import React from 'react';
 import SystemRequirements from 'components/detailpage/SystemRequirements';
 import { GameType } from 'types/games';
+import Review from 'components/detailpage/Review';
 
 export const DataContext = React.createContext<GameType | null>(null);
 
@@ -35,6 +36,7 @@ const Detail = () => {
     <DataContext.Provider value={data}>
       <StContainer>
         <GameTitle />
+        <Review gameName={data.name} />
         <StInfoBox>
           <GameInfo />
         </StInfoBox>

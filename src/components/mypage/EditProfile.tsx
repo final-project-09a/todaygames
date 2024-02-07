@@ -27,7 +27,7 @@ const EditProfile = () => {
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
   const { id, email, nickname, profile, genres } = user || {};
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(genres || []);
   const [nicknameError, setNicknameError] = useState<string>('');
   const [profileError, setProfileError] = useState<string>('');
   const [isValid, setIsValid] = useState<boolean>(true);
@@ -35,6 +35,12 @@ const EditProfile = () => {
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [PasswordError, setPasswordError] = useState<string>('');
+  const [hasChanges, setHasChanges] = useState<boolean>(false);
+  const [userprovider, setuserprovider] = useState<string | undefined>('');
+  const userdata = supabase.auth.getUser().then((users) => {
+    setuserprovider(users.data.user?.app_metadata.provider);
+  });
+  const [genre, setGenre] = useState<string>('');
 
   const isButtonDisabled = !(
     nickname &&
@@ -42,7 +48,8 @@ const EditProfile = () => {
     nickname.length <= 6 &&
     profile &&
     profile.length >= 10 &&
-    isValid
+    isValid &&
+    hasChanges
   );
   const isPasswordButtonDisabled = !passwordisValidisValid;
 
@@ -85,6 +92,7 @@ const EditProfile = () => {
   const handleProfileChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(setUser({ ...user, profile: e.target.value } as UserData));
     setProfileError(e.target.value.length < 10 ? '프로필은 최소 10글자 이상이어야 합니다.' : '');
+    setHasChanges(true);
   };
 
   const checkNickname = async (nickname: string) => {
@@ -118,12 +126,15 @@ const EditProfile = () => {
 
     setNicknameError(''); // 에러가 없다면 에러 메시지를 초기화합니다.
     setIsValid(true); // 모든 유효성 검사를 통과하면 isValid를 true로 설정합니다.
+    setHasChanges(true);
   };
 
   const handleGenresChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedOption = e.target.value;
+    setGenre(e.target.value);
     if (selectedOption && !selectedGenres.includes(selectedOption)) {
       setSelectedGenres((prev) => [...prev, selectedOption]);
+      setHasChanges(true);
     }
   };
 
@@ -134,8 +145,9 @@ const EditProfile = () => {
   // 수정버튼 클릭 핸들러 -> supabase에 user정보 업데이트
   const handleOnSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!nickname || nickname.length < 2 || nickname.length > 6 || !profile || profile.length < 10) {
-      alert('닉네임과 프로필 소개(10~200자) 글자수를 확인해주세요.');
+    if (!hasChanges) {
+      alert('변경된 내용이 없습니다.');
+      return;
     }
 
     supabase
@@ -173,7 +185,7 @@ const EditProfile = () => {
           placeholder={nickname || '닉네임 (2 ~ 6자)'}
           autoComplete="off"
         />
-        <StNickNameCount>{nickname?.length ? nickname.length : '0'} / 30</StNickNameCount>
+        <StNickNameCount>{nickname?.length ? nickname.length : '0'} / 6</StNickNameCount>
         {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}
         <label htmlFor="profile">프로필 소개(필수)</label>
         <textarea
@@ -189,59 +201,66 @@ const EditProfile = () => {
       <StUserinfoBox>
         <h2>계정 관리</h2>
         <label htmlFor="id">계정 아이디</label>
-        <input id="id" type="email" placeholder={email} readOnly />
-        <label htmlFor="password">비밀번호 변경</label>
-        <StpasswordInputGroup>
-          <input
-            placeholder="변경할 비밀번호"
-            type="password"
-            value={newPassword || ''}
-            onChange={(e) => {
-              setNewPassword(e.target.value);
-              if (!isValidPassword(e.target.value)) {
-                setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
-                setpasswordisValidIsValid(false);
-              } else {
-                setPasswordError('');
-                // 비밀번호 확인도 같이 검사합니다.
-                if (e.target.value !== confirmPassword) {
-                  setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-                  setpasswordisValidIsValid(false);
-                } else {
-                  setPasswordError('');
-                  setpasswordisValidIsValid(true);
-                }
-              }
-            }}
-          />
-          {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
-          <br></br>
-          <input
-            placeholder="변경할 비밀번호 확인"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              // 비밀번호 확인이 비밀번호와 일치하는지 검사합니다.
-              if (newPassword !== e.target.value) {
-                setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
-                setpasswordisValidIsValid(false);
-              } else {
-                setPasswordError('');
-                setpasswordisValidIsValid(true);
-              }
-            }}
-          />
-          <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
-            비밀번호 변경
-          </StPasswordButton>
-        </StpasswordInputGroup>
+        <input id="id" type="email" placeholder={email} readOnly autoComplete="username" />
+        {userprovider !== 'kakao' && userprovider !== 'google' && (
+          <>
+            <label htmlFor="password">비밀번호 변경</label>
+            <StpasswordInputGroup>
+              <input
+                placeholder="변경할 비밀번호"
+                type="password"
+                value={newPassword || ''}
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                  if (!isValidPassword(e.target.value)) {
+                    setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+                    setpasswordisValidIsValid(false);
+                  } else {
+                    setPasswordError('');
+                    // 비밀번호 확인도 같이 검사합니다.
+                    if (e.target.value !== confirmPassword) {
+                      setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                      setpasswordisValidIsValid(false);
+                    } else {
+                      setPasswordError('');
+                      setpasswordisValidIsValid(true);
+                    }
+                  }
+                }}
+                autoComplete="new-password"
+              />
+              {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
+              <br></br>
+              <input
+                placeholder="변경할 비밀번호 확인"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  // 비밀번호 확인이 비밀번호와 일치하는지 검사합니다.
+                  if (newPassword !== e.target.value) {
+                    setPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+                    setpasswordisValidIsValid(false);
+                  } else {
+                    setPasswordError('');
+                    setpasswordisValidIsValid(true);
+                  }
+                }}
+                autoComplete="new-password"
+              />
+              <StPasswordButton type="button" onClick={updatePassword} disabled={isPasswordButtonDisabled}>
+                비밀번호 변경
+              </StPasswordButton>
+            </StpasswordInputGroup>
+          </>
+        )}
       </StUserinfoBox>
+
       <StUserinfoBox>
         <h2>관심 장르</h2>
         <label htmlFor="genres">관심장르 등록</label>
-        <select id="genres" value={genres || ''} onChange={handleGenresChange}>
-          <option value={genres}>관심 장르를 선택하세요</option>
+        <select id="genres" value={genre} onChange={handleGenresChange}>
+          <option value="">관심 장르를 선택하세요</option>
           {GENRE_NAME.map((genre: GenreNameType) => (
             <option key={genre.tag} value={genre.tag}>
               {genre.tag}

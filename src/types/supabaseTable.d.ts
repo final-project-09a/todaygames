@@ -1,7 +1,7 @@
 import React from 'react';
 
 //  게시판 타입 저장
-export type Json = string | Date | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json = string | Date | number | boolean | null | { [key: string]: Json } | Json[];
 export interface Typedata {
   public: {
     Tables: {
@@ -12,67 +12,91 @@ export interface Typedata {
           game: string;
           category: string;
           content: string;
-          image: string;
+          image: string[];
           created_At: string;
           user_id: string;
+          like_count: number;
+          comment_count: number;
+          star_rating: "" | "⭐" | "⭐⭐" | "⭐⭐⭐" | "⭐⭐⭐⭐" | "⭐⭐⭐⭐⭐" | string[];
+          review:string
         };
         Insert: {
           id: string;
-          user_id: string;
-          content: string;
-          image: string;
           title: string;
-          category: string;
           game: string;
-          created_At: Date;
+          category: string;
+          content: string;
+          image: string[];
+          created_At: string;
+          user_id: string;
+          star_rating:string,
+          review:string
         };
         Update: {
           id: string;
-          user_id: string;
-          content: string;
-          image: string;
           title: string;
-          category: string;
           game: string;
-          created_At: Date;
+          category: string;
+          content: string;
+          image: string[];
+          created_At: string;
+          user_id: string;
+
+          star_rating:string,
+          review:string
         };
         Controll: {
           id?: string;
           user_id?: string;
           category: string;
           title?: string;
-          image?: string;
+          image?: string[];
           content?: string;
         };
         Delete: {
           id: string;
-          user_id: string;
-          content: string;
-          image: string;
           title: string;
-          category: string;
           game: string;
-          created_At: Date;
+          category: string;
+          content: string;
+          image: string[];
+          created_At: string;
+          user_id: string;
+          star_rating:string,
+          review:string
         };
       };
       comments: {
         CommentsUrl: {
           Select: {
-            userid: string;
-            comment_id: number;
+            user_id: string;
             comments: string;
-            created_at: Date;
+            comment_nickname: string;
+            id: string;
+            avatar_url: string
           };
           Userinfo: {
             avatar_url: string;
             nickname: string;
           };
+          Delete: {
+            comment_id: string;
+            comments: string;
+            created_at: string;
+            user_id: string;
+            comment_nickname: string;
+            id: string;
+            avatar_url: string;
+          }
         };
         Select: {
-          userid: string;
-          comment_id: number;
+          user_id: string;
+          comment_nickname: string;
+          comment_id: string;
           comments: string;
-          created_at: Date;
+          created_at: string;
+          id: string;
+          avatar_url: string
         };
         Insert: {
           id: string;
@@ -88,21 +112,29 @@ export interface Typedata {
 
           created_at: Date;
         };
-        Controll: [
+        Control: {
           comment: {
             id: string;
             comment_id: number;
             comments: string;
             created_at: Date;
-          },
+          };
           replies: {
             user_id: string;
-            reply_id?: number;
-            reply_text?: string;
-            created_at?: string;
+            reply_text: string;
             comment_id: string;
-          }
-        ];
+            reply_nickname: string;
+            reply_avatar_url: string
+          };
+          delete_replies: {
+            user_id: string;
+            reply_text: string;
+            comment_id: string;
+            reply_nickname: string;
+            reply_avatar_url: string;
+            for_delete: string
+          };
+        };
       };
       userinfo: {
         Row: {

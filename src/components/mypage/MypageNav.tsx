@@ -1,56 +1,81 @@
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
-import boomarkIcon from 'assets/icons/boomarkIcon.svg';
-import communityIcon from 'assets/icons/communityIcon.svg';
-import editProfileIcon from 'assets/icons/editProfileIcon.svg';
 import userimg from 'assets/img/userimg.png';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
-import { useDispatch } from 'react-redux';
 import { supabase } from 'types/supabase';
+import { TbMessageCircle2Filled } from 'react-icons/tb';
+import { FaHeart } from 'react-icons/fa';
+import { IoPersonSharp } from 'react-icons/io5';
+import { nowdate } from 'api/nowdate';
+
 interface MypageProps {
   onCategoryChange: (category: string) => void;
+  selectedCategory: string;
 }
 
-const MypageNav = ({ onCategoryChange }: MypageProps) => {
+interface StCategoryProps {
+  $isSelected: boolean;
+}
+
+const MypageNav = ({ selectedCategory, onCategoryChange }: MypageProps) => {
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [imageUrl, setImageUrl] = useState(user?.profile ? user.profile : userimg);
-
-  // 이미지를 업로드하면 base64로 바꿔 imgurl로 저장함
-
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (!user) return;
+
       if (e.target) {
         const selectedFile = e.target.files;
         if (selectedFile && selectedFile.length > 0) {
-          const fileReader = new FileReader();
-          fileReader.onload = async (event) => {
-            if (event.target) {
-              const imageUrl = event.target.result as string;
-              setImageUrl(imageUrl);
+          const file = selectedFile[0];
+          const filePath = `${user.id}${nowdate()}`;
 
-              if (user) {
-                // id가 존재하는지 확인
-                // 'userinfo' 테이블의 'avatar_url' 업데이트
-                const { error } = await supabase.from('userinfo').update({ avatar_url: imageUrl }).eq('id', user.id);
-                if (error) {
-                  console.log('프로필 이미지 업데이트 중 에러가 발생했습니다:', error.message);
-                  alert('이미지 업로드 오류');
-                } else {
-                  console.log('프로필 이미지가 성공적으로 업데이트되었습니다.');
-                  alert('이미지 업로드 성공!');
-                  window.location.reload();
-                }
-              } else {
-                console.log('유저 ID가 존재하지 않습니다.');
-                alert('유저 ID가 존재하지 않습니다.');
-              }
-            }
-          };
-          fileReader.readAsDataURL(selectedFile[0]);
+          // 버킷에서 파일 목록을 가져옵니다.
+          const { data: files, error } = await supabase.storage.from('avatars').list();
+
+          // 에러 처리
+          if (error) {
+            console.error('Error fetching files: ', error);
+            return;
+          }
+
+          // 현재 사용자의 uid를 포함한 파일만 선택하여 삭제합니다.
+          const filesToDelete = files.filter((file) => file.name.includes(user.id)).map((file) => file.name);
+
+          // 선택된 파일들을 삭제합니다.
+          const { error: deleteError } = await supabase.storage.from('avatars').remove(filesToDelete);
+
+          // 에러 처리
+          if (deleteError) {
+            console.error('Error deleting files: ', deleteError);
+          }
+
+          // 새 파일을 업로드합니다.
+          const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+
+          if (uploadError) {
+            console.error('Error uploading image:', uploadError.message);
+            return;
+          }
+
+          const { data: publicURL } = await supabase.storage.from('avatars').getPublicUrl(filePath);
+          const uploadedImageUrls = publicURL.publicUrl;
+
+          const { error: updateError } = await supabase
+            .from('userinfo')
+            .update({ avatar_url: uploadedImageUrls })
+            .eq('id', user.id);
+
+          if (updateError) {
+            console.error('Error updating avatar_url:', updateError.message);
+            alert('프로필 이미지 업데이트 실패');
+          } else {
+            alert('프로필 이미지 업데이트 성공');
+            window.location.reload();
+          }
         }
       }
     },
@@ -68,10 +93,9 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
     <StContainer>
       <StUserProfileWrapper>
         <StProfileImageWrapper>
-          <img src={user?.avatar_url} alt="프로필이미지" />
+          <img src={user?.avatar_url ? user.avatar_url : userimg} alt="프로필이미지" />
         </StProfileImageWrapper>
         <a onClick={triggerFileInput}>프로필 이미지 변경</a>
-        {/* <p>{user?.nickname ? user.nickname : 'KAKAO USER'}</p> */}
         <p>{user?.nickname ? user.nickname : ''}</p>
         <input
           type="file"
@@ -82,15 +106,15 @@ const MypageNav = ({ onCategoryChange }: MypageProps) => {
         />
       </StUserProfileWrapper>
       <StCategoryWrapper>
-        <StCategory onClick={() => onCategoryChange('profile')}>
+        <StCategory onClick={() => onCategoryChange('profile')} $isSelected={selectedCategory === 'profile'}>
           <StEditProfileIcon />
           <p>프로필 편집</p>
         </StCategory>
-        <StCategory onClick={() => onCategoryChange('community')}>
+        <StCategory onClick={() => onCategoryChange('community')} $isSelected={selectedCategory === 'community'}>
           <StCommunityIcon />
           <p>내가 쓴 글</p>
         </StCategory>
-        <StCategory onClick={() => onCategoryChange('bookmark')}>
+        <StCategory onClick={() => onCategoryChange('bookmark')} $isSelected={selectedCategory === 'bookmark'}>
           <StBookMarkIcon />
           <p>찜 목록</p>
         </StCategory>
@@ -123,6 +147,7 @@ const StUserProfileWrapper = styled.div`
     font-weight: 300;
     margin-top: 15px;
     color: gray;
+    cursor: pointer;
   }
   & p {
     font-size: 14px;
@@ -165,24 +190,26 @@ const StProfileImageWrapper = styled.figure`
   }
 `;
 
-const StEditProfileIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  background: url(${editProfileIcon}) no-repeat center center;
+const StEditProfileIcon = styled(IoPersonSharp)`
+  font-size: 20px;
 `;
 
-const StCommunityIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  background: url(${communityIcon}) no-repeat center center;
+const StCommunityIcon = styled(TbMessageCircle2Filled)`
+  font-size: 20px;
 `;
 
-const StBookMarkIcon = styled.div`
-  width: 24px;
-  height: 24px;
-  background: url(${boomarkIcon}) no-repeat center center;
+const StBookMarkIcon = styled(FaHeart)`
+  font-size: 20px;
 `;
 
-const StCategory = styled.div`
+const StCategory = styled.div<StCategoryProps>`
   cursor: pointer;
+  & svg {
+    color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
+  }
+  & p {
+    font-size: 16px;
+    font-weight: 500;
+    color: ${(props) => (props.$isSelected ? 'white' : 'gray')};
+  }
 `;

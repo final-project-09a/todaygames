@@ -72,7 +72,7 @@ const StNameOverlay = styled.div`
   justify-content: center;
   color: ${(props) => props.theme.color.white};
   text-align: center;
-  font-family: Pretendard;
+
   font-size: 20px;
   font-weight: 600;
   opacity: 0;

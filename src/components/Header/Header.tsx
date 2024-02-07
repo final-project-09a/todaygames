@@ -23,7 +23,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
     slidesToShow: 1,
     slidesToScroll: 1,
     centerMode: true,
-    centerPadding: '210',
+    centerPadding: '230px',
     afterChange: (index: number) => setCurrentGameIndex(index),
     adaptiveHeight: true,
     autoplay: true,
@@ -77,7 +77,7 @@ const Header = ({ mostPlayedGames }: HeaderProps) => {
         <StCarouselWrapper>
           <CustomCarousel settings={settings}>
             {gameDetailsArray.map((game) => (
-              <StFigure key={game.steam_appid}>
+              <StFigure key={game.steam_appid} onClick={() => navigate(`/detail/${game.steam_appid}`)}>
                 <img src={game.background_raw} alt={game.name} />
               </StFigure>
             ))}

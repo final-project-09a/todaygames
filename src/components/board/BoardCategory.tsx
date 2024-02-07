@@ -1,52 +1,28 @@
-import { useQuery } from '@tanstack/react-query';
-import { getPosts } from 'api/post';
 import { GENRE_NAME } from 'constants/genre';
-import { QUERY_KEYS } from 'query/keys';
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import cancelIcon from 'assets/icons/cancelIcon.svg';
+import { useDispatch } from 'react-redux';
+import { setSelectedGenres, setSortOption, SortOption } from '../../redux/modules/boardSlice';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/config/configStore';
 
-// type Genre = typeof GENRE_NAME;
-type BoardCategoryProps = {
-  setFilteredPosts: any;
-  filteredPosts: any;
-};
+export const BoardCategory = () => {
+  const dispatch = useDispatch();
+  const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
 
-export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategoryProps) => {
-  const [sortOption, setSortOption] = useState('최근순');
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-
-  const { data } = useQuery({
-    queryKey: [QUERY_KEYS.POSTS],
-    queryFn: getPosts
-  });
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    const data = await getPosts();
-    setFilteredPosts(data.reverse());
+  const genrefilterOnClick = async (genre: string) => {
+    if (selectedGenres.includes(genre)) return;
+    dispatch(setSelectedGenres([...selectedGenres, genre]));
   };
 
-  const genrefilterOnClick = (tag: string) => {
-    const updatedGenres = selectedGenres.includes(tag)
-      ? selectedGenres.filter((selectedGenre: string) => selectedGenre)
-      : [...selectedGenres, tag];
-
-    setSelectedGenres(updatedGenres);
-    const newFilteredPosts = data?.filter((post: any) => updatedGenres.some((genre) => post.category.includes(genre)));
-    setFilteredPosts(newFilteredPosts?.reverse());
+  const handleCancelIconClick = async (genre: string) => {
+    if (!selectedGenres.includes(genre)) return;
+    dispatch(setSelectedGenres(selectedGenres.filter((item) => item !== genre)));
   };
 
-  const handleCancelIconClick = (genre: string) => {
-    const updatedGenres = selectedGenres.filter((selectedGenre) => selectedGenre !== genre);
-    setSelectedGenres(updatedGenres);
-    const newFilteredPosts = data?.filter(
-      (post: any) => updatedGenres.length === 0 || updatedGenres.some((genre) => post.category.includes(genre))
-    );
-    setFilteredPosts(newFilteredPosts?.reverse());
+  const handleSortOption = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value as SortOption;
+    dispatch(setSortOption(value));
   };
 
   return (
@@ -57,16 +33,21 @@ export const BoardCategory = ({ setFilteredPosts, filteredPosts }: BoardCategory
           <StRadio>
             <input
               type="radio"
-              id="recent"
               name="sort"
-              value={sortOption}
+              value="최근순"
               checked={sortOption === '최근순'}
-              onChange={() => setSortOption('최근순')}
+              onChange={handleSortOption}
             />
             <p>최근순</p>
           </StRadio>
           <StRadio>
-            <input type="radio" id="recent" name="sort" value="인기순" onChange={() => setSortOption('인기순')} />
+            <input
+              type="radio"
+              name="sort"
+              value="인기순"
+              checked={sortOption === '인기순'}
+              onChange={handleSortOption}
+            />
             <p>인기순</p>
           </StRadio>
         </div>

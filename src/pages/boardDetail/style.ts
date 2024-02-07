@@ -16,7 +16,7 @@ const WrappingBoardDetail = styled.div`
   flex-direction: column;
   background: ${(props) => props.theme.color.postback};
   width: 1281px;
-  height: 1000px;
+  height: fit-content;
 `;
 
 const UserInfoAndBtn = styled.div`
@@ -55,12 +55,12 @@ const ProfileImage = styled.img`
   height: 45px;
   flex-shrink: 0;
   border-radius: 50px;
-  background-color: aqua;
+  background-color: transparent;
   border: 0px;
 `;
 
 const NickNameAndDate = styled.div`
-  width: 150px;
+  width: 250px;
   height: 22.5px;
   gap: 10px;
   display: flex;
@@ -75,11 +75,9 @@ const NickNameAndTitleText = styled.div`
   height: 22.5px;
   color: #fff;
   align-items: center;
-  font-family: Inter;
+
   font-size: 14px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
 `;
 
 const DateText = styled.div`
@@ -88,11 +86,9 @@ const DateText = styled.div`
   width: fit-content;
   height: 22.5px;
   color: #999;
-  font-family: Inter;
+
   font-size: 12px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
   text-align: center;
 `;
 
@@ -109,19 +105,16 @@ const DetailTitle = styled.div`
   width: fit-content;
   height: fit-content;
   color: #fff;
-  font-family: Inter;
+
   font-size: 18px;
-  font-style: normal;
   font-weight: 700;
-  line-height: normal;
   margin: 30px 0px 9px 20px;
 `;
 
 const DetailContent = styled.div`
   color: #eee;
-  font-family: Inter;
+
   font-size: 14px;
-  font-style: normal;
   font-weight: 400;
   line-height: 22px; /* 157.143% */
   margin-left: 20px;
@@ -137,11 +130,9 @@ const WrappingTags = styled.div`
 
 const EachTag = styled.div`
   color: #fff;
-  font-family: Inter;
+
   font-size: 12px;
-  font-style: normal;
   font-weight: 400;
-  line-height: normal;
   width: auto;
   height: auto;
   display: inline-flex;
@@ -155,7 +146,7 @@ const EachTag = styled.div`
 
 const WrappingComments = styled.div`
   width: 1281px;
-  height: 470px;
+  height: fit-content;
   display: flex;
   flex-direction: column;
   background: ${(props) => props.theme.color.gray};

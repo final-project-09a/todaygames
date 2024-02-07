@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { supabase } from '../../types/supabase';
 import { useNavigate } from 'react-router-dom';
 import {
-  StyledInputShort,
   StyledSignup,
   StyledForm,
   StyledInput,
@@ -10,8 +9,8 @@ import {
   StyledH1,
   StyledLabel,
   StInputGroup,
-  StyledButtonShort,
-  StInputBtwrap
+  StInputBtwrap,
+  StErrorMessage
 } from './styles';
 
 import { FormData } from 'types/global.d';
@@ -68,51 +67,63 @@ const checkEmail = async (email: string) => {
 function Signup() {
   const navigate = useNavigate();
   const [confirmPassword, setConfirmPassword] = useState('');
-
+  const [nicknameError, setNicknameError] = useState<string>('');
+  const [EmailError, setEmailError] = useState<string>('');
+  const [PasswordError, setPasswordError] = useState<string>('');
+  const [ConfirmPasswordError, setConfirmPasswordError] = useState<string>('');
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
     displayName: ''
   });
 
-  const handleCheckEmail = async () => {
-    if (!isValidEmail(formData.email)) {
-      alert('유효한 이메일 형식이 아닙니다.');
-      return;
-    }
-    const isDuplicate = await checkEmail(formData.email);
-    if (isDuplicate) {
-      alert('이미 사용중인 email입니다. 다른 email을 선택해주세요.');
-    } else {
-      alert('사용 가능한 email입니다.');
-    }
-  };
-
-  const handleCheckNickname = async () => {
-    if (!isValidDisplayName(formData.displayName)) {
-      alert('닉네임은 최소 2자,최대 6자로 설정해주세요');
-      return;
-    }
-    const isDuplicate = await checkNickname(formData.displayName);
-    if (isDuplicate) {
-      alert('이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
-    } else {
-      alert('사용 가능한 닉네임입니다.');
-    }
-  };
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // 비밀번호 확인 변경 핸들러
-    setConfirmPassword(e.target.value);
+    const confirmPassword = e.target.value;
+    setConfirmPassword(confirmPassword);
+
+    // 비밀번호 확인과 비밀번호가 일치하는지 검사
+    if (formData.password !== confirmPassword) {
+      setConfirmPasswordError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+    } else {
+      setConfirmPasswordError('');
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // 유효성 검사
+    if (name === 'displayName') {
+      if (!isValidDisplayName(value)) {
+        setNicknameError('닉네임은 2~6자 이내로 입력해주세요.');
+      } else {
+        // 닉네임 중복 검사
+        const isDuplicate = await checkNickname(value);
+        if (isDuplicate) {
+          setNicknameError('이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
+        } else {
+          setNicknameError('사용 가능한 닉네임입니다.'); // 에러 메시지 삭제
+        }
+      }
+    } else if (name === 'email') {
+      if (!isValidEmail(value)) {
+        setEmailError('올바른 이메일 형식이 아닙니다.');
+      } else {
+        // 이메일 중복 검사
+        const isDuplicate = await checkEmail(value);
+        if (isDuplicate) {
+          setEmailError('이미 사용중인 이메일입니다. 다른 이메일을 사용해주세요.');
+        } else {
+          setEmailError('사용 가능한 이메일입니다.'); // 에러 메시지 삭제
+        }
+      }
+    } else if (name === 'password') {
+      if (!isValidPassword(value)) {
+        setPasswordError('비밀번호는 8자 이상이며, 영문, 숫자, 특수문자를 모두 포함해야 합니다.');
+      } else {
+        setPasswordError('사용가능한 비밀번호입니다.'); // 에러 메시지 삭제
+      }
+    }
   };
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -175,10 +186,9 @@ function Signup() {
       <StyledH1>회원 가입</StyledH1>
       <StyledForm onSubmit={handleSignup}>
         <StInputBtwrap>
+          <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
           <StInputGroup>
-            {' '}
-            <StyledLabel htmlFor="displayName">닉네임</StyledLabel>
-            <StyledInputShort
+            <StyledInput
               placeholder="사용할 닉네임을 적어주세요."
               type="text"
               id="displayName"
@@ -186,16 +196,14 @@ function Signup() {
               value={formData.displayName}
               onChange={handleChange}
             />
-            {errors.displayName && <p>{errors.displayName}</p>}
           </StInputGroup>
-          <StyledButtonShort onClick={handleCheckNickname} type="button">
-            닉네임 중복 확인
-          </StyledButtonShort>
+          {nicknameError && <StErrorMessage>{nicknameError}</StErrorMessage>}{' '}
         </StInputBtwrap>
         <StInputBtwrap>
+          <StyledLabel htmlFor="email">이메일</StyledLabel>
+
           <StInputGroup>
-            <StyledLabel htmlFor="email">이메일</StyledLabel>
-            <StyledInputShort
+            <StyledInput
               placeholder="이메일을 입력해 주세요."
               type="email"
               id="email"
@@ -203,13 +211,11 @@ function Signup() {
               value={formData.email}
               onChange={handleChange}
             />
-            {errors.email && <p>{errors.email}</p>}
           </StInputGroup>
-          <StyledButtonShort onClick={handleCheckEmail} type="button">
-            email 중복 확인
-          </StyledButtonShort>
+          {EmailError && <StErrorMessage>{EmailError}</StErrorMessage>}
         </StInputBtwrap>
-        <StInputGroup>
+
+        <StInputBtwrap>
           <StyledLabel htmlFor="password">비밀번호</StyledLabel>
           <StyledInput
             placeholder="비밀번호를 입력해 주세요."
@@ -219,11 +225,11 @@ function Signup() {
             value={formData.password}
             onChange={handleChange}
           />
-          {errors.password && <p>{errors.password}</p>}
-          <StyledLabel htmlFor="password">8~16자 영문, 숫자, 특수문자를 조합해 주세요.</StyledLabel>
-        </StInputGroup>
-        <StInputGroup>
-          <StyledLabel htmlFor="confirmPassword">비밀번호 확인</StyledLabel>
+          {PasswordError && <StErrorMessage>{PasswordError}</StErrorMessage>}
+          <p>8~16자 영문, 숫자, 특수문자를 조합해 주세요.</p>
+        </StInputBtwrap>
+        <StInputBtwrap>
+          <StyledLabel htmlFor="password">비밀번호 확인</StyledLabel>
           <StyledInput
             placeholder="비밀번호 확인"
             type="password"
@@ -233,10 +239,9 @@ function Signup() {
             onChange={handleConfirmPasswordChange}
           />
 
-          {errors.confirmPassword && <p>{errors.confirmPassword}</p>}
-          <StyledLabel htmlFor="password">비밀번호를 한번 더 입력해 주세요.</StyledLabel>
-        </StInputGroup>
-
+          {ConfirmPasswordError && <StErrorMessage>{ConfirmPasswordError}</StErrorMessage>}
+          <p>비밀번호를 한번 더 입력해 주세요.</p>
+        </StInputBtwrap>
         <StyledButton type="submit">회원가입</StyledButton>
       </StyledForm>
     </StyledSignup>

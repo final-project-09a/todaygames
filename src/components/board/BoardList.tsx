@@ -1,62 +1,92 @@
-// 게시판 리스트
-
 import styled from 'styled-components';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { QUERY_KEYS } from 'query/keys';
 import { UserInfo } from 'api/user';
 import { Typedata } from 'types/supabaseTable';
-import React, { useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import searchIcon from '../../assets/icons/searchIcon.svg';
-import MoreViewButton from 'common/MoreViewButton';
 import Button from 'common/Button';
 import userimg from 'assets/img/userimg.png';
 import Tag from 'common/Tag';
 import comments from 'assets/icons/comments.svg';
 import thumsUp from 'assets/icons/thumsUp.svg';
 import editBtn from '../../assets/img/editBtn.png';
-import { getPosts, updatedataPosts } from 'api/post';
+import { deletedata } from 'api/post';
+import { getFormattedDate } from 'util/date';
+import { genreFilterPosts } from 'api/post';
+import { getGamesWithGameName } from 'api/games';
+import { RootState } from 'redux/config/configStore';
+import folderIcon from 'assets/icons/folderIcon.svg';
 
-interface UserInfo {
-  userInfo: Typedata['public']['Tables']['userinfo']['Row'];
-}
+type GameInfoMap = {
+  [appId: string]: Typedata['public']['Tables']['games']['Row'];
+};
 
-interface PostDetail {
-  user_id: string;
-  post: string;
-  id: string;
-  created_At: string;
-  title: string;
-  content: string;
-  category: string;
-  image: string;
-  game: string;
-}
-interface Post {
-  id: string;
-  text: string;
-}
-
-export const BoardList = ({ filteredPosts }: any) => {
-  const [displayedPosts, setDisplayedPosts] = useState(5);
-  const [searchText, SetSearchText] = useState<string>('');
-  const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [dropdownVisibleMap, setDropdownVisibleMap] = useState<{ [postId: string]: boolean }>({});
-
-  const user = useSelector((state: any) => state.userSlice.userInfo);
-
+export const BoardList = () => {
   const navigate = useNavigate();
+  const { selectedGenres, sortOption } = useSelector((state: RootState) => state.boardSlice);
+  const filteredPosts = useSelector((state: RootState) => state.boardSlice.filteredPosts);
+  const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [gameInfoMap, setGameInfoMap] = useState<GameInfoMap>({});
+  const [searchTerm, setSearchTerm] = useState(''); // 검색기능
 
-  // const updatePost = useSelector((state: any) => state.postSlice.updatePost);
-  // const deletePost = useSelector((state: any) => state.postSlice.deletePost);
+  // useInfiniteQuery를 이용한 무한스크롤 구현
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: ['posts', selectedGenres.join(','), sortOption],
+    queryFn: ({ pageParam }) => genreFilterPosts(selectedGenres, 5, pageParam, sortOption),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+      return lastPageParam + 1;
+    }
+  });
+
+  const posts = useMemo(() => {
+    if (!data) return [];
+    const page = data.pages.reduce((prev, current) => {
+      return [...prev, ...current];
+    }, []);
+    const listpostfiltered = page.filter(
+      (post) =>
+        post.title.toLowerCase().includes(searchTerm.toLowerCase().slice()) ||
+        post.game.toLowerCase().includes(searchTerm.toLowerCase().slice())
+    );
+    return listpostfiltered;
+  }, [data, searchTerm]);
+
+  // posts 데이터의 게임정보만 가져오기(게임 클릭 시 상세페이지 이동을 위함)
+  useEffect(() => {
+    const fetchGameInfo = async () => {
+      try {
+        const infoMap: GameInfoMap = {};
+        await Promise.all(
+          posts.map(async (post: Typedata['public']['Tables']['posts']['Row']) => {
+            try {
+              const gameInfo = await getGamesWithGameName(post.game);
+              infoMap[post.game] = gameInfo;
+            } catch (error) {
+              console.error(`${post.game} 게임 정보 패칭오류:`, error);
+            }
+          })
+        );
+        setGameInfoMap(infoMap);
+      } catch (error) {
+        console.error('게임 정보 패칭 에러:', error);
+      }
+    };
+
+    fetchGameInfo();
+  }, [posts]);
 
   const { data: userInfoData } = useQuery({
     queryKey: [QUERY_KEYS.USERINFO],
     queryFn: UserInfo
   });
-
-  // const { data: postsData } = useQuery({ queryKey: [QUERY_KEYS.POSTS], queryFn: getPosts }); // <= 이거원래 updatedataPosts
 
   // 글쓰기 이동
   const moveregisterPageOnClick = () => {
@@ -71,17 +101,24 @@ export const BoardList = ({ filteredPosts }: any) => {
     navigate(`/boarddetail/${item}`);
   };
 
-  const initialDisplayedPosts = filteredPosts.slice(0, displayedPosts);
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
 
-  const handleLoadMore = () => {
-    setDisplayedPosts((prev) => (prev === 0 ? 5 : prev + 5));
-  };
+      if (scrollTop + clientHeight >= scrollHeight - 10) {
+        if (hasNextPage) fetchNextPage();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [posts]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    SetSearchText(e.target.value);
+    setSearchTerm(e.target.value);
   };
-
-  // -----------------------------------------------------------
 
   const isOwner = (userId: string) => {
     return user && user.id === userId;
@@ -89,49 +126,63 @@ export const BoardList = ({ filteredPosts }: any) => {
 
   const handleMoreInfoClick = (postId: string) => {
     setEditingPostId((prev) => (prev === postId ? null : postId));
-    setDropdownVisibleMap((prev) => ({ ...prev, [postId]: !prev[postId] }));
   };
 
+  //검색
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchTerm('');
+  };
+
+  //수정
   const handleEditButtonClick = (postId: string) => {
     const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
-  const handleDeletePostButton: React.MouseEventHandler<HTMLButtonElement> = () => {
+  //삭제
+  const handleDeletePostButton = async (id: string, user_id: string) => {
     const answer = window.confirm('정말로 삭제하시겠습니까?');
-    if (!answer) return;
+    if (!answer) {
+      return;
+    }
+    await deletedata(id, user_id);
   };
 
+  const editdeleteForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   const handleReport = () => {
     alert('신고기능 구현중...');
   };
+  const handleSearch = () => {
+    setSearchTerm('검색어');
+  };
 
   return (
-    <div>
-      <StSeachContainer>
-        <p>{filteredPosts.length}개의 일치하는 게시물</p>
-        <StsearchBox>
-          <StseachInput value={searchText} onChange={handleOnChange} placeholder="게시글 검색" />
-          <StSearchIcon />
-          <Button size="small" onClick={moveregisterPageOnClick}>
-            글쓰기
-          </Button>
-        </StsearchBox>
+    <StBoardListContainer>
+      <StSeachContainer onSubmit={handleFormSubmit}>
+        <StseachInput value={searchTerm} onChange={handleOnChange} placeholder="게시글 검색" />
+        <StSearchIcon value={searchTerm} type="submit" onClick={handleSearch} />
+        <Button type="button" size="small" onClick={moveregisterPageOnClick}>
+          글쓰기
+        </Button>
       </StSeachContainer>
-
-      {filteredPosts.length > 0 ? (
-        initialDisplayedPosts.map((post: PostDetail) => {
+      {posts.length > 0 ? (
+        filteredPosts &&
+        posts.map((post: Typedata['public']['Tables']['posts']['Row']) => {
           const userInfo = userInfoData?.find((user) => user.id === post?.user_id);
 
           if (userInfo) {
             const postIsOwner = isOwner(post.user_id);
+
             return (
-              <StcontentBox key={post?.id}>
+              <StcontentBox key={post?.id} defaultValue={post.id}>
                 <EditBtn onClick={() => handleMoreInfoClick(post.id)} />
                 {postIsOwner && editingPostId === post.id && (
-                  <StfetchForm>
+                  <StfetchForm onSubmit={editdeleteForm}>
                     <StButton onClick={() => handleEditButtonClick(post.id)}>수정</StButton>
-                    <StButton onClick={handleDeletePostButton}>삭제</StButton>
+                    <StButton onClick={() => handleDeletePostButton(post.id, post.user_id)}>삭제</StButton>
                   </StfetchForm>
                 )}
 
@@ -140,51 +191,58 @@ export const BoardList = ({ filteredPosts }: any) => {
                     <StButton onClick={handleReport}>신고하기</StButton>
                   </StfetchForm>
                 )}
-                <Stdetailmoveline onClick={() => movedetailPageOnClick(post?.id)}>
-                  <StProfileWrapper>
-                    <section>
-                      <StUserImageWrapper>
-                        <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
-                      </StUserImageWrapper>
-                      <StUserNameWrapper>
-                        <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
-                        <p>{post.created_At}</p>
-                      </StUserNameWrapper>
-                    </section>
-                  </StProfileWrapper>
-                  <StContentWrapper>
-                    <StText>
+                <StProfileWrapper>
+                  <section>
+                    <StUserImageWrapper>
+                      <img src={userInfo.avatar_url ? userInfo.avatar_url : userimg} alt="프로필 이미지" />
+                    </StUserImageWrapper>
+                    <StUserNameWrapper>
+                      <h2>{userInfo.nickname ? userInfo.nickname : 'KAKAO USER'}</h2>
+                      <p>{getFormattedDate(post.created_At)}</p>
+                    </StUserNameWrapper>
+                  </section>
+                </StProfileWrapper>
+                <StContentWrapper>
+                  <StContent>
+                    <StText onClick={() => movedetailPageOnClick(post?.id)}>
                       <h3>{post?.title}</h3>
-                      <p>{post?.content}</p>
-                      <StTagWrapper>
-                        <Tag size="small" backgroundColor="secondary">
-                          {post.game}
-                        </Tag>
-                        {post?.category
-                          .split(',')
-                          .map((item) => item.trim())
-                          .map((genre: string) => (
-                            <Tag key={genre} prefix="#" size="small" backgroundColor="lightgray">
-                              {genre}
-                            </Tag>
-                          ))}
-                      </StTagWrapper>
+                      <StHiddenText>
+                        <p>{post?.content}</p>
+                      </StHiddenText>
                     </StText>
-                    {post?.image && (
-                      <StImageWrapper>
-                        <img src={post?.image} alt={post.game} />
-                      </StImageWrapper>
-                    )}
-                  </StContentWrapper>
-                </Stdetailmoveline>
+                    <StTagWrapper>
+                      <Tag
+                        onClick={() => navigate(`/detail/${gameInfoMap[post.game]?.app_id}`)}
+                        size="small"
+                        backgroundColor="secondary"
+                      >
+                        {post.game}
+                      </Tag>
+
+                      {post?.category
+                        .split(',')
+                        .map((item) => item.trim())
+                        .map((genre: string) => (
+                          <Tag key={genre} prefix="#" size="small" backgroundColor="lightgray">
+                            {genre}
+                          </Tag>
+                        ))}
+                    </StTagWrapper>
+                  </StContent>
+                  {post?.image && post.image.length > 0 && (
+                    <StImageWrapper onClick={() => movedetailPageOnClick(post?.id)}>
+                      <img src={post?.image[0]} alt={post.game} />
+                    </StImageWrapper>
+                  )}
+                </StContentWrapper>
                 <StPostInfoWrapper>
                   <div>
                     <img src={comments} />
-                    <p>5</p>
+                    <p>{post.comment_count}</p>
                   </div>
                   <div>
                     <img src={thumsUp} />
-                    <p>5</p>
+                    <p>{post.like_count}</p>
                   </div>
                 </StPostInfoWrapper>
               </StcontentBox>
@@ -192,18 +250,28 @@ export const BoardList = ({ filteredPosts }: any) => {
           }
         })
       ) : (
-        <StNullboard>게시물이 없습니다.</StNullboard>
+        <StNoResultWrapper>
+          <img src={folderIcon} alt="폴더아이콘" />
+          <p>해당 장르의 포스트가 없습니다.</p>
+        </StNoResultWrapper>
       )}
-
-      {initialDisplayedPosts.length < filteredPosts.length && (
-        <MoreViewButton onClick={handleLoadMore}>더보기</MoreViewButton>
-      )}
-    </div>
+    </StBoardListContainer>
   );
 };
-const Stdetailmoveline = styled.div`
-  cursor: pointer;
+
+const StBoardListContainer = styled.div`
+  width: 100%;
 `;
+
+const StNoResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+`;
+
 const StButton = styled.button`
   position: flex;
   height: 40px;
@@ -223,21 +291,17 @@ const StButton = styled.button`
     background-color: ${(props) => props.theme.color.gray};
   }
 `;
-const StfetchForm = styled.div`
+const StfetchForm = styled.form`
   flex-direction: column;
   padding: 10px;
   justify-content: flex-end;
   display: flex;
   position: absolute;
   z-index: 20;
-  right: 2%;
-  top: 16%;
+  right: 1.5%;
+  top: 20%;
 `;
-const StrefetchForm = styled.form`
-  flex-direction: column;
-  justify-content: space-between;
-  display: flex;
-`;
+
 const EditBtn = styled.button`
   display: flex;
   position: relative;
@@ -251,21 +315,19 @@ const EditBtn = styled.button`
   cursor: pointer;
 `;
 const StSeachContainer = styled.form`
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 20px;
-`;
-
-const StsearchBox = styled.div`
-  display: flex;
+  gap: 10px;
   position: relative;
-  gap: 20px;
 `;
 
 const StseachInput = styled.input`
   height: 48px;
   width: 400px;
+  color: ${(props) => props.theme.color.white};
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   border: none;
@@ -273,11 +335,11 @@ const StseachInput = styled.input`
   position: relative;
 `;
 
-const StSearchIcon = styled.div`
+const StSearchIcon = styled.button`
   display: flex;
   position: absolute;
   top: 50%;
-  right: 23%;
+  right: 9%;
   width: 24px;
   height: 24px;
   transform: translate(-50%, -50%);
@@ -290,13 +352,13 @@ const StcontentBox = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 1180px;
-  height: max-content;
+  height: fit-content;
   margin-bottom: 30px;
   background-color: ${(props) => props.theme.color.gray};
   border-radius: 10px;
   white-space: nowrap;
   color: ${(props) => props.theme.color.white};
-  padding: 20px;
+  padding: 30px;
 `;
 
 const StProfileWrapper = styled.div`
@@ -343,11 +405,13 @@ const StUserNameWrapper = styled.div`
 `;
 
 const StContentWrapper = styled.div`
+  height: fit-content;
   display: flex;
   gap: 20px;
+  width: 100%;
 `;
 
-const StText = styled.div`
+const StContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -359,22 +423,31 @@ const StText = styled.div`
     font-weight: 700;
   }
   & p {
-    color: #eee;
     font-size: 14px;
     font-weight: 400;
-    line-height: 22px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+    max-height: 66px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 `;
 
+const StHiddenText = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StText = styled.div`
+  width: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+`;
+
 const StTagWrapper = styled.div`
   display: flex;
   gap: 5px;
-  margin-top: 10px;
+  margin-top: 20px;
 `;
 
 const StImageWrapper = styled.figure`
@@ -383,6 +456,7 @@ const StImageWrapper = styled.figure`
   border-radius: 10px;
   background: #646466;
   overflow: hidden;
+  cursor: pointer;
   & img {
     width: 100%;
     height: 100%;

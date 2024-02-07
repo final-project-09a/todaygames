@@ -11,19 +11,19 @@ import {
   Titles,
   WrappingInput,
   TitleInput,
-  TextSpace,
   ImageUploadBtn,
   BottomBtn,
-  GameSelect,
   ImageBox,
   WrappingImages,
   SearchBtn,
   GameCard,
   CardImage,
   TagArea,
+  GameInput,
   TagText,
   RemoveImgBtn,
-  WrappingCardAndBtn
+  WrappingCardAndBtn,
+  ReviewInput
 } from './styles';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -36,10 +36,13 @@ import { insertPost } from 'api/supabaseData';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/config/configStore';
 import AlertModal from 'components/register/AlertModal';
+import { updatedataPosts } from 'api/post';
+import { getFormattedDate } from 'util/date';
 
 const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  // Register 페이지 들어올 때 받아온 게시물 데이터
   const { post } = location.state || {};
 
   const [title, setTitle] = useState('');
@@ -53,12 +56,17 @@ const Register = () => {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [isAlertModalOpen, setisAlertModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  const [selectedRating, setSelectedRating] = useState('' as '' | '⭐' | '⭐⭐' | '⭐⭐⭐' | '⭐⭐⭐⭐' | '⭐⭐⭐⭐⭐');
+
+  const [review, setReview] = useState<string>('');
 
   useEffect(() => {
     setTitle(post?.title || '');
     setContentText(post?.content || '');
     setGameName(post?.game || '');
     setTagText(post?.category || '');
+    setReview(post?.review || '');
+    setSelectedRating(post?.star_rating || '');
   }, []);
 
   const isEditing = !!post;
@@ -75,9 +83,16 @@ const Register = () => {
   };
 
   const user = useSelector((state: RootState) => state.userSlice.userInfo);
+  const timeStamp = getFormattedDate(Date());
 
   // 이미지를 Supabase 스토리지에 업로드하는 함수
   const uploadImagesToSupabase = async () => {
+    const timestamp = Date.now();
+    const dateObject = new Date(timestamp);
+    const isoString = dateObject.toISOString();
+    const urlTimeStamp = getFormattedDate(isoString);
+    const onlyNumbers = urlTimeStamp.replace(/\D/g, '');
+
     const uploadedImageUrls: string[] = [];
     try {
       for (const file of imageFiles) {
@@ -85,11 +100,10 @@ const Register = () => {
         const safeUserName = user?.nickname?.replace(/\s+/g, '').replace(/[^a-zA-Z0-9]/g, '_');
         // 파일 이름을 안전한 형태로 변환
         const safeFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const filePath = `${safeUserName}/${safeFileName}`;
-
+        const filePath = `${safeUserName}/${onlyNumbers}_${safeFileName}`;
         const { error, data } = await supabase.storage.from('postImage').upload(filePath, file);
-        if (error) throw error;
         const { data: publicURL } = supabase.storage.from('postImage').getPublicUrl(filePath);
+
         uploadedImageUrls.push(publicURL.publicUrl);
       }
     } catch (error) {
@@ -115,11 +129,7 @@ const Register = () => {
     setGameName(e.target.value);
   };
 
-  const {
-    isLoading,
-    isError,
-    data: allGames
-  } = useQuery({
+  const { data: allGames } = useQuery({
     queryKey: [QUERY_KEYS.GAMES],
     queryFn: getGames,
     enabled: isModalOpen
@@ -136,12 +146,6 @@ const Register = () => {
       setModalContent('검색어가 입력되지 않았습니다');
     }
   }, [isModalOpen, gameName]);
-
-  useEffect(() => {
-    if (gameName.length < 1) {
-      setTagText('');
-    }
-  }, [gameName]);
 
   const { mutate } = useMutation({
     mutationFn: insertPost,
@@ -165,7 +169,9 @@ const Register = () => {
         category: tagText,
         image: uploadedImageUrls,
         content: contentText,
-        user_id: user.id
+        user_id: user.id,
+        review,
+        star_rating: selectedRating
       });
       setModalContent('등록이 완료되었습니다!');
       setisAlertModalOpen(true);
@@ -177,8 +183,21 @@ const Register = () => {
     }
   };
 
-  const handleEditButton = () => {
-    alert('수정기능 구현중...');
+  // 수정
+  const handleEditButton = async (postId: string) => {
+    try {
+      await updatedataPosts(postId, title, gameName, tagText, contentText, imageUrls, review, selectedRating);
+      setisAlertModalOpen(true);
+
+      if (title || gameName || tagText || contentText) {
+        setModalContent('수정이 완료되었습니다.');
+        setTimeout(() => {
+          navigate('/board');
+        }, 1500);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -196,14 +215,24 @@ const Register = () => {
     navigate(`/board`);
   };
 
+  const handleRatingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedRating(e.target.value as '' | '⭐' | '⭐⭐' | '⭐⭐⭐' | '⭐⭐⭐⭐' | '⭐⭐⭐⭐⭐');
+  };
+
+  const handleReviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReview(e.target.value);
+  };
+
   return (
     <MainBackground>
       <WrappingBtnAndInput>
         <WrappingTitleAndBtn>
           <TitleText>{isEditing ? '게시글 수정' : '게시글 작성'}</TitleText>
           <WrappingBtns>
-            <CancelBtn onClick={cancelBtnHandler}>취소</CancelBtn>
-            <RegisterBtn onClick={isEditing ? handleEditButton : handelRegisterButton}>
+            <CancelBtn type="button" onClick={cancelBtnHandler}>
+              취소
+            </CancelBtn>
+            <RegisterBtn type="button" onClick={isEditing ? () => handleEditButton(post.id) : handelRegisterButton}>
               {isEditing ? '수정' : '등록'}
             </RegisterBtn>
           </WrappingBtns>
@@ -215,28 +244,47 @@ const Register = () => {
             }}
           >
             <Titles>
-              <TextSpace>제목</TextSpace>
-              <TitleInput value={title} onChange={titleTextHandler} />
+              <div>
+                <label>게임</label>
+                <GameInput
+                  value={gameName}
+                  onChange={searchOnClickHandler}
+                  placeholder="게시하고 싶은 게임을 검색해 주세요."
+                />
+                <SearchBtn type="submit" onClick={onClickToggleModal} />
+              </div>
+              <div>
+                <label>태그</label>
+                <TagArea>{gameName && <TagText isVisible={true}>{tagText}</TagText>}</TagArea>
+              </div>
             </Titles>
             <Titles>
-              <TextSpace>게임</TextSpace>
-              <GameSelect value={gameName} onChange={searchOnClickHandler} />
-              <SearchBtn onClick={onClickToggleModal} />
+              <div>
+                <label>별점</label>
+                <select onChange={handleRatingChange} value={selectedRating}>
+                  <option value="">별점을 선택하세요</option>
+                  <option value="⭐">⭐</option>
+                  <option value="⭐⭐">⭐⭐</option>
+                  <option value="⭐⭐⭐">⭐⭐⭐</option>
+                  <option value="⭐⭐⭐⭐">⭐⭐⭐⭐</option>
+                  <option value="⭐⭐⭐⭐⭐">⭐⭐⭐⭐⭐</option>
+                </select>
+              </div>
+              <div>
+                <label>한줄평</label>
+                <ReviewInput value={review} onChange={handleReviewChange} placeholder="한줄평을 입력해 주세요." />
+              </div>
             </Titles>
             <Titles>
-              <TextSpace>태그</TextSpace>
-              <TagArea>
-                {gameName ? (
-                  <TagText isVisible={true}>{tagText}</TagText>
-                ) : (
-                  <TagText isVisible={false}>{tagText}</TagText>
-                )}
-              </TagArea>
+              <label>제목</label>
+              <TitleInput value={title} onChange={titleTextHandler} placeholder="제목을 입력해 주세요." />
             </Titles>
           </WrappingInput>
-          <ContentInput value={contentText} onChange={contentTextHandler} />
+          <ContentInput value={contentText} onChange={contentTextHandler} placeholder="게시글을 입력해 주세요." />
           <BottomBtn>
-            <ImageUploadBtn onClick={handleImageUploadClick}>이미지 첨부하기</ImageUploadBtn>
+            <ImageUploadBtn type="button" onClick={handleImageUploadClick}>
+              이미지 첨부하기
+            </ImageUploadBtn>
             <input
               type="file"
               accept="image/*"

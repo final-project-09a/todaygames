@@ -9,5 +9,6 @@ export const QUERY_KEYS = {
   MEMOS: 'memos',
   AUTH: 'auth',
   USERINFO: 'userinfo',
-  BOOKMARK: 'user_bookmarks'
+  BOOKMARK: 'user_bookmarks',
+  LIKE: 'user_likes'
 };

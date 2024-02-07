@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { supabase } from 'types/supabase';
 import { Link, useNavigate } from 'react-router-dom';
-import { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton } from './styles';
+import {
+  StyledLogin,
+  StyledInput,
+  StyledButton,
+  StyledH1,
+  StyledLabel,
+  StFormWrapper,
+  StOtherLoginWrapper,
+  StSignInfo,
+  StLoginButton
+} from './styles';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/modules/userSlice';
+import googlelogo from '../../assets/img/googlelogo.png';
+import kakaologo from '../../assets/img/kakaologo.png';
 interface FormData {
   email: string;
   password: string;
@@ -17,8 +29,6 @@ function Login() {
     email: '',
     password: ''
   });
-  // const { user, session } = supabase.auth.session()
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -35,7 +45,6 @@ function Login() {
         email: formData.email,
         password: formData.password
       });
-      console.log(data);
 
       if (error) {
         console.error(error);
@@ -50,73 +59,67 @@ function Login() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error(error);
-        alert('로그아웃 중에 오류가 발생했습니다');
-      } else {
-        alert('로그아웃 성공!');
-        // You can redirect or perform other actions upon successful logout
-      }
-    } catch (error) {
-      console.error(error);
-      alert('로그아웃 중에 오류가 발생했습니다');
-    }
-  };
-
   const kakaologin = async function signInWithKakao() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'kakao'
     });
   };
 
-  // const googlelogin = async function signInWithgoogle() {
-  //   const { data, error } = await supabase.auth.signInWithOAuth({
-  //     provider: 'google',
-  //     options: {
-  //       queryParams: {
-  //         access_type: 'offline',
-  //         prompt: 'consent'
-  //       }
-  //     }
-  //   });
-  // }; 앱 배포 후에 구글로그인 도입가능
+  const googlelogin = async function signInWithgoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
+      }
+    });
+  };
 
   return (
     <StyledLogin>
       <StyledH1>로그인</StyledH1>
-      <StyledForm onSubmit={handlelogin}>
-        <StyledLabel htmlFor="email">이메일</StyledLabel>
-        <StyledInput
-          placeholder="아이디를 입력하세요"
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        {errors.email && <p>{errors.email}</p>}
-
-        <StyledLabel htmlFor="password">비밀번호</StyledLabel>
-        <StyledInput
-          placeholder="비밀번호"
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        {errors.password && <p>{errors.password}</p>}
-
-        <StyledButton type="submit">로그인하기</StyledButton>
-      </StyledForm>
-      <StkakaoButton onClick={kakaologin}>카카오로그인</StkakaoButton>
-      {/* <img src={kakaologo} width="222" alt="카카오 로그인 버튼" />  정식카카오로그인 로고사용준비완료*/}
-      <Link to="/signup">
-        <StyledButton>회원 가입</StyledButton>
-      </Link>
+      <form onSubmit={handlelogin}>
+        <StFormWrapper>
+          <StyledLabel htmlFor="email">이메일</StyledLabel>
+          <StyledInput
+            placeholder="이메일을 입력해 주세요."
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          {/* {errors.email && <p>{errors.email}</p>} */}
+        </StFormWrapper>
+        <StFormWrapper>
+          <StyledLabel htmlFor="password">비밀번호</StyledLabel>
+          <StyledInput
+            placeholder="비밀번호를 입력해 주세요."
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </StFormWrapper>
+        <StyledButton type="submit">로그인</StyledButton>
+      </form>
+      <StOtherLoginWrapper>
+        <StLoginButton onClick={googlelogin}>
+          <img src={googlelogo} alt="기본이미지" onClick={googlelogin} />
+        </StLoginButton>
+        <StLoginButton onClick={kakaologin}>
+          <img src={kakaologo} alt="기본이미지" onClick={googlelogin} />
+        </StLoginButton>
+      </StOtherLoginWrapper>
+      <StSignInfo>
+        <h4>계정이 없으신가요?</h4>
+        <Link to="/signup">
+          <p>회원가입</p>
+        </Link>
+      </StSignInfo>
     </StyledLogin>
   );
 }

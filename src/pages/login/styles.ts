@@ -4,72 +4,116 @@ const StyledLogin = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${(props) => props.theme.color.balck};
-  height: 100vh;
-  justify-content: center;
+  margin-top: 100px;
+  & p {
+    color: ${(props) => props.theme.color.white};
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 40px;
+  }
 `;
 
-const StyledForm = styled.form`
+const StFormWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  margin-bottom: 30px;
+`;
+
+const StSignInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  & h4 {
+    color: #ccc;
+    margin-top: 40px;
+    font-size: 14px;
+    font-weight: 100;
+  }
 `;
 
 const StyledInput = styled.input`
   width: 350px;
-  height: 50px;
+  height: 48px;
   flex-shrink: 0;
   margin-top: 10px;
-  border-radius: 15px;
+  border-radius: 10px;
+  color: ${(props) => props.theme.color.white};
+  background: ${(props) => props.theme.color.postback};
+  border: none;
+  padding-left: 18px;
+  &:focus {
+    background: ${(props) => props.theme.color.postback};
+  }
+
+  &:-webkit-autofill {
+    background-color: ${(props) => props.theme.color.postback} !important;
+    -webkit-text-fill-color: ${(props) => props.theme.color.white} !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  &:-webkit-autofill:focus {
+    background-color: ${(props) => props.theme.color.postback} !important;
+    -webkit-text-fill-color: ${(props) => props.theme.color.white} !important;
+  }
 `;
 
 const StyledButton = styled.button`
   width: 350px;
   height: 50px;
-  flex-shrink: 0;
   background-color: ${(props) => props.theme.color.primary};
   color: ${(props) => props.theme.color.white};
   border: none;
   margin-top: 10px;
-  border-radius: 15px;
-
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
   &:hover {
-    background-color: #1c3669;
+    color: ${(props) => props.theme.color.black};
+    background-color: ${(props) => props.theme.color.white};
   }
 `;
-const StkakaoButton = styled.button`
-  width: 350px;
-  height: 50px;
-  flex-shrink: 0;
-  background-color: #f7e600;
-  color: #3a1d1d;
-  border: none;
-  margin-top: 10px;
-  border-radius: 15px;
-  font-weight: bolder;
 
-  &:hover {
-    background-color: #ccbe04;
+const StLoginButton = styled.div`
+  width: 170px;
+  height: 50px;
+  border: none;
+  margin-top: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  overflow: hidden;
+  & img {
+    object-fit: cover;
   }
+  & &:hover {
+  }
+`;
+
+const StOtherLoginWrapper = styled.div`
+  display: flex;
+  gap: 10px;
 `;
 
 const StyledH1 = styled.h1`
-  color: #ffffff;
-  font-family: Pretendard;
   font-size: 34px;
-  font-style: normal;
   font-weight: 700;
-  line-height: normal;
+  margin-bottom: 50px;
 `;
 
 const StyledLabel = styled.label`
-  color: #ffffff;
-  font-family: Pretendard;
-  font-size: 16px;
-  font-style: normal;
+  font-size: 14px;
   font-weight: 400;
   margin-top: 10px;
-  text-align: left;
 `;
 
-export { StyledLogin, StyledForm, StyledInput, StyledButton, StyledH1, StyledLabel, StkakaoButton };
+export {
+  StOtherLoginWrapper,
+  StFormWrapper,
+  StyledLogin,
+  StyledInput,
+  StyledButton,
+  StyledH1,
+  StyledLabel,
+  StSignInfo,
+  StLoginButton
+};
