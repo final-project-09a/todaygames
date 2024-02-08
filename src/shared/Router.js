@@ -10,6 +10,7 @@ import NavBar from 'components/Navbar/NavBar';
 import Mypage from '../pages/mypage/mypage';
 import Search from 'pages/search/Search';
 import SearchUserInfo from 'pages/searchUserInfo';
+import Footer from 'components/Footer';
 
 const Router = () => {
   return (
@@ -28,6 +29,7 @@ const Router = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/mypage" element={<Mypage />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };

@@ -16,7 +16,6 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/modules/userSlice';
 import googlelogo from '../../assets/img/googlelogo.png';
 import kakaologo from '../../assets/img/kakaologo.png';
-
 interface FormData {
   email: string;
   password: string;
@@ -25,6 +24,7 @@ interface FormData {
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [formData, setFormData] = useState<FormData>({
     email: '',
     password: ''
@@ -63,7 +63,6 @@ function Login() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'kakao'
     });
-    return data;
   };
 
   const googlelogin = async function signInWithgoogle() {
@@ -76,7 +75,6 @@ function Login() {
         }
       }
     });
-    return data;
   };
 
   return (
