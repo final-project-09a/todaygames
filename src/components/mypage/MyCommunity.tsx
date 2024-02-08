@@ -53,7 +53,7 @@ const MyCommunity = () => {
   };
 
   const handleEditButtonClick = (postId: string) => {
-    const postToEdit = filteredPosts.find((post) => post.id === postId);
+    const postToEdit = posts.find((post) => post.id === postId);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
