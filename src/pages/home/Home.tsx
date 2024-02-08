@@ -6,6 +6,7 @@ import { StContainer, StMainWrapper, StSection } from './styles';
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMostPlayedGames } from 'api/steamApis';
+import Footer from 'components/Footer';
 
 const Home = () => {
   const queryClient = useQueryClient();
