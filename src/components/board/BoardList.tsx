@@ -137,7 +137,8 @@ export const BoardList = () => {
 
   //수정
   const handleEditButtonClick = (postId: string) => {
-    const postToEdit = filteredPosts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    const postToEdit = posts.find((post: Typedata['public']['Tables']['posts']['Row']) => post.id === postId);
+    console.log('postToEdit', postToEdit);
     navigate(`/board/edit/${postId}`, { state: { post: postToEdit } });
   };
 
