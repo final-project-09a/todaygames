@@ -1,11 +1,11 @@
+![스크린샷 2024-02-09 002818](https://github.com/final-project-09a/todaygames/assets/117058056/bcfb6ef9-ae0c-4853-85f6-db372237db00)
+
 ## 내배캠 React 3기 A-9조 파이널 프로젝트
 ### 📢 프로젝트 개요
 **24. 01. 04 - 23. 02. 08**
 
 
 - 프로젝트명: **오늘의 게임**
-  # ![오늘의게임 로고-05 png](https://github.com/final-project-09a/todaygames/assets/117058056/89a88ecb-4d1c-4d90-82bc-2a8a9b072d2e)
-  
 - 소개
     - 한 줄 정리 : 게임포탈사이트
     - 내용 :  다양한 게임들을 추천 받을 수 있고 결제 할 수 있으며 게임에 대한 정보를 유저들끼리 나눌 수 있는 사이트 구현
